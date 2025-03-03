@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/public/images/favicon.png">
+    <title>Kidify - Confirm OTP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .otp-container {
+            max-width: 900px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .confirm-btn {
+            background-color: #4C3398;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            max-width: 250px;
+        }
+        .textContent {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="row otp-container w-100">
+        <!-- Left Side (Illustration) -->
+        <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center">
+            <img src="/public/images/otpsignUp.png" alt="OTP Illustration" class="img-fluid" style="max-width: 80%;">
+        </div>
+        
+        <!-- Right Side (OTP Form) -->
+        <div class="col-md-6 text-center d-flex flex-column align-items-center justify-content-center">
+            <div class="text-start w-100">
+                <img src="/public/images/bgremovedlogo.png" alt="Kidify Logo" width="100">
+            </div>
+            <h3 class="fw-bold mt-3">Confirm with OTP</h3>
+            <p class="textContent">Please check your mail address for OTP</p>
+            
+            <div class="d-flex justify-content-center mb-3">
+                <input type="text" class="otp-input" maxlength="1" id="otp1" oninput="moveNext(this, 'otp2')" onkeydown="moveBack(event, 'otp1')">
+                <input type="text" class="otp-input" maxlength="1" id="otp2" oninput="moveNext(this, 'otp3')" onkeydown="moveBack(event, 'otp1')">
+                <input type="text" class="otp-input" maxlength="1" id="otp3" oninput="moveNext(this, 'otp4')" onkeydown="moveBack(event, 'otp2')">
+                <input type="text" class="otp-input" maxlength="1" id="otp4" onkeydown="moveBack(event, 'otp3')">
+            </div>
+            
+            <button class="btn confirm-btn">Confirm</button>
+            <p class="mt-3"><a href="#" class="text-dark">Go back to Signup page</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function moveNext(current, nextFieldID) {
+        if (current.value.length === 1) {
+            document.getElementById(nextFieldID)?.focus();
+        }
+    }
+    function moveBack(event, prevFieldID) {
+        if (event.key === "Backspace" && event.target.value === "") {
+            document.getElementById(prevFieldID)?.focus();
+        }
+    }
+</script>
+
+</body>
+</html>

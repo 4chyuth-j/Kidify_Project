@@ -1,0 +1,32 @@
+body {
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 900px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-btn {
+            background-color: #4C3398;
+            color: white;
+            font-weight: bold;
+        }
+        .google-btn {
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .google-btn img {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .forgot-password, .signup-link {
+            color: #4C3398;
+            text-decoration: none;
+        }

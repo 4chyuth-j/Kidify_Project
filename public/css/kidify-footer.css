@@ -1,0 +1,12 @@
+footer a {
+    text-decoration: none;
+    color: #333;
+}
+
+footer a:hover {
+    color: #b57edc;
+}
+
+.payment-icons img {
+    max-height: 30px;
+}

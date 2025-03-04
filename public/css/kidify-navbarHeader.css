@@ -1,0 +1,83 @@
+.navbar-brand img {
+    height: 50px;
+    width: auto;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.nav-link:hover {
+    color: #b57edc;
+}
+
+.icon-btn {
+    font-size: 20px;
+    color: #333;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    color: #b57edc;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #b57edc;
+    font-size: 12px;
+}
+
+/* Search Bar Styling */
+.search-container {
+    position: relative;
+    max-width: 250px;
+    width: 100%;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 8px 35px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+}
+
+.search-container .fa-search {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+}
+
+/* Hide icons on small screens (≤ 992px) */
+@media (max-width: 992px) {
+    .d-lg-flex {
+        display: none !important; /* Hide user, wishlist, and cart icons */
+    }
+}
+
+/* Show icons again on large screens (> 992px) */
+@media (min-width: 993px) {
+    .d-lg-flex {
+        display: flex !important; /* Ensure icons are visible */
+    }
+}
+
+/* Move menu button to the right on mobile */
+.navbar-toggler {
+    border: none;
+    background: none;
+    font-size: 24px;
+    order: 1;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}

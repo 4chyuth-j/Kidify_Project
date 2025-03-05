@@ -1,0 +1,56 @@
+body {
+    background-color: #f8f9fa;
+}
+.signup-container {
+    max-width: 900px;
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.form-control {
+    background-color: #f2f2f2;
+    border: none;
+    height: 50px;
+    border-radius: 8px;
+}
+.signup-btn {
+    background-color: #4C3398;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    max-width: 250px;
+}
+.google-btn {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.google-btn img {
+    width: 20px;
+}
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+.divider:not(:empty)::before {
+    margin-right: .25em;
+}
+.divider:not(:empty)::after {
+    margin-left: .25em;
+}

@@ -1,10 +1,25 @@
+/* Increase logo size */
 .navbar-brand img {
-    height: 50px;
+    height: 65px; /* Increased from 50px */
     width: auto;
 }
 
+/* Increase font size of navbar links */
+.navbar-nav .nav-link {
+    font-size: 18px; /* Increased font size */
+    font-weight: 600; /* Make it a bit bolder */
+}
+
+/* Center align navbar links */
+.navbar-nav {
+    margin: 0 auto; /* This will center the links */
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Add some spacing between items */
+}
+
+/* Existing Styles */
 .nav-link {
-    font-weight: 500;
     color: #333;
 }
 

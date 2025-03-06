@@ -5,7 +5,7 @@ const { Schema } = mongoose; // Extract Schema from mongoose
 const userSchema = new Schema({
     name: {
         type: String,
-        required: true // Name field is required
+        required: false // Name field is not mandatory
     },
     email: {
         type: String,

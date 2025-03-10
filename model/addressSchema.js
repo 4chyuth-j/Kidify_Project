@@ -62,7 +62,7 @@ const addressSchema = new Schema({
             required: true,
         }
     }]
-});
+},{timestamps:true});
 
 // Create the Address model from the schema
 const Address = mongoose.model("Address", addressSchema);

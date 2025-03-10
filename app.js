@@ -4,6 +4,7 @@ const path = require("path");
 const session = require("express-session");
 const connectDB = require("./config/db.js");
 const userRouter = require("./routes/userRouter.js");
+const adminRouter = require("./routes/adminRouter.js");
 const passport = require("./config/passport.js");
 
 const app = express();
@@ -13,14 +14,22 @@ const app = express();
 app.use(express.urlencoded({ extended: true })); //Parses form data from <form>. Without this middleware, req.body will be undefined when handling form data
 app.use(express.json());  //Parses JSON data from API requests. Without this, req.body will be undefined when receiving JSON data.
 
+
+
+app.use(express.static('public'));  /*This is an application level middleware in Express is used to serve static files like CSS, 
+                                                                                             JavaScript, images, fonts, and other assets from a directory called public.*/
+
+
+
+
 app.use(session({
-    secret:process.env.SESSION_SECRET,  
-    resave:false,
-    saveUninitialized:true,
-    cookie:{
-        secure:false, //during production(hosting) it is set as true
-        httpOnly:true,
-        maxAge:72*60*60*1000,
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false, //during production(hosting) it is set as true
+        httpOnly: true,
+        maxAge: 72 * 60 * 60 * 1000,
     }
 }));
 
@@ -28,8 +37,8 @@ app.use(session({
 app.use(passport.initialize()); // This initializes Passport to be used in the application
 app.use(passport.session()); // This allows Passport to maintain authentication state across requests
 
-app.use((req,res,next)=>{
-    res.set('cache-control','no-store');
+app.use((req, res, next) => {
+    res.set('cache-control', 'no-store');
     next();
 });
 /*cache-control: no-store tells browsers and proxies not to cache the response at all.
@@ -43,10 +52,9 @@ app.set('views', [path.join(__dirname, 'views/user'), path.join(__dirname, 'view
 
 const PORT = process.env.PORT || 4000;
 
-app.use(express.static('public'));  /*This is an application level middleware in Express is used to serve static files like CSS, 
-                                                                                             JavaScript, images, fonts, and other assets from a directory called public.*/
 
-app.use("/",userRouter);
+app.use("/", userRouter);
+app.use("/admin", adminRouter);
 
 connectDB();
 

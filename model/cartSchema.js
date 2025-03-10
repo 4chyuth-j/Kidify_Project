@@ -52,7 +52,7 @@ const cartSchema = new Schema({
         }
 
     }]
-});
+},{timestamps:true});
 
 // Create the Cart model from the schema
 const Cart = mongoose.model("Cart", cartSchema);

@@ -22,13 +22,9 @@ const brandSchema = new Schema({
         default: false, // By default, the brand is active (not blocked)
     },
 
-    // Timestamp for when the brand was created
-    createdAt: {
-        type: Date, 
-        default: Date.now, // Automatically sets the creation date to the current time
-    },
+   
 
-});
+},{timestamps:true});
 
 // Create the Brand model from the schema
 const Brand = mongoose.model("Brand", brandSchema);

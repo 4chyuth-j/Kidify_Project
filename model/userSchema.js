@@ -5,7 +5,9 @@ const { Schema } = mongoose; // Extract Schema from mongoose
 const userSchema = new Schema({
     name: {
         type: String,
-        required: false // Name field is not mandatory
+        required: false, // Name field is not mandatory
+        default:"User",
+
     },
     email: {
         type: String,
@@ -64,10 +66,7 @@ const userSchema = new Schema({
         ref: "Order" // References the Order collection to store past orders
     }],
 
-    createdOn: {
-        type: Date,
-        default: Date.now, // Automatically sets the creation date
-    },
+   
     // Referral code omitted from the video
 
     searchHistory: [{
@@ -85,7 +84,7 @@ const userSchema = new Schema({
             default: Date.now, // Automatically sets the search timestamp
         }
     }]
-});
+},{timestamps:true});
 
 // Create a model for User collection
 const User = mongoose.model("User", userSchema);

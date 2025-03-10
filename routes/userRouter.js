@@ -14,6 +14,8 @@ router.post("/resend-otp",userController.resendOtp);
 router.get("/login",userController.loadLogin);
 router.post("/login",userController.login);
 
+router.get("/logout",userController.logout);
+
 
 // Route to start Google authentication process
 router.get("/auth/google", passport.authenticate('google', { scope: ['profile', 'email'] })); // Redirects to Google with scope access

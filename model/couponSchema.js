@@ -11,12 +11,7 @@ const couponSchema = new Schema({
         unique: true, // Ensures that each coupon name is unique
     },
 
-    // Date when the coupon is created (defaults to the current date/time)
-    createdOn: {
-        type: Date,
-        default: Date.now, // Automatically sets the current date when a coupon is created
-        required: true,
-    },
+    
 
     // Expiry date of the coupon (when it will no longer be valid)
     expireOn: {
@@ -47,7 +42,7 @@ const couponSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User', // Refers to the User collection
     }]
-});
+},{timestamps:true});
 
 // Create the Coupon model from the schema
 const Coupon = mongoose.model("Coupon", couponSchema);

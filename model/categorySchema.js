@@ -36,12 +36,8 @@ const categorySchema = new Schema({
         required: true, // At least one image is required
     },
 
-    // Stores the timestamp of when the category was created
-    createdAt: {
-        type: Date, 
-        default: Date.now, // Automatically sets the current date/time
-    }
-});
+   
+},{timestamps:true});
 
 // Create the Category model from the schema
 const Category = mongoose.model("Category", categorySchema);

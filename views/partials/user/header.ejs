@@ -73,8 +73,16 @@
                     <li class="nav-item d-lg-none"><a class="nav-link" href="#">Account</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="#">Wishlist</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="#">Cart</a></li>
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="/signup">SignUp</a></li>
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="/login">Login</a></li>
+                    <%if(locals.user){ %>
+                        <li class="nav-item d-lg-none"><a class="nav-link" href="/logout">Logout</a></li>
+
+
+                    <%}else{%>
+
+                        <li class="nav-item d-lg-none"><a class="nav-link" href="/signup">SignUp</a></li>
+                        <li class="nav-item d-lg-none"><a class="nav-link" href="/login">Login</a></li>
+
+                    <%}%>
                 </ul>
             </div>
     
@@ -86,8 +94,20 @@
     
             <!-- Icons (Only Visible on Large Screens, Removed on Small Screens) -->
             <div class="d-none d-lg-flex align-items-center">
-                <a href="/signup" class="icon-btn ">SignUp</a>
-                <a href="/login" class="icon-btn ">Login</a>
+                <%if(locals.user){ %>
+                    <div class="dropdown">
+                        <a href="#" class="sign-in-link fs-5 fw-bold"><%=locals.user.name%></a>
+                        <div class="dropdown-content">
+                            <a href="/logout" class="fs-5 fw-bold">Logout</a>
+                        </div>
+                    </div> 
+
+                <%}else{%>
+
+                    <a href="/signup" class="icon-btn ">SignUp</a>
+                    <a href="/login" class="icon-btn ">Login</a>
+
+                <%}%>
                 <a href="#" class="icon-btn"><i class="fas fa-user"></i></a>
                 <a href="#" class="icon-btn position-relative">
                     <i class="fas fa-heart"></i>

@@ -78,12 +78,7 @@ const orderSchema = new Schema({
         enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"],
     },
 
-    // Date when the order was created
-    createdOn: {
-        type: Date,
-        default: Date.now, // Automatically sets the current timestamp
-        required: true,
-    },
+   
 
     // Indicates if a coupon was applied to the order
     couponApplied: {
@@ -91,7 +86,7 @@ const orderSchema = new Schema({
         default: false,
     },
 
-});
+},{timestamps:true});
 
 // Creating the Order model from the schema
 const Order = mongoose.model("Order", orderSchema);

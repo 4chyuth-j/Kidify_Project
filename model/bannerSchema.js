@@ -39,7 +39,7 @@ const bannerSchema = new Schema({
         required: true, // Ensures the banner has a defined end date
     }
 
-});
+},{timestamps:true});
 
 // Creating the Banner model from the schema
 const Banner = mongoose.model("Banner", bannerSchema);

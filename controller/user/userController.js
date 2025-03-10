@@ -236,8 +236,14 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
    try {
-
-      return res.render("home.ejs");
+      const user = req.session.user;
+      if(user){
+         
+         const userData = await User.findOne({_id:user});
+         res.render("home.ejs",{user:userData});
+      }else{
+         return res.render("home.ejs");
+      }
 
    } catch (error) {
       console.log("home page not found\n", error);
@@ -245,6 +251,24 @@ const loadHomepage = async (req, res) => {
    }
 };
 
+
+const logout = async (req,res)=>{
+   try {
+      req.session.destroy((err)=>{
+         if(err){
+            console.log("session destruction error",err);
+            return res.redirect("/pageNotFound");
+         }
+         
+         return res.render("login",{successMessage:"LoggedOut successfully!"});
+
+      })
+      
+   } catch (error) {
+      console.log("logout error",error);
+      res.redirect("/pageNotFound");
+   }
+}
 
 module.exports = {
    loadHomepage,
@@ -255,5 +279,6 @@ module.exports = {
    verifyOtp,
    resendOtp,
    login,
+   logout,
 
 }

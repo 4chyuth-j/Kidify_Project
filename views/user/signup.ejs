@@ -19,8 +19,10 @@
             <h2>Create Account</h2>
             <div class="form-container">
                 <div class="google-btn">
-                    <img src="images/google.png" alt="Google Icon">
-                    <span>Signup with Google</span>
+                    <a href="/auth/google" class="custom-link">
+                        <img src="images/google.png" alt="Google Icon">
+                        <span>Signup with Google</span>
+                    </a>
                 </div>
                 <div class="divider">or</div>
                 <form id="signform" method="post" action="/signup">
@@ -28,7 +30,8 @@
                     <div id="error1" class="error-message"></div>
                     <input type="password" name="password" id="password" class="form-control" placeholder="Password">
                     <div id="error2" class="error-message"></div>
-                    <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password">
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control"
+                        placeholder="Confirm Password">
                     <div id="error3" class="error-message"></div>
                     <button type="submit" class="signup-btn">Sign Up</button>
                 </form>
@@ -78,32 +81,32 @@
 
             const passPattern = /^(?=.*[A-Za-z])(?=.*\d).+$/;
 
-            if(passwordVal.length<8){
-                error2.style.display="block";
+            if (passwordVal.length < 8) {
+                error2.style.display = "block";
                 error2.innerHTML = "Should contain atleast 8 characters";
-            } else if(!passPattern.test(passwordVal)){
+            } else if (!passPattern.test(passwordVal)) {
                 error2.style.display = "block";
                 error2.innerHTML = "Should contain numbers and alphabets"
-            }else{
+            } else {
                 error2.style.display = "none";
                 error2.innerHTML = "";
             }
 
-            if(cpasswordVal==""){
+            if (cpasswordVal == "") {
                 error3.style.display = "block";
                 error3.innerHTML = "Please fill this field";
             }
-            else if(passwordVal!=cpasswordVal){
+            else if (passwordVal != cpasswordVal) {
                 error3.style.display = "block";
                 error3.innerHTML = "passwords don't match";
-            } else{
+            } else {
                 error3.style.display = "none";
                 error3.innerHTML = "";
             }
 
         }
 
-      
+
 
 
 
@@ -121,7 +124,7 @@
                 if (error1.innerHTML || error2.innerHTML || error3.innerHTML) {
 
                     e.preventDefault();  // If validation fails, the form will not submit, allowing the user to fix errors.
-                              
+
                 }
 
             });

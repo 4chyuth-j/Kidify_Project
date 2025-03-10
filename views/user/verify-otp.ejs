@@ -39,12 +39,21 @@
             border-radius: 8px;
         }
 
-        .confirm-btn {
-            background-color: #4C3398;
-            color: white;
+        .confirm-btn,
+        .resend-btn {
             font-weight: bold;
             width: 100%;
             max-width: 250px;
+        }
+
+        .confirm-btn {
+            background-color: #4C3398;
+            color: white;
+        }
+
+        .resend-btn {
+            background-color: #FF9900;
+            color: white;
         }
 
         .textContent {
@@ -71,19 +80,21 @@
                 <p class="textContent">Please check your mail address for OTP</p>
 
                 <!-- Added Form Tag -->
-                <form id="otpForm" method="POST" action="/verify-otp" onsubmit="return validateOTPForm()">
+                <form id="otpForm" onsubmit="return validateOTPForm()">
                     <div class="d-flex justify-content-center mb-3">
                         <input type="text" class="otp-input" maxlength="1" name="otp1" id="otp1"
-                            oninput="moveNext(this, 'otp2')" onkeydown="moveBack(event, 'otp1')" required>
+                            oninput="moveNext(this, 'otp2')" onkeydown="moveBack(event, 'otp1')">
                         <input type="text" class="otp-input" maxlength="1" name="otp2" id="otp2"
-                            oninput="moveNext(this, 'otp3')" onkeydown="moveBack(event, 'otp1')" required>
+                            oninput="moveNext(this, 'otp3')" onkeydown="moveBack(event, 'otp1')">
                         <input type="text" class="otp-input" maxlength="1" name="otp3" id="otp3"
-                            oninput="moveNext(this, 'otp4')" onkeydown="moveBack(event, 'otp2')" required>
+                            oninput="moveNext(this, 'otp4')" onkeydown="moveBack(event, 'otp2')">
                         <input type="text" class="otp-input" maxlength="1" name="otp4" id="otp4"
-                            onkeydown="moveBack(event, 'otp3')" required>
+                            onkeydown="moveBack(event, 'otp3')">
                     </div>
 
                     <button type="submit" class="btn confirm-btn">Confirm</button>
+                    <button type="button" class="btn resend-btn mt-2" onclick="resendOTP()">Resend OTP</button>
+
                 </form>
                 <!-- End Form Tag -->
 
@@ -97,7 +108,7 @@
         const otp2 = document.getElementById("otp2").value;
         const otp3 = document.getElementById("otp3").value;
         const otp4 = document.getElementById("otp4").value;
-       
+
 
         function moveNext(current, nextFieldID) {
             if (current.value.length === 1) {
@@ -111,53 +122,91 @@
         }
 
         function validateOTPForm() {
+            // Collect the OTP input from 4 input fields and combine them into one string
             const otpInput = document.getElementById("otp1").value +
-                     document.getElementById("otp2").value +
-                     document.getElementById("otp3").value +
-                     document.getElementById("otp4").value;
+                document.getElementById("otp2").value +
+                document.getElementById("otp3").value +
+                document.getElementById("otp4").value;
 
+            // Send the OTP to the backend for verification using AJAX
             $.ajax({
-                type: "POST",
-                url: "verify-otp",
-                data: { otp: otpInput },
+                type: "POST", // Sending data to the server
+                url: "verify-otp", // Backend API endpoint to verify OTP
+                data: { otp: otpInput }, // Sending OTP value to the server
+
                 success: function (response) {
+                    // If the server confirms OTP is correct
                     if (response.success) {
                         Swal.fire({
-                            title: "OTP verified successfully",
+                            icon: "success",
+                            title: "OTP verified successfully", // Success message
                             width: 600,
                             padding: "3em",
                             color: "#716add",
-                            background: "#fff url(/images/trees.png)",
-                            backdrop: `
-                                       rgba(0,0,123,0.4)
-                                       url("/images/nyan-cat.gif")
-                                       left top
-                                       no-repeat
-                                       `,
-                            timer: 2000,
+                            timer: 2000, // Automatically closes after 2 seconds
                         }).then(() => {
-                            window.location.href = response.redirectUrl;
+                            window.location.href = response.redirectUrl; // Redirect to next page after the timer ends or by clicking on "OK"
                         })
                     } else {
+                        // If OTP is incorrect, show an error message
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",
-                            text:response.message,
-                            
+                            text: response.message, // Error message from the server
+                        }).then(() => {
+                            // Clear OTP input fields if OTP is incorrect
+                            document.querySelectorAll('.otp-input').forEach(input => input.value = "");
+                            document.getElementById('otp1').focus(); // Set focus to the first input
                         });
-                       
                     }
                 },
 
-                error: function(){
+                error: function () {
+                    // If there is a network issue or server error
                     Swal.fire({
-                        icon:"error",
-                        title:"Invalid otp",
-                        text:"Please try again",
+                        icon: "error",
+                        title: "Invalid OTP",
+                        text: "Please try again",
+                    }).then(() => {
+                        // Clear OTP input fields if OTP is incorrect
+                        document.querySelectorAll('.otp-input').forEach(input => input.value = "");
+                        document.getElementById('otp1').focus(); // Set focus to the first input
                     })
                 }
             })
 
+            return false; // Prevents default form submission
+        }
+
+        //function for resending otp
+        function resendOTP() {
+            document.getElementById("otp1").disabled = false;
+            document.getElementById("otp2").disabled = false;
+            document.getElementById("otp3").disabled = false;
+            document.getElementById("otp4").disabled = false;
+
+            $.ajax({
+                type: "POST",
+                url: "resend-otp",
+                success: function (response) {
+                    if (response.success) {
+
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "OTP Resend Successfully",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occured while resending otp",
+                        });
+                    }
+                }
+            })
             return false;
         }
 

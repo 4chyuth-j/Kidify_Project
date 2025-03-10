@@ -110,3 +110,8 @@ img.signup-illustration {
   font-size: 0.75rem;
   display:none ;  
 }
+
+.custom-link {
+    text-decoration: none; /* Removes the underline */
+    color: inherit; /* Uses the default text color of the parent element */
+}

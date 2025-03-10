@@ -19,16 +19,25 @@ const userSchema = new Schema({
         sparse: true, // Allows null values without affecting uniqueness constraint
         default: null, // Default value is null
     },
-    // Google ID omitted as referred in the video
+    googleId:{
+        type:String,
+        unique:true,
+
+    },
     password: {
         type: String,
-        required: true // Password is required
+        required: false, // Password is not required if user is signed up with google(in that case it uses googleId)
     },
     isBlocked: {
         type: Boolean,
         default: false, // By default, users are not blocked
     },
-    // isAdmin field can be added if needed
+    
+    isAdmin:{
+        type:Boolean,
+        required:false,
+        default:false,
+    },
 
     cart: [{ 
         /*

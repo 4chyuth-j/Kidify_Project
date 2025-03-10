@@ -31,7 +31,7 @@ const couponSchema = new Schema({
     },
 
     // The minimum price of a purchase required to apply this coupon
-    minimumPirce: {  // (Note: "Pirce" should be corrected to "Price")
+    minimumPrice: {  // (Note: "Pirce" should be corrected to "Price")
         type: Number,
         required: true,
     },

@@ -4,6 +4,7 @@ const path = require("path");
 const session = require("express-session");
 const connectDB = require("./config/db.js");
 const userRouter = require("./routes/userRouter.js");
+const passport = require("./config/passport.js");
 
 const app = express();
 
@@ -22,6 +23,10 @@ app.use(session({
         maxAge:72*60*60*1000,
     }
 }));
+
+// Initialize passport middleware in the Express application
+app.use(passport.initialize()); // This initializes Passport to be used in the application
+app.use(passport.session()); // This allows Passport to maintain authentication state across requests
 
 app.use((req,res,next)=>{
     res.set('cache-control','no-store');

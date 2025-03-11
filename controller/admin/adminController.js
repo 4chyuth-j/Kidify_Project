@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 
+
+//for loading admin error page
+const pageError = async (req,res)=>{
+    res.render("admin-error");
+};
+
+
 // loading login page of admin
 const loadLogin = async (req,res)=>{
     if(req.session.admin){
@@ -60,9 +67,33 @@ const loadDashboard = async (req,res)=>{
 }
 
 
+
+//admin logout
+const logout = async (req,res)=>{
+    try {
+       req.session.destroy(err=>{
+        if(err){
+            console.log("Error occured while distroying sesssion:",err);
+            return res.redirect('/pageError');
+        }
+        res.render("admin-login",{successMessage:"Admin LoggedOut successfully!"});
+        
+       }) 
+    } catch (error) {
+        console.log("Unexpected error during logout:",error);
+        res.redirect('/pageError')
+    }
+}
+
+
+
+
+
 module.exports = {
     loadLogin,
     login,
     loadDashboard,
+    pageError,
+    logout
 
 }

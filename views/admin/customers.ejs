@@ -1,0 +1,187 @@
+<%- include("../../views/partials/admin/header") %>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9fb;
+            color: #333;
+        }
+
+        /* Content Styling */
+        .content-container {
+            margin-left: 280px;
+            /* Adjust to ensure space from sidebar */
+            padding: 20px;
+            width: calc(100% - 300px);
+            /* Leaves some padding on the right */
+        }
+
+        /* Search Bar Styling */
+        .input-group {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .input-group input {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .input-group button {
+            background-color: #6c43c1;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 0 50px 50px 0;
+        }
+
+        /* Table Styling */
+        .table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: #563d7c;
+            color: white;
+        }
+
+        .table th,
+        .table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            background: #f4f4f9;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #e0f9eb;
+            color: #219653;
+            border: 1px solid #219653;
+        }
+
+        .status-blocked {
+            background: #fde6e6;
+            color: #eb5757;
+            border: 1px solid #eb5757;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .page-item {
+            list-style: none;
+            margin: 0 5px;
+        }
+
+        .pagination .page-link {
+            text-decoration: none;
+            color: #6c43c1;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid #6c43c1;
+        }
+
+        .pagination .active .page-link {
+            background: #6c43c1;
+            color: white;
+        }
+    </style>
+
+
+
+    <div class="content-header row">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="content-title card-title">Customers</h2>
+
+        </div>
+    </div>
+    </div>
+
+    <header class="card-header text-center mb-20">
+        <form action="/admin/users/" method="get" class="d-inline">
+            <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
+                style="width: 500px; margin-left: 230px;">
+                <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..."
+                    name="search">
+                <button class="btn  border-0" type="submit">Search</button>
+            </div>
+        </form>
+    </header>
+    <div class="right mt-5">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"><b>Name</b></th>
+                    <th scope="col"><b>Email</b></th>
+                    <th scope="col"><b>CustomerID</b></th>
+                    <th scope="col"><b>Status</b></th>
+                    <th scope="col"><b>Action</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(let i=0; i<data.length; i++) {%>
+                    <tr>
+                        <td>
+                            <%=data[i].name%>
+                        </td>
+                        <td>
+                            <%=data[i].email%>
+                        </td>
+                        <td>
+                            <%=data[i].userId%>
+                        </td>
+                        <td>
+                            <%=data[i].isBlocked%>
+                        </td>
+                        <td>
+                            <% if(data[i].isBlocked===false){%>
+                                <button class="btn btn-danger" style="width: 80px;">
+                                    <a href="/admin/blockCustomer?id=<%=data[i]._id%>" class="text-white"
+                                        style="text-decoration: none;">Block</a>
+                                </button>
+                                <%}else{%>
+                                    <button class="btn btn-success" style="width: 80px;">
+                                        <a href="/admin/unblockCustomer?id=<%=data[i]._id%>" class="text-white"
+                                            style="text-decoration: none;">Unblock</a>
+                                    </button>
+                                    <%}%>
+                        </td>
+                    </tr>
+                    <%}%>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- pagination  -->
+    <div class="container mt-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+                <%for(let i=1; i<=totalPages; i++){%>
+                    <li class="page-item <%=(i===currentPage) ? 'active' : ''%>">
+                        <a class="page-link" href="?page=<%=i%>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <%}%>
+            </ul>
+        </nav>
+    </div>
+    <%- include("../../views/partials/admin/footer") %>

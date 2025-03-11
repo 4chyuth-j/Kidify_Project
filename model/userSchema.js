@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose; // Extract Schema from mongoose
+const { v4: uuidv4 } = require('uuid'); 
 
 // Define the User schema
 const userSchema = new Schema({
@@ -8,7 +9,15 @@ const userSchema = new Schema({
         required: false, // Name field is not mandatory
         default:"User",
 
+    }, 
+    
+    userId: {
+        type: String,
+        default: () => uuidv4(), // Generates a unique ID when a new user is created
+        unique: true, 
     },
+
+
     email: {
         type: String,
         required: true, // Email field is required

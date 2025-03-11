@@ -94,20 +94,26 @@
     
             <!-- Icons (Only Visible on Large Screens, Removed on Small Screens) -->
             <div class="d-none d-lg-flex align-items-center">
-                <%if(locals.user){ %>
-                    <div class="dropdown">
-                        <a href="#" class="sign-in-link fs-5 fw-bold"><%=locals.user.name%></a>
-                        <div class="dropdown-content">
-                            <a href="/logout" class="fs-5 fw-bold">Logout</a>
+                <% if (locals.user) { %>  <!-- Check if a user is logged in -->
+                    <div class="dropdown"> <!-- Dropdown menu for logged-in users -->
+                        <a href="#" class="sign-in-link fs-5 fw-bold"><%= locals.user.name %></a> 
+                        <!-- Display the logged-in user's name as a link -->
+                        
+                        <div class="dropdown-content"> <!-- Dropdown menu options -->
+                            <a href="/logout" class="fs-5 fw-bold">Logout</a> 
+                            <!-- Logout link to log the user out -->
                         </div>
                     </div> 
-
-                <%}else{%>
-
-                    <a href="/signup" class="icon-btn ">SignUp</a>
-                    <a href="/login" class="icon-btn ">Login</a>
-
-                <%}%>
+                <% } else { %>  <!-- If no user is logged in, show SignUp and Login buttons -->
+                    
+                    <a href="/signup" class="icon-btn">SignUp</a> 
+                    <!-- Link to the signup page -->
+                    
+                    <a href="/login" class="icon-btn">Login</a> 
+                    <!-- Link to the login page -->
+                
+                <% } %> <!-- End of if-else condition -->
+                
                 <a href="#" class="icon-btn"><i class="fas fa-user"></i></a>
                 <a href="#" class="icon-btn position-relative">
                     <i class="fas fa-heart"></i>

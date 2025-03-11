@@ -1,0 +1,141 @@
+/* Increase logo size */
+.navbar-brand img {
+    height: 65px; /* Increased from 50px */
+    width: auto;
+}
+
+/* Increase font size of navbar links */
+.navbar-nav .nav-link {
+    font-size: 18px; /* Increased font size */
+    font-weight: 600; /* Make it a bit bolder */
+}
+
+/* Center align navbar links */
+.navbar-nav {
+    margin: 0 auto; /* This will center the links */
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Add some spacing between items */
+}
+
+/* Existing Styles */
+.nav-link {
+    color: #333;
+}
+
+.nav-link:hover {
+    color: #b57edc;
+}
+
+.icon-btn {
+    font-size: 20px;
+    color: #333;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    color: #b57edc;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #b57edc;
+    font-size: 12px;
+}
+
+/* Search Bar Styling */
+.search-container {
+    position: relative;
+    max-width: 250px;
+    width: 100%;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 8px 35px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+}
+
+.search-container .fa-search {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+}
+
+/* Hide icons on small screens (≤ 992px) */
+@media (max-width: 992px) {
+    .d-lg-flex {
+        display: none !important; /* Hide user, wishlist, and cart icons */
+    }
+}
+
+/* Show icons again on large screens (> 992px) */
+@media (min-width: 993px) {
+    .d-lg-flex {
+        display: flex !important; /* Ensure icons are visible */
+    }
+}
+
+/* Move menu button to the right on mobile */
+.navbar-toggler {
+    border: none;
+    background: none;
+    font-size: 24px;
+    order: 1;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.dropdown{
+    position:relative;
+    display:inline-block;
+}
+
+.dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    right:0;
+}
+
+.dropdown-content a{
+    color:black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width:100%;
+
+}
+
+.dropdown-content a:hover{
+   background-color: #f1f1f1;
+
+}
+
+.dropdown:hover .dropdown-content{
+    display: block;
+}
+
+.header{
+    position: relative;
+    z-index: 500;
+
+}
+
+.sign-in-link{
+    color: #333
+}

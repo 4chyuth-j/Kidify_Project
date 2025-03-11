@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidify || Admin</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        /* Reset default margin & padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Full-page layout */
+        body {
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #b0d5de;
+            color: #310505;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+            padding-left: 10px;
+        }
+
+        .sidebar .logo {
+            display: block;
+            margin: 0 auto 20px;
+            width: 150px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #310505;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #6e7e6e;
+            color: #ffffff;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            height: 60px;
+            background-color: #8da7ab;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .top-navbar .dropdown-menu {
+            background-color: #bb9aaf;
+        }
+
+        .top-navbar .dropdown-item:hover {
+            background-color: #33053d;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: rgb(204, 67, 67);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .header {
+            position: relative;
+            z-index: 500;
+
+        }
+
+        .sign-in-link {
+            color: #333;
+            text-decoration: none;
+            
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/images/bgremovedlogo.png" class="logo" alt="Kidify Logo">
+        <ul>
+            <li><a href="/admin" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="/admin/users"><i class="fas fa-user"></i> Customers</a></li>
+            <li><a href="/admin/category"><i class="fas fa-list"></i> Category</a></li>
+            <li><a href="/admin/brands"><i class="fas fa-star"></i> Brands</a></li>
+            <li><a href="/admin/addProducts"><i class="fas fa-plus"></i> Add Product</a></li>
+            <li><a href="/admin/products"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="/admin/coupon"><i class="fas fa-ticket-alt"></i> Coupon</a></li>
+            <li><a href="/admin/banner"><i class="fas fa-image"></i> Banner</a></li>
+            <li><a href="/admin/orderList"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        </ul>
+    </div>
+
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <h4 class="text-white">Admin Panel</h4>
+        <!-- Admin Profile Dropdown -->
+        <div class="dropdown">
+            <a href="#" class="sign-in-link fs-6 fw-bold"><i class="bi bi-person-gear"></i>Achyuth</a>
+            <div class="dropdown-content">
+                <a href="/logout" class="fs-6 fw-light">Logout<i class="bi bi-power"></i></a>
+            </div>
+        </div>
+
+    </div>

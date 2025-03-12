@@ -32,8 +32,8 @@ const categorySchema = new Schema({
 
     // Stores the thumbnail images for the category
     thumbnail: {
-        type: [String], // Array of image URLs
-        required: true, // At least one image is required
+        type: String, //  image URLs
+        required: false, //  image is not required
     },
 
    

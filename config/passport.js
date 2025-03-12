@@ -11,11 +11,12 @@ passport.use(new GoogleStrategy({
 },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            // Checking if a user with the given Google ID already exists in the database
+            // Checking if a user with the given Google ID already exists in the database.
             let user = await User.findOne({ googleId: profile.id });
             
             if (user) {
                 // If user already exists, return the user object
+                
                 return done(null, user); // done() is a callback that passes user data to Passport
             } else {
                 // If user doesn't exist, create a new user entry in the database
@@ -24,7 +25,8 @@ passport.use(new GoogleStrategy({
                     email: profile.emails[0].value, // Extracting user's email from Google profile
                     googleId: profile.id, // Storing unique Google ID for future authentication
                 });
-
+                
+               
                 await user.save(); // Saving the new user to the database
                 return done(null, user); // Returning the new user object
             }

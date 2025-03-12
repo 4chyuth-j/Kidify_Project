@@ -8,22 +8,23 @@ const customerInfo = async (req, res)=>{
         let search = "";
         if (req.query.search) {
             search = req.query.search;
-
+            
         }
         let page = 1;
         if (req.query.page) {
             page = req.query.page;
         }
 
-        const limit = 3;
+        const limit = 6;
         const UserData = await User.find({
             isAdmin: false,
             $or: [
-                { name: { $regex: ".*" + search + ".*" } },
-                { email: { $regex: ".*" + search + ".*" } },
+                { name: { $regex: ".*" + search + ".*", $options: "i" } },
+                { email: { $regex: ".*" + search + ".*", $options: "i" } },
             ],
         }).limit(limit * 1)
             .skip((page - 1) * limit)
+            .sort({createdAt:-1})
             .exec();
 
 
@@ -36,7 +37,7 @@ const customerInfo = async (req, res)=>{
 
         }).countDocuments();
 
-        console.log("UserData fetched:", UserData); // ✅ Debugging step
+        // console.log("UserData fetched:", UserData); // ✅ Debugging step
 
         res.render("customers",{ 
             data: UserData, 

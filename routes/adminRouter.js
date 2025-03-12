@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controller/admin/adminController.js");
 const customerController = require('../controller/admin/customerController.js');
+const categoryController = require('../controller/admin/categoryController.js');
 const {userAuth,adminAuth} = require("../middlewares/auth.js");
 
 
@@ -21,8 +22,9 @@ router.get("/unblockCustomer",adminAuth,customerController.customerUnblocked);
 
 router.get("/pageError",adminAuth,adminController.pageError);
 
+router.get("/category",adminAuth,categoryController.categoryInfo);
 
-
+router.post("/addCategory",adminAuth,categoryController.addCategory);
 
 module.exports = router;
 

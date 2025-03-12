@@ -236,13 +236,19 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
    try {
+
       const user = req.session.user;
+
+
       if(user){
-         
+
          const userData = await User.findOne({_id:user});
          res.render("home.ejs",{user:userData});
+
       }else{
+
          return res.render("home.ejs");
+
       }
 
    } catch (error) {

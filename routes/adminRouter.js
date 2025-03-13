@@ -28,6 +28,13 @@ router.get("/addCategory",adminAuth,categoryController.loadAddCategory);
 
 router.post("/addCategory",adminAuth,categoryController.addCategory);
 
+router.get("/blockCategory",adminAuth,categoryController.categoryBlocked);
+
+router.get("/unblockCategory",adminAuth,categoryController.categoryUnBlocked);
+
+router.get("/editCategory",adminAuth,categoryController.loadEditCategory);
+
+router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
 
 
 module.exports = router;

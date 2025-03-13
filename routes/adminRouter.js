@@ -24,7 +24,11 @@ router.get("/pageError",adminAuth,adminController.pageError);
 
 router.get("/category",adminAuth,categoryController.categoryInfo);
 
+router.get("/addCategory",adminAuth,categoryController.loadAddCategory);
+
 router.post("/addCategory",adminAuth,categoryController.addCategory);
+
+
 
 module.exports = router;
 

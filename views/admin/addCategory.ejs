@@ -1,0 +1,231 @@
+<%- include("../../views/partials/admin/header") %>
+
+    <style>
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+            margin-left: 500px;
+
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #563d7c;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #6c43c1;
+            color: #6c43c1;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-save {
+            background: #6c43c1;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+
+    <div class="form-container">
+        <h2 class="form-title">Add New Category</h2>
+        <form id="addCat" action="/admin/addCategory" method="post">
+            <div class="form-group">
+                <label class="form-label">Category Name</label>
+                <input id="name" type="text" class="form-control" name="name" placeholder="Enter category name">
+                <div id="error1" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category Description</label>
+                <textarea id="description" class="form-control" name="description"
+                    placeholder="Write your description here..."></textarea>
+                <div id="error2" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Visibility Status</label>
+                <select id="status" class="form-control" name="visibilityStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Discounts/Offers(%)</label>
+                <input id="discount" type="number" class="form-control" name="discount" placeholder="Eg:10%">
+                <div id="error3" class="error-message"></div>
+            </div>
+            <div class="form-actions">
+                <a href="/admin/category" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-save">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- form validation -->
+
+
+    <script>
+
+        const catNameId = document.getElementById("name");
+        const catDesId = document.getElementById("description");
+        const catDiscountId = document.getElementById("discount");
+
+        const error1 = document.getElementById("error1");
+        const error2 = document.getElementById("error2");
+        const error3 = document.getElementById("error3");
+
+        const formId = document.getElementById("addCat");
+
+        function fieldValidation() {
+            let isValid = true; // Track if the form is valid
+
+            const catName = catNameId.value.trim();
+            const catDes = catDesId.value.trim();
+            const catDiscount = catDiscountId.value.trim();
+
+            // Reset previous errors
+            error1.innerHTML = "";
+            error2.innerHTML = "";
+            error3.innerHTML = "";
+
+            // Category Name Validation
+            if (catName === "") {
+                error1.style.display = "block";
+                error1.innerHTML = "Please enter the category name";
+                isValid = false;
+            } else if (catName.length <= 4) {
+                error1.style.display = "block";
+                error1.innerHTML = "Name length should be at least 4 characters.";
+                isValid = false;
+            }
+
+            // Category Description Validation
+            if (catDes === "") {
+                error2.style.display = "block";
+                error2.innerHTML = "Please enter the category description";
+                isValid = false;
+            } else if (catDes.length <= 8) {
+                error2.style.display = "block";
+                error2.innerHTML = "Description should contain at least 8 letters";
+                isValid = false;
+            }
+
+            // Discount Validation
+            if (catDiscount === "") {
+                error3.style.display = "block";
+                error3.innerHTML = "Please don't leave this field empty";
+                isValid = false;
+            } else if (isNaN(catDiscount) || catDiscount < 0 || catDiscount > 100) {
+                error3.style.display = "block";
+                error3.innerHTML = "Please enter a valid discount (0-100%)";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            formId.addEventListener("submit", (e) => {
+                e.preventDefault(); // Prevent form submission since we are using fetch now
+                if (!fieldValidation()) {
+                    return;
+                }
+
+                const catName = catNameId.value.trim();
+                const catDes = catDesId.value.trim();
+                const catDiscount = catDiscountId.value.trim();
+                const catStatus = document.getElementById("status").value;
+
+                // Send a POST request to add a new category
+                fetch('/admin/addCategory', {
+                    method: 'POST', // Request type is POST (used for submitting data)
+                    headers: {
+                        'Content-Type': 'application/json' // Specify that we're sending JSON data
+                    },
+                    body: JSON.stringify({ // Convert the category details into a JSON string
+                        name: catName, // Category Name
+                        description: catDes, // Category Description
+                        visibilityStatus: catStatus, // Visibility status (Active/Inactive)
+                        discount: catDiscount // Discount percentage
+                    })
+                })
+                    .then(response => {
+                        // Check if the response is not OK (e.g., error occurred)
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.error); // Extract and throw the error message
+                            });
+                        }
+                        return response.json(); // If successful, return the response data
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'success', // Display an error icon
+                            title: 'Successfully Added', // Alert title
+                            text: data.message,  //response message from server
+                            timer:2500,
+                        }).then(()=>{
+                            location.reload(); // Reload the page after successfully adding the category and after clicking ok on the alert or after the timer goes off.
+
+                        });
+                    })
+                    .catch(error => {
+                        // Show an alert using SweetAlert2 if an error occurs
+                        Swal.fire({
+                            icon: 'error', // Display an error icon
+                            title: 'Oops', // Alert title
+                            text: error.message === "Category Already exists"
+                                ? "Category already exists" // If the category already exists, show this message
+                                : "An error occurred while adding the category" // Otherwise, show a general error message
+                        });
+                    });
+
+
+            });
+        });
+
+
+
+
+    </script>
+
+
+    <%- include("../../views/partials/admin/footer") %>

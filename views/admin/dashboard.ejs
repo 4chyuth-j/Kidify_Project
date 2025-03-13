@@ -1,9 +1,41 @@
 <%- include("../../views/partials/admin/header") %>
 
-<div class="main-content">
-    <h2>Dashboard</h2>
-</div>
+<div class="container mt-4" style="max-width: 95%; padding-left:300px; padding-top: 150px;">
+    <h2 class="fw-bold"></h2>
+    <div class="d-flex justify-content-start gap-3 flex-wrap ms-4">
+        <!-- Total Sales -->
+        <div class="card text-center p-3 shadow" style="border-radius: 15px; background-color: #ffe8e8; width: 250px;">
+            <i class="fas fa-envelope-open-text fa-2x mb-2" style="color: #ff4d4d;"></i>
+            <h3>₹ 70k</h3>
+            <p class="mb-1">Total Sales</p>
+            <small class="text-danger">-8% than yesterday</small>
+        </div>
 
+        <!-- Total Orders -->
+        <div class="card text-center p-3 shadow" style="border-radius: 15px; background-color: #fff4d6; width: 250px;">
+            <i class="fas fa-box fa-2x mb-2" style="color: #ffaf00;"></i>
+            <h3>300</h3>
+            <p class="mb-1">Total Orders</p>
+            <small class="text-warning">-5% than yesterday</small>
+        </div>
+
+        <!-- Products Sold -->
+        <div class="card text-center p-3 shadow" style="border-radius: 15px; background-color: #d6f5d6; width: 250px;">
+            <i class="fas fa-paperclip fa-2x mb-2" style="color: #2eb82e;"></i>
+            <h3>50</h3>
+            <p class="mb-1">Products Sold</p>
+            <small class="text-success">-8% than yesterday</small>
+        </div>
+
+        <!-- New Customers -->
+        <div class="card text-center p-3 shadow" style="border-radius: 15px; background-color: #ebccff; width: 250px;">
+            <i class="fas fa-user-plus fa-2x mb-2" style="color: #8000ff;"></i>
+            <h3>15</h3>
+            <p class="mb-1">New Customers</p>
+            <small class="text-primary">-8% than yesterday</small>
+        </div>
+    </div>
+</div>
 
 
 <%- include("../../views/partials/admin/footer") %>

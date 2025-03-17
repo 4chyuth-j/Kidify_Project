@@ -1,0 +1,205 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+    .form-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 50%;
+        margin: auto;
+        margin-left: 500px;
+    }
+
+    .form-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #563d7c;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .form-row .form-group {
+        width: 48%;
+    }
+
+    /* Styling the entire image upload section */
+    .image-upload-container {
+        border: 2px solid #ccc;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+
+    .image-upload {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+    }
+
+    .image-box {
+        width: 30%;
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 10px;
+        position: relative;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .image-box:hover {
+        border-color: #6c43c1;
+        background: #f9f7ff;
+    }
+
+    .image-box img {
+        max-width: 100%;
+        display: none;
+    }
+
+    /* Adding plus symbol */
+    .image-box .plus-symbol {
+        font-size: 24px;
+        color: #6c43c1;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid #6c43c1;
+        color: #6c43c1;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .btn-save {
+        background: #6c43c1;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Add New Product</h2>
+    <form id="addProduct" action="/admin/addProduct" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label">Product Name</label>
+            <input id="name" type="text" class="form-control" name="name" placeholder="Enter product name">
+            <div id="error1" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Product Description</label>
+            <textarea id="description" class="form-control" name="description"
+                placeholder="Write your description here..."></textarea>
+            <div id="error2" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <select id="category" class="form-control" name="category">
+                <% categories.forEach(category => { %>
+                    <option value="<%= category._id %>"><%= category.name %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <!-- Updated Image Upload Section -->
+        <div class="form-group">
+            <label class="form-label">Add Photos</label>
+            <div class="image-upload-container">
+                <div class="image-upload">
+                    <div class="image-box">
+                        <span class="plus-symbol">+</span>
+                        <input type="file" name="image1" id="image1" accept="image/*" style="display: none;">
+                        <label for="image1">Add Image</label>
+                    </div>
+                    <div class="image-box">
+                        <span class="plus-symbol">+</span>
+                        <input type="file" name="image2" id="image2" accept="image/*" style="display: none;">
+                        <label for="image2">Add Image</label>
+                    </div>
+                    <div class="image-box">
+                        <span class="plus-symbol">+</span>
+                        <input type="file" name="image3" id="image3" accept="image/*" style="display: none;">
+                        <label for="image3">Add Image</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Base Price</label>
+                <input id="basePrice" type="number" class="form-control" name="basePrice" placeholder="Enter base price">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Discount Price</label>
+                <input id="discountPrice" type="number" class="form-control" name="discountPrice"
+                    placeholder="Enter discount price">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Stock</label>
+                <input id="stock" type="number" class="form-control" name="stock" placeholder="Enter stock limit">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Brand Name</label>
+                <input id="brand" type="text" class="form-control" name="brand" placeholder="Enter brand name">
+                <div id="error3" class="error-message"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="/admin/products" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save">Save</button>
+        </div>
+    </form>
+</div>
+    
+    <%- include("../../views/partials/admin/footer") %>

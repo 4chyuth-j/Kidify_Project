@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 //loading signup page
 const loadSignup = async (req, res) => {
    try {
-      return res.render('signup');
+      return res.render('signup',{error_msg:""});
 
    } catch (err) {
       console.log("Signup page failed to load", err);
@@ -65,12 +65,12 @@ const signup = async (req, res) => {
       const { email, password, confirm_password } = req.body;
 
       if (password !== confirm_password) {
-         return res.render("signup", { message: "Passwords don't match:(" });
+         return res.render("signup", { message: "Passwords don't match:(",error_msg:"" });
       }
 
       const findUser = await User.findOne({ email });
       if (findUser) {
-         return res.render("signup", { message: "User with this email already exists" });
+         return res.render("signup", { message: "User with this email already exists",error_msg:"" });
       }
 
       const otp = generateOtp();

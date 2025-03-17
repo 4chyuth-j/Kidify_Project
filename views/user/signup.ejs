@@ -32,17 +32,27 @@
                     <div id="error2" class="error-message"></div>
                     <input type="password" name="confirm_password" id="confirm_password" class="form-control"
                         placeholder="Confirm Password">
-                        <% if(locals.message && message.length>0) { %>
-                            <!-- Check if the 'message' variable exists and has a length greater than 0 -->
-                            <div class="alert alert-danger text-center">
-                                <%=message%>
-                                    <!-- Output the message dynamically from the backend -->
-                            </div>
-                         <% }%>
-                    <div id="error3" class="error-message"></div>
-                    <button type="submit" class="signup-btn">Sign Up</button>
+                    <% if(locals.message && message.length>0) { %>
+                        <!-- Check if the 'message' variable exists and has a length greater than 0 -->
+                        <div class="alert alert-danger text-center">
+                            <%=message%>
+                                <!-- Output the message dynamically from the backend -->
+                        </div>
+                        <% }%>
+                            <div id="error3" class="error-message"></div>
+                            <button type="submit" class="signup-btn">Sign Up</button>
                 </form>
                 <p>Already have an account? <a href="/login">Login now..!</a></p>
+                
+                <p>Debug: <%= JSON.stringify(error_msg) %></p>
+
+                <% if (error_msg && error_msg.length > 0) { %>
+                    <div class="alert alert-danger text-center">
+                        <%= error_msg %>
+                    </div>
+                <% } %>
+                
+
             </div>
         </div>
         <div class="right-container">

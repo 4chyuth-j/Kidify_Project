@@ -15,9 +15,15 @@ passport.use(new GoogleStrategy({
             let user = await User.findOne({ googleId: profile.id });
             
             if (user) {
-                // If user already exists, return the user object
                 
+                if (user.isBlocked) { // Assuming "isBlocked" is the field that stores the block status
+                    return done(null, false, { message: "Your account has been blocked by the admin." });
+                }
+
+                // If user already exists, return the user object
                 return done(null, user); // done() is a callback that passes user data to Passport
+
+
             } else {
                 // If user doesn't exist, create a new user entry in the database
                 user = new User({
@@ -53,3 +59,4 @@ passport.deserializeUser((id, done) => {
 });
 
 module.exports = passport; // Export configured passport instance to use in other files
+

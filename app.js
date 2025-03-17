@@ -6,6 +6,7 @@ const connectDB = require("./config/db.js");
 const userRouter = require("./routes/userRouter.js");
 const adminRouter = require("./routes/adminRouter.js");
 const passport = require("./config/passport.js");
+const flash = require("connect-flash");
 
 const app = express();
 
@@ -21,7 +22,6 @@ app.use(express.static('public'));  /*This is an application level middleware in
 
 
 
-
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -32,6 +32,18 @@ app.use(session({
         maxAge: 72 * 60 * 60 * 1000,
     }
 }));
+
+
+app.use(flash()); // Initialize connect-flash
+
+// Middleware to make flash messages available in views
+app.use((req, res, next) => {
+    res.locals.error_msg = req.flash("error");
+    res.locals.success_msg = req.flash("success");
+    next();
+});
+
+
 
 // Initialize passport middleware in the Express application
 app.use(passport.initialize()); // This initializes Passport to be used in the application

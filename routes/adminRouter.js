@@ -4,6 +4,10 @@ const adminController = require("../controller/admin/adminController.js");
 const customerController = require('../controller/admin/customerController.js');
 const categoryController = require('../controller/admin/categoryController.js');
 const productController = require('../controller/admin/productController.js');
+const multer = require("multer");
+const storage = require("../helpers/multer");
+const uploads = multer({storage:storage});
+
 const {userAuth,adminAuth} = require("../middlewares/auth.js");
 
 
@@ -35,7 +39,7 @@ router.get("/addCategory",adminAuth,categoryController.loadAddCategory);
 
 router.post("/addCategory",adminAuth,categoryController.addCategory);
 
-router.get("/blockCategory",adminAuth,categoryController.categoryBlocked);
+router.get("/blockCategory",adminAuth,categoryController.categoryBlocked);s
 
 router.get("/unblockCategory",adminAuth,categoryController.categoryUnBlocked);
 
@@ -48,6 +52,7 @@ router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
 
 router.get("/addProducts",adminAuth,productController.loadAddProduct);
 
+router.post("/addProducts",adminAuth,uploads.array("variantImages[]",4),productController.addProducts);
 
 module.exports = router;
 

@@ -29,24 +29,14 @@ const productSchema = new Schema({
         required:true,
     },
 
-    discountPrice:{
+    discountPercentage:{
         type:Number,
         required:true,
-    },
-
-    productOffer:{
-        type:Number,
-        default:0
     },
 
     stock:{
          type:Number,
          default:true
-    },
-
-    color:{
-        type:String,
-        required: true,
     },
 
     productImage:{
@@ -65,6 +55,17 @@ const productSchema = new Schema({
         require:true,
         default:"Available",
     },
+    
+    // Variants (if any)
+  variants: [
+    {
+      size: String,
+      color: String,
+      price: Number,
+      stock: Number,
+      images: [String],
+    },
+  ],
 
    
 },{timestamps:true});

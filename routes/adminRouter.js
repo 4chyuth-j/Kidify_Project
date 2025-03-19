@@ -39,7 +39,7 @@ router.get("/addCategory",adminAuth,categoryController.loadAddCategory);
 
 router.post("/addCategory",adminAuth,categoryController.addCategory);
 
-router.get("/blockCategory",adminAuth,categoryController.categoryBlocked);s
+router.get("/blockCategory",adminAuth,categoryController.categoryBlocked);
 
 router.get("/unblockCategory",adminAuth,categoryController.categoryUnBlocked);
 
@@ -52,7 +52,9 @@ router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
 
 router.get("/addProducts",adminAuth,productController.loadAddProduct);
 
-router.post("/addProducts",adminAuth,uploads.array("variantImages[]",4),productController.addProducts);
+router.post("/addProducts",adminAuth,uploads.array("variantImages",4),productController.addProducts);
+
+router.get("/products",adminAuth,productController.viewProducts);
 
 module.exports = router;
 

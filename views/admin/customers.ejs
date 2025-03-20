@@ -164,7 +164,7 @@
                         <tr>
                             <td><%= data[i].name %></td>
                             <td><%= data[i].email %></td>
-                            <td><%= data[i].userId %></td>
+                            <td><%= data[i].userId.slice(0,8) %></td>
                             <td>
                                 <% if (data[i].isBlocked === false) { %>
                                     <span class="status-badge status-active">Active</span>

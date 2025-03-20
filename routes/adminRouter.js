@@ -56,5 +56,10 @@ router.post("/addProducts",adminAuth,uploads.array("variantImages",4),productCon
 
 router.get("/products",adminAuth,productController.viewProducts);
 
+router.post("/addProductOffer",adminAuth,productController.addProductOffer)
+
+router.post("/removeProductOffer",adminAuth,productController.removeProductOffer)
+
+
 module.exports = router;
 

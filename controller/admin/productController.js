@@ -3,6 +3,7 @@ const Category = require("../../model/categorySchema");
 const User = require("../../model/userSchema");
 const fs = require("node:fs");
 const path = require("node:path");
+const { error } = require("node:console");
 
 
 
@@ -124,8 +125,98 @@ const viewProducts = async (req, res) => {
 };
 
 
+//adding product offer
+const addProductOffer = async (req, res) => {
+  try {
+    const { discountPercentage, productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+
+    // Validate discount percentage
+    if (!discountPercentage || isNaN(discountPercentage) || discountPercentage < 0) {
+      return res.status(400).json({ error: "Invalid discount percentage" });
+    }
+
+
+
+    const productExist = await Product.findOne({ _id: productId });
+
+    if (!productExist) {
+      console.log("error in finding the product for adding offer");  //debugging step
+      return res.status(400).json({ error: "Failed to locate the product" });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { discountPercentage },
+      { new: true } // Returns the updated document
+    );
+
+
+    if (!updatedProduct) {
+      return res.status(400).json({ error: "Failed to update product offer" });
+    }
+
+
+    return res.status(200).json({ message: "Product Offer added successfully!" });
+
+  } catch (error) {
+    console.error("Something went wrong while adding offer", error);
+    return res.status(500).json({ error: "Internal server Error" });
+
+  }
+}
+
+
+
+
+const removeProductOffer = async (req, res) => {
+  try {
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+
+    const productExist = await Product.findOne({ _id: productId });
+
+    if (!productExist) {
+      console.log("error in finding the product for removing the offer");  //debugging step
+      return res.status(400).json({ error: "Failed to locate the product" });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { discountPercentage: 0 },
+      { new: true } // Returns the updated document
+    );
+
+
+    if (!updatedProduct) {
+      return res.status(400).json({ error: "Failed to update product offer" });
+    }
+
+
+    return res.status(200).json({ message: "Product Offer Removed successfully!" });
+
+  } catch (error) {
+
+    console.error("Something went wrong while removing offer", error);
+
+    return res.status(500).json({ error: "Internal server Error" });
+
+  }
+}
+
+
+
+
 module.exports = {
   loadAddProduct,
   addProducts,
-  viewProducts
+  viewProducts,
+  addProductOffer,
+  removeProductOffer,
 }

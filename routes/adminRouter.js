@@ -56,9 +56,13 @@ router.post("/addProducts",adminAuth,uploads.array("variantImages",4),productCon
 
 router.get("/products",adminAuth,productController.viewProducts);
 
-router.post("/addProductOffer",adminAuth,productController.addProductOffer)
+router.post("/addProductOffer",adminAuth,productController.addProductOffer);
 
-router.post("/removeProductOffer",adminAuth,productController.removeProductOffer)
+router.post("/removeProductOffer",adminAuth,productController.removeProductOffer);
+
+router.post("/blockProduct",adminAuth,productController.blockProduct);
+
+router.post("/unBlockProduct",adminAuth,productController.unBlockProduct);
 
 
 module.exports = router;

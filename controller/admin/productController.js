@@ -171,7 +171,7 @@ const addProductOffer = async (req, res) => {
 
 
 
-
+//remove product offer
 const removeProductOffer = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -211,6 +211,96 @@ const removeProductOffer = async (req, res) => {
 }
 
 
+//product blocking
+const blockProduct = async (req,res)=>{
+
+  try {
+    const {productId} = req.body;
+  
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+    
+    const productExist = await Product.findOne({ _id: productId });
+
+    if (!productExist) {
+      console.log("error in finding the product for blocking the product");  //debugging step
+      return res.status(400).json({ error: "Failed to block the product" });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { isBlocked:true },
+      { new: true } // Returns the updated document
+    );
+
+
+    if (!updatedProduct) {
+      return res.status(400).json({ error: "Failed to block the product" });
+    }
+
+
+    return res.status(200).json({ message: "Product Blocked successfully!" });
+
+
+  } catch (error) {
+    console.error("Something went wrong while blocking ", error);
+
+    return res.status(500).json({ error: "Internal server Error" });
+    
+  }
+
+
+
+}
+
+
+//product unblocking
+const unBlockProduct = async(req,res)=>{
+  try {
+
+    const {productId} = req.body;
+  
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+    
+    const productExist = await Product.findOne({ _id: productId });
+
+    if (!productExist) {
+      console.log("error in finding the product for Unblocking the product");  //debugging step
+      return res.status(400).json({ error: "Failed to Unblock the product" });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { isBlocked:false },
+      { new: true } // Returns the updated document
+    );
+
+
+    if (!updatedProduct) {
+      return res.status(400).json({ error: "Failed to Unblock the product" });
+    }
+
+
+    return res.status(200).json({ message: "Product UnBlocked successfully!" });
+
+
+    
+  } catch (error) {
+    
+    console.error("Something went wrong while Unblocking ", error);
+
+    return res.status(500).json({ error: "Internal server Error" });
+  }
+}
+
+
+
+
+
+
 
 
 module.exports = {
@@ -219,4 +309,6 @@ module.exports = {
   viewProducts,
   addProductOffer,
   removeProductOffer,
+  blockProduct,
+  unBlockProduct,
 }

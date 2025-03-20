@@ -214,12 +214,15 @@
                             </td>
                             <td>
                                 <div class="btn-container">
-                                    <button class="btn btn-danger">
+                                    <%if(locals.data[i].isBlocked==false){%>
+                                    <button class="btn btn-danger" onclick="blockproduct('<%=data[i]._id%>')">
                                         <a href="#" class="text-white" style="text-decoration: none;">Block</a>
                                     </button>
-                                    <button class="btn btn-success">
+                                    <%} else{%>
+                                    <button class="btn btn-success" onclick="unblockproduct('<%=data[i]._id%>')">
                                         <a href="#" class="text-white" style="text-decoration: none;">Unblock</a>
                                     </button>
+                                    <%}%>
                                 </div>
                             </td>
                             <td>
@@ -364,7 +367,83 @@
         }
 
 
+        // product blocking function
+        async function blockproduct(productId){
 
+            fetch('/admin/blockProduct', {
+                            method: 'POST',
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ productId })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(err => {
+                                        throw new Error(err.error);
+                                    });
+                                }
+                                return response.json();
+
+                            }).then(data => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Product Blocked',
+                                    text: data.message,
+                                    timer: 1000,
+                                }).then(() => {
+                                    location.reload();
+
+                                });
+                            })
+                            .catch(error => {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops',
+                                    text: error.message,
+                                    timer: 1200,
+                                });
+                            });
+        }
+
+
+        // product unblocking function
+        async function unblockproduct(productId) {
+            fetch('/admin/unBlockProduct', {
+                            method: 'POST',
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ productId })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(err => {
+                                        throw new Error(err.error);
+                                    });
+                                }
+                                return response.json();
+
+                            }).then(data => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Product UnBlocked',
+                                    text: data.message,
+                                    timer: 1000,
+                                }).then(() => {
+                                    location.reload();
+
+                                });
+                            })
+                            .catch(error => {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops',
+                                    text: error.message,
+                                    timer: 1200,
+                                });
+                            });
+            
+        }
+     
 
     </script>
     <%- include("../../views/partials/admin/footer") %>

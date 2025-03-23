@@ -64,6 +64,12 @@ router.post("/blockProduct",adminAuth,productController.blockProduct);
 
 router.post("/unBlockProduct",adminAuth,productController.unBlockProduct);
 
+router.get("/editproduct",adminAuth,productController.loadEditProduct);
+
+router.post('/editproduct/:id', uploads.array('variantImages',4), productController.editProduct);
+
+
+
 
 module.exports = router;
 

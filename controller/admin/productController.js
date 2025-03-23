@@ -212,15 +212,15 @@ const removeProductOffer = async (req, res) => {
 
 
 //product blocking
-const blockProduct = async (req,res)=>{
+const blockProduct = async (req, res) => {
 
   try {
-    const {productId} = req.body;
-  
+    const { productId } = req.body;
+
     if (!productId) {
       return res.status(400).json({ error: "Product ID is required" });
     }
-    
+
     const productExist = await Product.findOne({ _id: productId });
 
     if (!productExist) {
@@ -230,7 +230,7 @@ const blockProduct = async (req,res)=>{
 
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { isBlocked:true },
+      { isBlocked: true },
       { new: true } // Returns the updated document
     );
 
@@ -247,7 +247,7 @@ const blockProduct = async (req,res)=>{
     console.error("Something went wrong while blocking ", error);
 
     return res.status(500).json({ error: "Internal server Error" });
-    
+
   }
 
 
@@ -256,15 +256,15 @@ const blockProduct = async (req,res)=>{
 
 
 //product unblocking
-const unBlockProduct = async(req,res)=>{
+const unBlockProduct = async (req, res) => {
   try {
 
-    const {productId} = req.body;
-  
+    const { productId } = req.body;
+
     if (!productId) {
       return res.status(400).json({ error: "Product ID is required" });
     }
-    
+
     const productExist = await Product.findOne({ _id: productId });
 
     if (!productExist) {
@@ -274,7 +274,7 @@ const unBlockProduct = async(req,res)=>{
 
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { isBlocked:false },
+      { isBlocked: false },
       { new: true } // Returns the updated document
     );
 
@@ -287,9 +287,9 @@ const unBlockProduct = async(req,res)=>{
     return res.status(200).json({ message: "Product UnBlocked successfully!" });
 
 
-    
+
   } catch (error) {
-    
+
     console.error("Something went wrong while Unblocking ", error);
 
     return res.status(500).json({ error: "Internal server Error" });
@@ -297,6 +297,126 @@ const unBlockProduct = async(req,res)=>{
 }
 
 
+
+const loadEditProduct = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const product = await Product.findOne({ _id: id });
+    const category = await Category.find({});
+    if (!product) {
+      console.log("product not found for edit product display");
+      return res.render("admin-error", { pageTitle: "Page Not found!" });
+    }
+    res.render("editProduct", { pageTitle: "Edit Product", product: product, cat: category });
+  } catch (error) {
+    console.log("something went wrong while loading edit product");
+    res.redirect("/pageError");
+  }
+}
+
+
+
+//editProduct
+const editProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    
+    const existingProduct = await Product.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    
+    const {
+      productName,
+      description,
+      category,
+      basePrice,
+      discountPercentage,
+      stock,
+      brand,
+      existingImages,
+      deletedImages
+    } = req.body;
+
+    
+    const categoryId = await Category.findOne({ _id: category });
+    if (!categoryId) {
+      return res.status(400).json({ error: "Invalid category" });
+    }
+
+    
+    const productWithSameName = await Product.findOne({
+      productName: productName,
+      _id: { $ne: productId } // Exclude current product from check
+    });
+
+    if (productWithSameName) {
+      return res.status(400).json({
+        error: "Product name already exists, please choose another name"
+      });
+    }
+
+    // Process images
+    let updatedImages = [];
+
+    // Keep existing images that weren't deleted
+    if (existingImages) {
+      // Handle case when existingImages is a single value or an array
+      const existingImagesArray = Array.isArray(existingImages)
+        ? existingImages
+        : [existingImages];
+
+      // Handle case when deletedImages is a single value, an array, or undefined
+      const deletedImagesArray = deletedImages
+        ? (Array.isArray(deletedImages) ? deletedImages : [deletedImages])
+        : [];
+
+      // Filter out deleted images
+      updatedImages = existingImagesArray.filter(
+        img => !deletedImagesArray.includes(img)
+      );
+    }
+
+    // Add new uploaded images
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => file.filename);
+      updatedImages = [...updatedImages, ...newImages];
+    }
+
+    // Ensure there's at least one image
+    if (updatedImages.length === 0) {
+      return res.status(400).json({ error: "At least one product image is required" });
+    }
+
+    // Update product
+    existingProduct.productName = productName;
+    existingProduct.description = description;
+    existingProduct.brand = brand;
+    existingProduct.category = categoryId._id;
+    existingProduct.basePrice = parseFloat(basePrice);
+    existingProduct.discountPercentage = discountPercentage !== ""
+      ? parseFloat(discountPercentage)
+      : 0;
+    existingProduct.stock = parseInt(stock);
+    existingProduct.productImage = updatedImages;
+
+    await existingProduct.save();
+
+    // Return success response
+    return res.status(200).json({
+      message: "Product updated successfully",
+      product: existingProduct
+    });
+
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return res.status(500).json({
+      error: "An error occurred while updating the product"
+    });
+  }
+};
 
 
 
@@ -311,4 +431,6 @@ module.exports = {
   removeProductOffer,
   blockProduct,
   unBlockProduct,
+  loadEditProduct,
+  editProduct,
 }

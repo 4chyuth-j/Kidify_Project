@@ -239,27 +239,31 @@
         <div class="main-content">
 
 
-            <form id="productForm" action="/admin/addProducts" method="post" enctype="multipart/form-data">
+            <form id="productForm" action="/admin/editproduct/<%=product._id%>" method="post"
+                enctype="multipart/form-data">
                 <div class="container mt-5">
                     <div class="card shadow p-4">
-                        <h2 class="mb-4">Add New Products</h2>
+                        <h2 class="mb-4">Edit Product</h2>
                         <div class="mb-3">
                             <label class="form-label">Product Name</label>
-                            <input type="text" class="form-control" placeholder="Enter product name" name="productName">
+                            <input type="text" class="form-control" placeholder="Enter product name" name="productName"
+                                value="<%=product.productName%>">
                             <div id="error1" class="error-message"></div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Product Description</label>
                             <textarea class="form-control" rows="3" placeholder="Write your description here..."
-                                name="description"></textarea>
+                                name="description"><%=product.description%></textarea>
                             <div id="error2" class="error-message"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>
                             <select class="form-select" name="category">
-                                <% categories.forEach(category=> { %>
-                                    <option value="<%= category._id %>">
+                                <% cat.forEach(category=> { %>
+                                    <option value="<%= category._id %>"
+                                        <%=category._id.toString()===product.category._id.toString()?'selected':''%>>
+
                                         <%= category.name %>
                                     </option>
                                     <% }); %>
@@ -274,42 +278,27 @@
                                     <div class="w-100 mb-3">
                                         <label class="form-label">Product Images</label>
                                         <div class="image-upload-row">
-                                            <div class="image-upload-slot" data-slot="1">
-                                                <div class="image-upload-dropzone">
-                                                    <i class="fa-solid fa-upload"></i>
-                                                    <p class="mb-0">Add Image</p>
-                                                    <input type="file" class="d-none" name="variantImages[]"
-                                                        accept="image/*">
+                                            <% for(let i=0; i < 4; i++) { %>
+                                                <div class="image-upload-slot" data-slot="<%= i+1 %>">
+                                                    <div class="image-upload-dropzone"
+                                                        style="<%= product.productImage[i] ? 'display: none;' : '' %>">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"
+                                                        style="<%= product.productImage[i] ? 'display: block;' : '' %>">
+                                                        <% if(product.productImage[i]) { %>
+                                                            <img src="/uploads/re-image/<%= product.productImage[i] %>"
+                                                                alt="Product image">
+                                                            <button class="close-btn" type="button"> × </button>
+                                                            <input type="hidden" name="existingImages[]"
+                                                                value="<%= product.productImage[i] %>">
+                                                            <% } %>
+                                                    </div>
                                                 </div>
-                                                <div class="image-preview"></div>
-                                            </div>
-                                            <div class="image-upload-slot" data-slot="2">
-                                                <div class="image-upload-dropzone">
-                                                    <i class="fa-solid fa-upload"></i>
-                                                    <p class="mb-0">Add Image</p>
-                                                    <input type="file" class="d-none" name="variantImages[]"
-                                                        accept="image/*">
-                                                </div>
-                                                <div class="image-preview"></div>
-                                            </div>
-                                            <div class="image-upload-slot" data-slot="3">
-                                                <div class="image-upload-dropzone">
-                                                    <i class="fa-solid fa-upload"></i>
-                                                    <p class="mb-0">Add Image</p>
-                                                    <input type="file" class="d-none" name="variantImages[]"
-                                                        accept="image/*">
-                                                </div>
-                                                <div class="image-preview"></div>
-                                            </div>
-                                            <div class="image-upload-slot" data-slot="4">
-                                                <div class="image-upload-dropzone">
-                                                    <i class="fa-solid fa-upload"></i>
-                                                    <p class="mb-0">Add Image</p>
-                                                    <input type="file" class="d-none" name="variantImages[]"
-                                                        accept="image/*">
-                                                </div>
-                                                <div class="image-preview"></div>
-                                            </div>
+                                                <% } %>
                                         </div>
                                     </div>
                                 </div>
@@ -322,30 +311,33 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Base Price</label>
-                                <input type="text" class="form-control" placeholder="₹ XXXX" name="basePrice">
+                                <input type="text" class="form-control" placeholder="₹ XXXX" name="basePrice"
+                                    value="<%=product.basePrice%>">
                                 <div id="error3" class="error-message"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Discount Percentage</label>
                                 <input type="text" class="form-control" placeholder="Enter discount percentage"
-                                    name="discountPercentage">
+                                    name="discountPercentage" value="<%=product.discountPercentage%>">
                                 <div id="error4" class="error-message"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Stock</label>
-                                <input type="text" class="form-control" placeholder="Enter stock limit" name="stock">
+                                <input type="text" class="form-control" placeholder="Enter stock limit" name="stock"
+                                    value="<%=product.stock%>">
                                 <div id="error5" class="error-message"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Brand</label>
-                                <input type="text" class="form-control" placeholder="Enter Brand Name" name="brand">
+                                <input type="text" class="form-control" placeholder="Enter Brand Name" name="brand"
+                                    value="<%=product.brand%>">
                                 <div id="error6" class="error-message"></div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-outline-secondary me-2" onclick="window.location.href='/admin/'">Cancel</button>
-
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-outline-secondary me-2"
+                                onclick="window.location.href='/admin/products'">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
@@ -375,6 +367,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
         <script>
+            // Updated JavaScript for image handling
             let cropper;
             let currentSlot;
 
@@ -419,8 +412,24 @@
                     }
                 });
 
+                // Handle close button clicks (both for existing and new images)
                 preview.addEventListener('click', (e) => {
                     if (e.target.classList.contains('close-btn')) {
+                        // Remove existing image reference if it exists
+                        const existingImageInput = preview.querySelector('input[name="existingImages[]"]');
+                        if (existingImageInput) {
+                            // Create a hidden input to track deleted images
+                            const deletedInput = document.createElement('input');
+                            deletedInput.type = 'hidden';
+                            deletedInput.name = 'deletedImages[]';
+                            deletedInput.value = existingImageInput.value;
+                            document.getElementById('productForm').appendChild(deletedInput);
+
+                            // Remove the existing image input
+                            existingImageInput.remove();
+                        }
+
+                        // Clear the preview
                         preview.style.display = 'none';
                         preview.innerHTML = '';
                         dropzone.style.display = 'flex';
@@ -441,10 +450,22 @@
 
                     canvas.toBlob((blob) => {
                         const url = URL.createObjectURL(blob);
+
+                        // Remove existing image input if it exists
+                        const existingImageInput = preview.querySelector('input[name="existingImages[]"]');
+                        if (existingImageInput) {
+                            // Create a hidden input to track deleted images
+                            const deletedInput = document.createElement('input');
+                            deletedInput.type = 'hidden';
+                            deletedInput.name = 'deletedImages[]';
+                            deletedInput.value = existingImageInput.value;
+                            document.getElementById('productForm').appendChild(deletedInput);
+                        }
+
                         preview.innerHTML = `
-                        <img src="${url}" alt="Preview">
-                        <button class="close-btn" type="button">×</button>
-                    `;
+                <img src="${url}" alt="Preview">
+                <button class="close-btn" type="button">×</button>
+            `;
                         dropzone.style.display = 'none';
                         preview.style.display = 'block';
 
@@ -469,211 +490,178 @@
 
 
 
-
-
-
-
-            //   form validation
-
-            function validateForm() {
-                let isValid = true;
-
-                // Get input values
-                const productName = document.querySelector('input[name="productName"]').value.trim();
-                const description = document.querySelector('textarea[name="description"]').value.trim();
-                const category = document.querySelector('select[name="category"]').value;
-                const basePrice = document.querySelector('input[name="basePrice"]').value.trim();
-                const discountPercentage = document.querySelector('input[name="discountPercentage"]').value.trim();
-                const stock = document.querySelector('input[name="stock"]').value.trim();
-                const brand = document.querySelector('input[name="brand"]').value.trim();
-
-                // Error elements
-                const error1 = document.getElementById("error1"); // Product Name
-                const error2 = document.getElementById("error2"); // Product Description
-                const error3 = document.getElementById("error3"); // Base Price & Image Errors
-                const error4 = document.getElementById("error4"); // Discount Percentage
-                const error5 = document.getElementById("error5"); // Stock
-                const error6 = document.getElementById("error6"); // Brand
-
-                // Reset previous error messages
-                error1.innerText = "";
-                error2.innerText = "";
-                error3.innerText = "";
-                error4.innerText = "";
-                error5.innerText = "";
-                error6.innerText = "";
-
-                // Get all uploaded image inputs
-                const imageInputs = document.querySelectorAll('input[name="variantImages[]"]');
-                let uploadedImages = 0;
-
-                // Count the number of uploaded images
-                imageInputs.forEach(input => {
-                    if (input.files.length > 0) {
-                        uploadedImages++;
-                    }
-                });
-
-                // Validation rules
-                if (!productName) {
-                    error1.innerText = "Product Name is required!";
-                    isValid = false;
-                }
-                if (!description) {
-                    error2.innerText = "Product Description is required!";
-                    isValid = false;
-                }
-                if (!category) {
-                    error3.innerText = "Category is required!";
-                    isValid = false;
-                }
-
-                // Base Price Validation
-                if (!basePrice) {
-                    error3.innerText = "Base Price is required!";
-                    isValid = false;
-                } else if (isNaN(basePrice) || parseFloat(basePrice) <= 0) {
-                    error3.innerText = "Base Price must be a positive number!";
-                    isValid = false;
-                }
-
-                // Discount Percentage Validation
-                if (discountPercentage !== "") {
-                    if (isNaN(discountPercentage)) {
-                        error4.innerText = "Discount Percentage must be a number!";
-                        isValid = false;
-                    } else if (parseFloat(discountPercentage) < 0 || parseFloat(discountPercentage) > 100) {
-                        error4.innerText = "Discount Percentage must be between 0 and 100!";
-                        isValid = false;
-                    }
-                }
-
-                // Stock Validation
-                if (!stock) {
-                    error5.innerText = "Stock is required!";
-                    isValid = false;
-                } else if (isNaN(stock) || parseInt(stock) < 0) {
-                    error5.innerText = "Stock must be a non-negative number!";
-                    isValid = false;
-                }
-
-                // Brand Validation
-                if (!brand) {
-                    error6.innerText = "Brand name is required!";
-                    isValid = false;
-                }
-
-                // Image Upload Validation
-                if (uploadedImages < 4) {
-                    error3.innerText = "All 4 product images are required!";
-                    isValid = false;
-                }
-
-                return isValid; // Allow form submission if valid
-            }
-
-
-
-
+            // Form validation and submission
             document.addEventListener("DOMContentLoaded", () => {
-                const form = document.getElementById("productForm"); // Get the form element
+                const form = document.getElementById("productForm");
 
                 form.addEventListener("submit", (e) => {
-                    e.preventDefault(); // Prevent form submission since we are using fetch now
+                    e.preventDefault(); // Prevent default form submission
 
-                    if (!validateForm()) { // Run validation
-                        return;
+                    if (!validateForm()) {
+                        return; // Stop if validation fails
                     }
 
-                    // Get input values
-                    const productName = document.querySelector('input[name="productName"]').value.trim();
-                    const description = document.querySelector('textarea[name="description"]').value.trim();
-                    const category = document.querySelector('select[name="category"]').value;
-                    const basePrice = document.querySelector('input[name="basePrice"]').value.trim();
-                    const discountPercentage = document.querySelector('input[name="discountPercentage"]').value.trim();
-                    const stock = document.querySelector('input[name="stock"]').value.trim();
-                    const brand = document.querySelector('input[name="brand"]').value.trim();
-
-                    // Get selected images
-                    const imageInputs = document.querySelectorAll('input[name="variantImages[]"]');
+                    // Create FormData object
                     const formData = new FormData();
 
-                    formData.append("productName", productName);
-                    formData.append("description", description);
-                    formData.append("category", category);
-                    formData.append("basePrice", basePrice);
-                    formData.append("discountPercentage", discountPercentage);
-                    formData.append("stock", stock);
-                    formData.append("brand", brand);
+                    // Add basic product data
+                    formData.append("productName", document.querySelector('input[name="productName"]').value.trim());
+                    formData.append("description", document.querySelector('textarea[name="description"]').value.trim());
+                    formData.append("category", document.querySelector('select[name="category"]').value);
+                    formData.append("basePrice", document.querySelector('input[name="basePrice"]').value.trim());
+                    formData.append("discountPercentage", document.querySelector('input[name="discountPercentage"]').value.trim());
+                    formData.append("stock", document.querySelector('input[name="stock"]').value.trim());
+                    formData.append("brand", document.querySelector('input[name="brand"]').value.trim());
 
-                    let uploadedImages = 0;
-                    imageInputs.forEach(input => {
-                        Array.from(input.files).forEach(file => {
-                            formData.append("variantImages", file); // Append all selected files
-                            uploadedImages++;
-                        });
+                    // Add existing images
+                    const existingImageInputs = document.querySelectorAll('input[name="existingImages[]"]');
+                    existingImageInputs.forEach(input => {
+                        formData.append("existingImages", input.value);
                     });
 
+                    // Add deleted images
+                    const deletedImageInputs = document.querySelectorAll('input[name="deletedImages[]"]');
+                    deletedImageInputs.forEach(input => {
+                        formData.append("deletedImages", input.value);
+                    });
 
-                    // Ensure all 4 images are uploaded
-                    if (uploadedImages < 4) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: "All 4 product images are required!"
-                        });
-                        return;
-                    }
+                    // Add new uploaded images
+                    const imageInputs = document.querySelectorAll('input[name="variantImages[]"]');
+                    imageInputs.forEach(input => {
+                        if (input.files.length > 0) {
+                            formData.append("variantImages", input.files[0]);
+                        }
+                    });
 
-                    // Send a POST request to add a new product
-                    fetch('/admin/addProducts', {
+                    // Get product ID from the form action URL
+                    const productId = form.action.split('/').pop();
+
+                    // Send AJAX request to update product
+                    fetch(`/admin/editproduct/${productId}`, {
                         method: 'POST',
-                        body:formData
+                        body: formData
                     })
                         .then(response => {
                             if (!response.ok) {
                                 return response.json().then(err => {
-                                    throw new Error(err.error);
+                                    throw new Error(err.error || 'Failed to update product');
                                 });
                             }
                             return response.json();
                         })
                         .then(data => {
+                            // Show success message
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Product Added Successfully',
-                                text: data.message,
+                                title: 'Product Updated Successfully',
+                                text: data.message || 'Product has been updated successfully',
                                 timer: 2500,
                             }).then(() => {
-                                location.reload(); // Reload the page after adding the product
+                                window.location.href = '/admin/products'; // Redirect to products page
                             });
                         })
                         .catch(error => {
-                            if(error.message === "Invalid category" ){
-                                Swal.fire({
+                            // Show error message
+                            Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text:"Invalid category"
-                                
+                                text: error.message || 'Something went wrong while updating the product'
                             });
-                            } else if(error.message === "Product already exist, please try with another Name"){
-                                Swal.fire({
-                                icon: 'error',
-                                title: 'Product already exist',
-                                text:"Product already exist, please try with another Name"
-                            });
-                            } else{
-                                Swal.fire({
-                                icon: 'error',
-                                title: 'Opps',
-                                text:"Something Went wrong while adding product"
-                            });
-
-                            }
-                           
                         });
                 });
+
+                // Form validation function
+                function validateForm() {
+                    let isValid = true;
+
+                    // Get input values
+                    const productName = document.querySelector('input[name="productName"]').value.trim();
+                    const description = document.querySelector('textarea[name="description"]').value.trim();
+                    const basePrice = document.querySelector('input[name="basePrice"]').value.trim();
+                    const discountPercentage = document.querySelector('input[name="discountPercentage"]').value.trim();
+                    const stock = document.querySelector('input[name="stock"]').value.trim();
+                    const brand = document.querySelector('input[name="brand"]').value.trim();
+
+                    // Error elements
+                    const error1 = document.getElementById("error1"); // Product Name
+                    const error2 = document.getElementById("error2"); // Product Description
+                    const error3 = document.getElementById("error3"); // Base Price & Image Errors
+                    const error4 = document.getElementById("error4"); // Discount Percentage
+                    const error5 = document.getElementById("error5"); // Stock
+                    const error6 = document.getElementById("error6"); // Brand
+
+                    // Reset previous error messages
+                    error1.innerText = "";
+                    error2.innerText = "";
+                    error3.innerText = "";
+                    error4.innerText = "";
+                    error5.innerText = "";
+                    error6.innerText = "";
+
+                    // Check for images - count both existing and new images
+                    const existingImages = document.querySelectorAll('input[name="existingImages[]"]').length;
+                    const newImages = Array.from(document.querySelectorAll('input[name="variantImages[]"]'))
+                        .filter(input => input.files.length > 0).length;
+                    const totalImages = existingImages + newImages;
+
+                    // Validation rules
+                    if (!productName) {
+                        error1.innerText = "Product Name is required!";
+                        isValid = false;
+                    }
+
+                    if (!description) {
+                        error2.innerText = "Product Description is required!";
+                        isValid = false;
+                    }
+
+                    // Base Price Validation
+                    if (!basePrice) {
+                        error3.innerText = "Base Price is required!";
+                        isValid = false;
+                    } else if (isNaN(basePrice) || parseFloat(basePrice) <= 0) {
+                        error3.innerText = "Base Price must be a positive number!";
+                        isValid = false;
+                    }
+
+                    // Discount Percentage Validation
+                    if (discountPercentage !== "") {
+                        if (isNaN(discountPercentage)) {
+                            error4.innerText = "Discount Percentage must be a number!";
+                            isValid = false;
+                        } else if (parseFloat(discountPercentage) < 0 || parseFloat(discountPercentage) > 100) {
+                            error4.innerText = "Discount Percentage must be between 0 and 100!";
+                            isValid = false;
+                        }
+                    }
+
+                    // Stock Validation
+                    if (!stock) {
+                        error5.innerText = "Stock is required!";
+                        isValid = false;
+                    } else if (isNaN(stock) || parseInt(stock) < 0) {
+                        error5.innerText = "Stock must be a non-negative number!";
+                        isValid = false;
+                    }
+
+                    // Brand Validation
+                    if (!brand) {
+                        error6.innerText = "Brand name is required!";
+                        isValid = false;
+                    }
+
+                    // Image Validation - require at least one image
+                    if (totalImages != 4) {
+                        error3.innerText = "Four product image is required!";
+                        isValid = false;
+                    }
+
+                    return isValid;
+                }
             });
+
+
+
 
 
         </script>

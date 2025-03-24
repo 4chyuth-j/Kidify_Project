@@ -367,7 +367,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
         <script>
-            // Updated JavaScript for image handling
+            //  JavaScript for image handling
             let cropper;
             let currentSlot;
 
@@ -399,9 +399,9 @@
                                     responsive: true, // Adapt to container size
                                     restore: true, // Restore crop box on resize
                                     dragMode: 'move', // Allow dragging the image
-                                    cropBoxResizable: true, // Allow resizing the crop box
-                                    minContainerWidth: 1000, // Minimum container width
-                                    minContainerHeight: 600, // Minimum container height
+                                    cropBoxResizable: true, 
+                                    minContainerWidth: 1000, 
+                                    minContainerHeight: 600, 
                                 });
                             };
 
@@ -495,16 +495,16 @@
                 const form = document.getElementById("productForm");
 
                 form.addEventListener("submit", (e) => {
-                    e.preventDefault(); // Prevent default form submission
+                    e.preventDefault(); 
 
                     if (!validateForm()) {
-                        return; // Stop if validation fails
+                        return; 
                     }
 
-                    // Create FormData object
+                   
                     const formData = new FormData();
 
-                    // Add basic product data
+                   
                     formData.append("productName", document.querySelector('input[name="productName"]').value.trim());
                     formData.append("description", document.querySelector('textarea[name="description"]').value.trim());
                     formData.append("category", document.querySelector('select[name="category"]').value);
@@ -533,10 +533,10 @@
                         }
                     });
 
-                    // Get product ID from the form action URL
+                    
                     const productId = form.action.split('/').pop();
 
-                    // Send AJAX request to update product
+                    
                     fetch(`/admin/editproduct/${productId}`, {
                         method: 'POST',
                         body: formData

@@ -30,7 +30,12 @@ router.get("/forgot-password",profileController.getForgotPassPage);
 
 router.post("/forgot-password",profileController.validateEmail);
 
-router.get("/passwordChangeOtp",profileController.loadOtpPage)
+router.get("/passwordChangeOtp",profileController.loadOtpPage);
+
+router.post("/verifyPasswordChangeOtp",profileController.verifyPasswordChangeOtp);
+
+router.get("/reset-Password",profileController.loadResetPassword);
+
 
 
 

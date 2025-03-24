@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require('../controller/user/userController.js');
+const profileController = require('../controller/user/profileController.js');
 const passport = require("passport");
 const {userAuth,adminAuth} = require("../middlewares/auth.js");
 
@@ -23,6 +24,14 @@ router.get("/login",userController.loadLogin);
 router.post("/login",userController.login);
 
 router.get("/logout",userController.logout);
+
+
+router.get("/forgot-password",profileController.getForgotPassPage);
+
+router.post("/forgot-password",profileController.validateEmail);
+
+router.get("/passwordChangeOtp",profileController.loadOtpPage)
+
 
 
 // Route to start Google authentication process

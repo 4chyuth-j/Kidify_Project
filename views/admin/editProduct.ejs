@@ -278,7 +278,7 @@
                                     <div class="w-100 mb-3">
                                         <label class="form-label">Product Images</label>
                                         <div class="image-upload-row">
-                                            <% for(let i=0; i < 4; i++) { %>
+                                            <% for(let i=0; i < product.productImage.length; i++) { %>
                                                 <div class="image-upload-slot" data-slot="<%= i+1 %>">
                                                     <div class="image-upload-dropzone"
                                                         style="<%= product.productImage[i] ? 'display: none;' : '' %>">

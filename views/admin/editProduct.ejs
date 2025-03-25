@@ -239,7 +239,7 @@
         <div class="main-content">
 
 
-            <form id="productForm" action="/admin/editproduct/<%=product._id%>" method="post"
+            <form id="productForm" action="/admin/editproduct/<%=product._id%>" method="put"
                 enctype="multipart/form-data">
                 <div class="container mt-5">
                     <div class="card shadow p-4">
@@ -538,7 +538,7 @@
 
                     
                     fetch(`/admin/editproduct/${productId}`, {
-                        method: 'POST',
+                        method: 'PUT',
                         body: formData
                     })
                         .then(response => {

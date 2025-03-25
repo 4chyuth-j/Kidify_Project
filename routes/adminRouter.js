@@ -66,7 +66,7 @@ router.post("/unBlockProduct",adminAuth,productController.unBlockProduct);
 
 router.get("/editproduct",adminAuth,productController.loadEditProduct);
 
-router.post('/editproduct/:id', uploads.array('variantImages',4), productController.editProduct);
+router.put('/editproduct/:id', uploads.array('variantImages',4), productController.editProduct);
 
 
 

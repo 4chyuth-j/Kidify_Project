@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require('../controller/user/userController.js');
 const profileController = require('../controller/user/profileController.js');
 const passport = require("passport");
-const {userAuth,adminAuth} = require("../middlewares/auth.js");
+const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
 
 
@@ -30,12 +30,17 @@ router.get("/forgot-password",profileController.getForgotPassPage);
 
 router.post("/forgot-password",profileController.validateEmail);
 
-router.get("/passwordChangeOtp",profileController.loadOtpPage);
+router.get("/passwordChangeOtp",ensureOtpExists,profileController.loadOtpPage);
 
 router.post("/verifyPasswordChangeOtp",profileController.verifyPasswordChangeOtp);
 
-router.get("/reset-Password",profileController.loadResetPassword);
+router.post('/clearSessionOtp',profileController.clearSessionOtp)
 
+router.post("/resend-forgotPasswordOtp",profileController.resendOTP);
+
+router.get("/reset-Password",ensureEmailSession,profileController.loadResetPassword);
+
+router.post("/reset-Password",ensureEmailSession,profileController.resetPassword);
 
 
 

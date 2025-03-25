@@ -40,6 +40,17 @@ async function sendVerificationEmail(email, otp) {
 }
 
 
+const securePassword = async (password) => {
+    try {
+        const passwordHash = await bcrypt.hash(password, 10);
+        return passwordHash;
+    } catch (error) {
+        console.log("error in hashing the password", error);
+
+    }
+}
+
+
 function generateOtp() {
     const digits = "1234567890";
     let otp = "";
@@ -63,6 +74,7 @@ const getForgotPassPage = async (req, res) => {
 
     }
 }
+
 
 const validateEmail = async (req, res) => {
     try {
@@ -98,7 +110,7 @@ const validateEmail = async (req, res) => {
     }
 }
 
-
+// loading otp entering page
 const loadOtpPage = async (req, res) => {
     try {
         res.render("passwordChgOTP");
@@ -107,6 +119,7 @@ const loadOtpPage = async (req, res) => {
     }
 }
 
+// otp verifying
 const verifyPasswordChangeOtp = async (req, res) => {
     console.log("Received request body:", req.body);
     try {
@@ -115,31 +128,35 @@ const verifyPasswordChangeOtp = async (req, res) => {
         console.log("Session OTP:", req.session.userOtp);
 
         if (otpInput === req.session.userOtp) {
+
+            // Clear OTP from session after successful verification
+            req.session.userOtp = null;
+
             console.log("OTP matched");
-            return res.status(200).json({ 
+            return res.status(200).json({
                 success: true,
-                message: "OTP matched Successfully", 
-                redirectUrl: '/reset-Password' 
+                message: "OTP matched Successfully",
+                redirectUrl: '/reset-Password'
             });
         } else {
             console.log("OTP didn't match");
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                error: "OTP not matching, try again!" 
+                error: "OTP not matching, try again!"
             });
         }
     } catch (error) {
         console.error("Error in OTP verification:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             success: false,
-            error: "Internal Server error, Please try again" 
+            error: "Internal Server error, Please try again"
         });
     }
 }
 
 
 
-
+// load reset password page
 const loadResetPassword = async (req, res) => {
     try {
         res.render("changePassword");
@@ -149,11 +166,105 @@ const loadResetPassword = async (req, res) => {
 }
 
 
+// change password and make these changes in db
+const resetPassword = async (req, res) => {
+    try {
+        console.log("entered reset password section");
+
+        const password = req.body.password;
+        const { email } = req.session;
+
+        const userData = await User.findOne({ email });
+
+        if (password) {
+            console.log("email from session", email);
+
+            console.log("password before hash:", password);
+            const passwordHash = await securePassword(password);
+            console.log("password after hash:", passwordHash);
+
+            const passwordMatch = await bcrypt.compare(password, userData.password);
+            if (passwordMatch) {
+                console.log("existing password(Old password)");
+                return res.status(400).json({ message: "Please Enter a new password. This password is your current password." });
+
+            }
+            else {
+                await User.updateOne({ email: email }, { $set: { password: passwordHash } });
+                console.log("updated new password successfully");
+
+                 // **Clear session data**
+                 req.session.email = null;
+                 req.session.userOtp = null;
+
+                return res.status(200).json({ message: "Password Changed successfully.", redirectUrl: '/login' });
+            }
+        }
+
+
+
+    } catch (error) {
+        console.log("Something went wrong while changing the password to the database");
+        return res.status(500).json({ message: "Internal server error" });
+
+    }
+
+}
+
+
+
+const clearSessionOtp = async (req, res) => {
+    try {
+        req.session.userOtp = "";
+        console.log("Session otp is cleared");
+        res.status(200).json({ message: "Cleared OTP from session, Please resend otp to continue" });
+    } catch (error) {
+        console.log("Error in occured while clearing the otp from session");
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
+
+const resendOTP = async (req, res) => {
+    try {
+        console.log("entered the resendotp"); //debugging 
+        const email = req.session.email;
+
+        const otp = generateOtp();
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if (emailSent) {
+            req.session.userOtp = otp;
+
+            console.log("Resend Generated OTP:", otp);
+            console.log("Resend Session OTP:", req.session.userOtp);
+
+
+            return res.status(200).json({ message: " OTP is resend to your email:)" });
+        } else {
+
+            return res.status(400).json({ message: "Failed to resend OTP. Please try again" });
+
+        }
+
+
+    } catch (error) {
+
+        console.log("Something went wrong while resending the otp ");
+        return res.status(500).json({ error: "Internal server Error" });
+
+    }
+}
+
 
 module.exports = {
     getForgotPassPage,
     validateEmail,
     loadOtpPage,
     verifyPasswordChangeOtp,
-    loadResetPassword
+    loadResetPassword,
+    resetPassword,
+    resendOTP,
+    clearSessionOtp,
 }

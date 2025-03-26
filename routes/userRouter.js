@@ -42,6 +42,9 @@ router.get("/reset-Password",ensureEmailSession,profileController.loadResetPassw
 
 router.post("/reset-Password",ensureEmailSession,profileController.resetPassword);
 
+// load home and shop page 
+router.get("/shop",userAuth,userController.loadShopingPage);
+
 
 
 // Route to start Google authentication process

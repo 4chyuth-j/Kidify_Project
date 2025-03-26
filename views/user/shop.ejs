@@ -171,7 +171,7 @@
     <section class="shop-page container">
       <div class="shop-topbar">
         <div class="search-bar">
-          <form action="" method="POST" class="search-form">
+          <form action="/search" method="POST" class="search-form">
             <input type="text" name="query" placeholder="Search items..." class="search-input" />
             <button type="submit" class="search-button">Search</button>
           </form>
@@ -187,7 +187,7 @@
                 <!-- <%%> -->
                 <%for(let i=0;i<category.length; i++) {%>
                 <li class="filter-item">
-                  <a href=""><%=category[i].name%></a>
+                  <a href="/filter?category=<%=category[i]._id%>"><%=category[i].name%></a>
                 </li>
                 <%}%>
               </ul>
@@ -200,7 +200,7 @@
               <ul>
                 <%for(let i=0;i<brand.length; i++) {%>
                 <li class="filter-item">
-                  <a href=""><%=brand[i]%></a>
+                  <a href="/filter?brand=<%=brand[i]%>"><%=brand[i]%></a>
                 </li>
                 <%}%>
               </ul>
@@ -211,10 +211,10 @@
             <div class="filter-title">Filter by Price</div>
             <form id="price-filter-form">
               <div class="price-options">
-                <a href=""><button type="button" class="price-button">Under ₹500</button></a>
-                <a href=""><button type="button" class="price-button">₹500 - ₹1000</button></a>
-                <a href=""><button type="button" class="price-button">₹1000 - ₹1500</button></a>
-                <a href=""><button type="button" class="price-button">Above ₹1500</button></a>
+                <a href="/filterPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
+                <a href="/filterPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 - ₹1000</button></a>
+                <a href="/filterPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000 - ₹1500</button></a>
+                <a href="/filterPrice?gt=1500&lt=100000"><button type="button" class="price-button">Above ₹1500</button></a>
               </div>
             </form>
           </div>
@@ -224,10 +224,10 @@
             <%for(let i=0;i<products.length; i++) {%>
           <div class="product-card">
             <span class="wishlist-btn" onclick=""><i class="bi bi-heart-fill"></i></span>
-            <a href="">
+            <a href="/productDetails?id=<%=products[i]._id%>">
               <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
               <h5 title="<%= products[i].productName %>"> 
-                <%= products[i].productName.length > 20 ? products[i].productName.substring(0, 45) + "..." : products[i].productName %>
+                <%= products[i].productName.length > 20 ? products[i].productName.substring(0, 40) + "..." : products[i].productName %>
               </h5>
               <p>Brand:<%= products[i].brand %></p>
               <p>Price:₹<%= products[i].basePrice %><span class="text-muted"><strike>₹<%= products[i].basePrice %></strike></span></p>

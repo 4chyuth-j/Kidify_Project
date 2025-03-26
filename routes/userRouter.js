@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require('../controller/user/userController.js');
 const profileController = require('../controller/user/profileController.js');
+const productController = require('../controller/user/productController.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -45,6 +46,13 @@ router.post("/reset-Password",ensureEmailSession,profileController.resetPassword
 // load home and shop page 
 router.get("/shop",userAuth,userController.loadShopingPage);
 
+// shopping page filter
+router.get("/filter",userAuth,userController.filterProduct);
+router.get("/filterPrice",userAuth,userController.filterByPrice);
+router.post("/search",userAuth,userController.searchProducts);
+
+// product details page
+router.get("/productDetails",userAuth,productController.productDetails)
 
 
 // Route to start Google authentication process

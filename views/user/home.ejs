@@ -204,7 +204,7 @@ Here it is used to load the header section html code of the page from /views/par
                         <h6 title="<%= products[i].productName %>">
                             <%= products[i].productName.length > 20 ? products[i].productName.substring(0, 45) + "..." : products[i].productName %>
                         </h6>
-                          <h5><%=products[i].basePrice%></h5>
+                          <h5>₹<%=products[i].basePrice%></h5>
                           <a href="/addToCart?id=<%=products[i]._id%>">Add to cart</a>
                       </div>
                   </div>

@@ -11,10 +11,13 @@ const productDetails = async (req,res)=>{
         const productId = req.query.id;
         const product = await Product.findById(productId).populate("category");
         const findCategory = product.category;
+
+        
+        
         
         const productOffer = product.discountPercentage || 0;
 
-        res.render("product-details2",{
+        res.render("product-details",{
             user:userData,
             product:product,
             stock:product.stock,

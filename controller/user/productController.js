@@ -14,7 +14,13 @@ const productDetails = async (req,res)=>{
         
         const productOffer = product.discountPercentage || 0;
 
-        res.render("product-details");
+        res.render("product-details2",{
+            user:userData,
+            product:product,
+            stock:product.stock,
+            productOffer,
+            category:findCategory,
+        });
     } catch (error) {
         console.log("something went wrong while displaying product details page");
         res.redirect("/pageNotFound");

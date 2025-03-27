@@ -1,4 +1,345 @@
 <%- include("../../views/partials/user/header") %>
+<style>
+    /* Color Palette */
+    :root {
+        --primary-color: #ff69b4;
+        --secondary-color: #f8c8dc;
+        --background-color: #ffe4e1;
+        --text-color: #333;
+        --accent-color: #d14792;
+    }
+
+    /* Main Container */
+    .main {
+        font-family: 'Arial', sans-serif;
+        background-color: #fff;
+    }
+
+    /* Breadcrumb Styling */
+    .breadcrumb {
+        background-color: var(--secondary-color);
+        padding: 15px 0;
+        font-size: 14px;
+        color: var(--text-color);
+    }
+
+    .breadcrumb a {
+        color: var(--accent-color);
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    .breadcrumb span {
+        margin: 0 5px;
+        color: #888;
+    }
+
+    /* Product Detail Section */
+    .product-detail {
+        padding: 50px 0;
+        background-color: #ffffff;
+    }
+
+    .detail-gallery {
+        position: relative;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: var(--background-color);
+    }
+
+    .zoom-icon {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 10;
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    .product-image-slider figure {
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+
+    .product-image-slider img {
+        width: 100%;
+        height: 500px;
+        object-fit: contain;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .product-image-slider img:hover {
+        transform: scale(1.05);
+    }
+
+    .slider-nav-thumbnails {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .slider-nav-thumbnails img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: border-color 0.3s ease;
+    }
+
+    .slider-nav-thumbnails img:hover {
+        border-color: var(--primary-color);
+    }
+
+    /* Detail Info Styling */
+    .detail-info {
+        padding: 0 30px;
+    }
+
+    .title-detail {
+        color: var(--accent-color);
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    .product-detail-rating {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .product-rate-cover {
+        display: flex;
+        align-items: center;
+    }
+
+    .product-rate {
+        background-color: #f0f0f0;
+        height: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .product-rating {
+        background-color: var(--primary-color);
+        height: 100%;
+    }
+
+    .product-price-cover {
+        margin-bottom: 20px;
+    }
+
+    .product-price ins {
+        text-decoration: none;
+        color: var(--accent-color);
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .old-price {
+        color: #888;
+        text-decoration: line-through;
+        margin-left: 15px;
+    }
+
+    .save-price {
+        color: green;
+        font-weight: bold;
+    }
+
+    .short-desc {
+        line-height: 1.6;
+        color: #666;
+    }
+
+    .product_sort_info {
+        background-color: var(--background-color);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .product_sort_info ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .product_sort_info li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .product_sort_info i {
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+
+    /* Quantity and Cart Buttons */
+    .detail-extralink {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .detail-qty {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .detail-qty select {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: inherit;
+    appearance: none; /* Removes default browser styles */
+}
+
+
+    .qty-down, .qty-up {
+        padding: 5px 10px;
+        cursor: pointer;
+        color: var(--accent-color);
+    }
+
+    .qty-val {
+        padding: 0 15px;
+    }
+
+    .button-add-to-cart {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .button-add-to-cart:hover {
+        background-color: var(--accent-color);
+    }
+
+    .action-btn {
+        color: var(--primary-color);
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .product-meta {
+        margin-top: 30px;
+        font-size: 14px;
+    }
+
+    .product-meta a {
+        color: var(--accent-color);
+        text-decoration: none;
+    }
+
+    .in-stock {
+        color: green;
+        font-weight: bold;
+    }
+
+    .star-rating {
+        color: #ffc107;
+        font-size: 1rem;
+    }
+
+    .star-rating i {
+        margin-right: 2px;
+    }
+
+    .star-rating .bi-star-fill {
+        color: #ffc107;
+    }
+
+    .star-rating .bi-star {
+        color: #ddd;
+    }
+
+    /* Breadcrumb Separator Styles */
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .breadcrumb-separator {
+        color: var(--accent-color);
+        margin: 0 5px;
+    }
+
+    /* Image Slider Improvements */
+    .product-image-slider {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-image-slider .slider-wrapper {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .product-image-slider figure {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .slider-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+    }
+
+    .slider-nav-btn {
+        background-color: rgba(255,255,255,0.7);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .slider-nav-btn:hover {
+        background-color: rgba(255,105,180,0.5);
+    }
+
+    .slider-nav-btn i {
+        color: var(--accent-color);
+        font-size: 1.5rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .detail-gallery, .detail-info {
+            padding: 10px;
+        }
+
+        .product-image-slider img {
+            height: 300px;
+        }
+
+        .title-detail {
+            font-size: 20px;
+        }
+    }
+</style>
 <main class="main">
  <div class="page-header breadcrumb-wrap">
      <div class="container">
@@ -20,36 +361,36 @@
                                  <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                  <div class="product-image-slider">
                                      <figure class="border-radius-10">
-                                         <img src="" alt="">
+                                         <img src="/uploads/re-image/<%=product.productImage[0]%>" alt="productImage">
                                      </figure>
                                      <figure class="border-radius-10">
-                                       <img src="" alt="">
+                                       <img src="/uploads/re-image/<%=product.productImage[1]%>" alt="productImage">
                                    </figure>
                                    <figure class="border-radius-10">
-                                       <img src="" alt="">
+                                       <img src="/uploads/re-image/<%=product.productImage[2]%>" alt="productImage">
                                    </figure>
                                    <figure class="border-radius-10">
-                                       <img src="" alt="">
+                                       <img src="/uploads/re-image/<%=product.productImage[3]%>" alt="productImage">
                                    </figure>
-                                   <figure class="border-radius-10">
+                                   <!-- <figure class="border-radius-10">
                                        <img src="" alt="">
-                                   </figure>
+                                   </figure> -->
                                  </div>
                                  <div  class="slider-nav-thumbnails pl-15 pr-15">
-                                    
+                                    <%for(let i=0; i<product.productImage.length; i++){%>
                                        <div>
-                                           <img style="object-fit:contain ;" src="" alt="">
+                                           <img style="object-fit:contain ;" src="/uploads/re-image/<%=product.productImage[i]%>" alt="productImage">
                                        </div>
-                                  
+                                       <%}%>
                                  </div>
                              </div>
                          </div>
                          <div class="col-md-6 col-sm-12 col-xs-12">
                              <div class="detail-info">
-                                 <h2 class="title-detail"></h2>
+                                 <h2 class="title-detail"><%=product.productName%></h2>
                                  <div class="product-detail-rating">
                                      <div class="pro-details-brand">
-                                         <span> Brands: <a href="#"></a></span>
+                                         <span> Brands: <a href="#"><%=product.brand%></a></span>
                                      </div>
                                      <div class="product-rate-cover text-end">
                                          <div class="product-rate d-inline-block">
@@ -61,31 +402,49 @@
                                  </div>
                                  <div class="clearfix product-price-cover">
                                      <div class="product-price primary-color float-left">
-                                         <ins><span class="text-brand"></span></ins>
-                                         <ins><span class="old-price font-md ml-15"></span></ins>
+                                        <!-- sales price -->
+                                        <ins><span class="text-brand"><%=product.basePrice%>/-</span></ins>
+                                        <!-- base price -->
+                                         <ins><span class="old-price font-md ml-15"><%=product.basePrice%></span></ins>
                                          <span class="save-price  font-md color3 ml-15">
+                                            <%if(!productOffer) {%>
+                                                  No current Offer
+                                            <%} else{%>
+                                                <%=productOffer%> %Off
+                                            <%}%>
                                        </span>
                                      </div>
                                  </div>
                                  <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                  <div class="short-desc mb-30">
-                                     <p></p>
+                                     <p><%=product.description%></p>
                                  </div>
                                  <div class="product_sort_info font-xs mb-30">
-                                     <ul>
-                                         <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
-                                         <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
-                                         <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
-                                     </ul>
-                                 </div>
+                                    <ul>
+                                        <li class="mb-10">
+                                            <i class="bi bi-shield-check"></i> 1 Year Brand Warranty
+                                        </li>
+                                        <li class="mb-10">
+                                            <i class="bi bi-arrow-repeat"></i> 30 Day Return Policy
+                                        </li>
+                                        <li>
+                                            <i class="bi bi-cash-coin"></i> Cash on Delivery available
+                                        </li>
+                                    </ul>
+                                </div>
                                
                                  <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                  <div class="detail-extralink">
-                                     <div class="detail-qty border radius">
-                                         <a href="#" class="qty-down" onclick="" ><i class="fi-rs-angle-small-down"></i></a>
-                                         <span class="qty-val" id="quantity">1</span>
-                                         <a href="#" class="qty-up" onclick=""><i class="fi-rs-angle-small-up"></i></a>
-                                     </div>
+                                    <div class="detail-qty border radius">
+                                        <a href="#" class="qty-down" onclick=""><i class="fi-rs-angle-small-down"></i></a>
+                                        <select id="quantity" class="qty-val">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                        <a href="#" class="qty-up" onclick=""><i class="fi-rs-angle-small-up"></i></a>
+                                    </div>
                                      <div class="product-extra-link2">
                                       
                                          <button type="submit" class="button button-add-to-cart" onclick="">Add to cart</button>
@@ -94,9 +453,8 @@
                                      </div>
                                  </div>
                                  <ul class="product-meta font-xs color-grey mt-50">
-                                     <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                                     <li class="mb-5">Tags: <a href="#" rel="tag"></a> <a href="#" rel="tag"></a> <a href="#" rel="tag"></a> </li>
-                                     <li>Availability:<span class="in-stock text-success ml-5"></span></li>
+                                     <li class="mb-5">Tags: <a href="#" rel="tag"></a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag"></a> </li>
+                                     <li>Availability:<span class="in-stock text-success ml-5"><%=stock%></span></li>
                                  </ul>
                              </div>
                          </div>

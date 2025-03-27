@@ -25,7 +25,7 @@
                     </a>
                 </div>
                 <div class="divider">or</div>
-                <form id="signform" method="post" action="/signup">
+                <form id="signform">
                     <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                     <div id="error1" class="error-message"></div>
                     <input type="password" name="password" id="password" class="form-control" placeholder="Password">
@@ -60,7 +60,7 @@
     </div>
 
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- form validation  -->
     <script>
 
@@ -128,20 +128,55 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             signform.addEventListener("submit", function (e) {
+                e.preventDefault();  // If validation fails, the form will not submit, allowing the user to fix errors.
                 emailValidateChecking();
                 passwordValidateChecking();
 
 
-
-                if (!emailid || !passwordid || !error1 || !error2 || !error3 || !signform) {
-                    console.log("one or more elements not found");
-                }
-
                 if (error1.innerHTML || error2.innerHTML || error3.innerHTML) {
-
-                    e.preventDefault();  // If validation fails, the form will not submit, allowing the user to fix errors.
-
+                  return;
                 }
+
+                const email = emailid.value.trim();
+                const password = passwordid.value.trim();
+                const confirm_password = c_passwordid.value.trim();
+
+
+                fetch("/signup",{
+                    method:'POST',
+                    headers:{
+                        'Content-type':'application/json'
+                    },
+                    body:JSON.stringify({email,password,confirm_password}),
+                })
+                .then(response => {
+                    console.log("backend response:",response);
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.error || 'Failed to register the email');
+                            });
+                        }
+
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OTP Sent',
+                            text: data.message || 'OTP has been send to your mail. Redirecting to get otp',
+                            timer: 2000,
+                        }).then(() => {
+                            window.location.href = data.redirectUrl;
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.message || 'Something went wrong while registering your email'
+                        });
+                    });
+
 
             });
         });

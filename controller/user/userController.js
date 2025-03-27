@@ -68,12 +68,15 @@ const signup = async (req, res) => {
       const { email, password, confirm_password } = req.body;
 
       if (password !== confirm_password) {
-         return res.render("signup", { message: "Passwords don't match:(", error_msg: "" });
+         return res.status(400).json({message:"Passwords don't match :("});
+         // return res.render("signup", { message: "Passwords don't match:(", error_msg: "" });
       }
-
+      
       const findUser = await User.findOne({ email });
       if (findUser) {
-         return res.render("signup", { message: "User with this email already exists", error_msg: "" });
+         
+         return res.status(400).json({message:"User with this email already exists"});
+         // return res.render("signup", { message: "User with this email already exists", error_msg: "" });
       }
 
       const otp = generateOtp();
@@ -82,14 +85,14 @@ const signup = async (req, res) => {
       console.log(email);
       const emailSent = await sendVerificationEmail(email, otp);
       if (!emailSent) {
-         return res.json("email-error");
+         return res.status(400).json({message:"error occured while sending email"});
       }
 
       req.session.userOtp = otp;
       req.session.userData = { email, password };
 
-      res.render("verify-otp");
       console.log("OTP sent to user:", otp);
+      return res.status(200).json({message:"OTP Sent to your mail",redirectUrl:'/verify-otp'});
 
    } catch (error) {
       console.error("sigup error occured", error);
@@ -107,7 +110,20 @@ const securePassword = async (password) => {
    }
 }
 
-
+const getverifyOtp = async (req, res) => {
+   try {
+      const otp = req.session.userOtp;
+      if (otp) {
+         res.render("verify-otp");
+      } else {
+         console.log("OTP expired or missing");
+         res.redirect("/signup");
+      }
+   } catch (error) {
+      console.error("Error occurred while loading the OTP verification page:", error);
+      res.redirect("/pageNotFound");
+   }
+};
 
 
 //otp verification and signup
@@ -627,6 +643,7 @@ module.exports = {
    loadLogin,
    loadSignup,
    signup,
+   getverifyOtp,
    verifyOtp,
    resendOtp,
    login,

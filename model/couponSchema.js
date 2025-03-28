@@ -1,51 +1,47 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-// Define the schema for coupons
+
 const couponSchema = new Schema({
 
-    // Name of the coupon (e.g., "NEWUSER50")
+    
     name: {
         type: String,
         required: true,
-        unique: true, // Ensures that each coupon name is unique
+        unique: true, 
     },
 
     
 
-    // Expiry date of the coupon (when it will no longer be valid)
+    
     expireOn: {
         type: Date,
         required: true,
     },
 
-    // The discount amount (offer price) provided by the coupon
+   
     offerPrice: {
         type: Number,
         required: true,
     },
 
-    // The minimum price of a purchase required to apply this coupon
-    minimumPrice: {  // (Note: "Pirce" should be corrected to "Price")
+    minimumPrice: {  
         type: Number,
         required: true,
     },
 
-    // Determines if the coupon is active and listed for use
     isList: {
         type: Boolean,
-        default: true, // If true, the coupon is available for use
+        default: true, 
     },
 
     // List of users who have used or are eligible to use the coupon
     userId: [{
         type: Schema.Types.ObjectId,
-        ref: 'User', // Refers to the User collection
+        ref: 'User', 
     }]
 },{timestamps:true});
 
-// Create the Coupon model from the schema
 const Coupon = mongoose.model("Coupon", couponSchema);
 
-// Export the model so it can be used in other parts of the application
 module.exports = Coupon;

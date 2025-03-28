@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose; // Extract Schema from mongoose
 const { v4: uuidv4 } = require('uuid'); 
 
-// Define the User schema
+
 const userSchema = new Schema({
     name: {
         type: String,
-        required: false, // Name field is not mandatory
+        required: false, 
         default:"User",
 
     }, 
@@ -20,8 +20,8 @@ const userSchema = new Schema({
 
     email: {
         type: String,
-        required: true, // Email field is required
-        unique: true, // Ensures no duplicate emails
+        required: true, 
+        unique: true, 
     },
     phone: {
         type: String,
@@ -42,7 +42,7 @@ const userSchema = new Schema({
     },
     isBlocked: {
         type: Boolean,
-        default: false, // By default, users are not blocked
+        default: false, 
     },
     
     isAdmin:{
@@ -63,7 +63,7 @@ const userSchema = new Schema({
 
     wallet: {
         type: Number,
-        default: 0, // Default wallet balance is 0
+        default: 0, 
     },
 
     wishlist: [{
@@ -77,12 +77,12 @@ const userSchema = new Schema({
     }],
 
    
-    // Referral code omitted from the video
+    
 
     searchHistory: [{
         category: {
             type: Schema.Types.ObjectId,
-            ref: "Category", // References the Category collection for searches
+            ref: "Category", 
         },
 
         brand: {

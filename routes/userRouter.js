@@ -63,12 +63,10 @@ router.get("/auth/google", passport.authenticate('google', { scope: ['profile', 
 // Google callback route - Handles authentication response from Google
 router.get("/google/callback", passport.authenticate('google', { failureRedirect: '/signup'}), (req, res) => {
     
-    if (!req.user) { // if user is not found(blocked)
-        req.flash("error", "Your account has been blocked by the admin."); // Flash message if blocked
-        console.log("hello")
-        console.log("Flash set:", req.flash("error")); //debugging
-
-        return res.redirect("/signup"); // Redirect to signup page
+    if (!req.user) { // If user is not found or blocked
+        req.flash("error", "Your account has been blocked by the admin.");
+        console.log("Flash set:", req.flash("error")); // Debugging
+        return res.redirect("/signup"); // Redirect to signup page with flash message
     }
 
 

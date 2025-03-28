@@ -8,33 +8,29 @@ const { v4: uuidv4 } = require('uuid'); // Importing UUID package for generating
    - `{ v4: uuidv4 }` renames `v4` to `uuidv4` for easy use in the code.
 */
 
-// Define the schema for order details
+
 const orderSchema = new Schema({
     
-    // Unique order ID generated using UUID
+    
     orderId: {
         type: String,
-        default: () => uuidv4(), // Generates a unique ID when a new order is created
-        unique: true, // Ensures each order has a unique ID
+        default: () => uuidv4(), 
+        unique: true, 
     },
 
-    // Array to store ordered items
     orderedItems: [{
         
-        // Product reference (linked to the "Product" collection)
         product: {
             type: Schema.Types.ObjectId,
             ref: "Product",
             required: true,
         },
 
-        // Quantity of the product ordered
         quantity: {
             type: Number,
             required: true,
         },
 
-        // Price of the product at the time of purchase
         price: {
             type: Number,
             default: 0,
@@ -59,10 +55,10 @@ const orderSchema = new Schema({
         required: true,
     },
 
-    // Address ID (linked to the "User" collection, should be "Address" if referring to address schema)
+    
     address: {
         type: Schema.Types.ObjectId,
-        ref: "User", // ⚠️ This should probably be "Address" instead of "User"
+        ref: "User", 
         required: true,
     },
 
@@ -71,7 +67,6 @@ const orderSchema = new Schema({
         type: Date,
     },
 
-    // Status of the order (only accepts predefined values)
     status: {
         type: String,
         required: true,
@@ -80,7 +75,6 @@ const orderSchema = new Schema({
 
    
 
-    // Indicates if a coupon was applied to the order
     couponApplied: {
         type: Boolean,
         default: false,
@@ -88,8 +82,6 @@ const orderSchema = new Schema({
 
 },{timestamps:true});
 
-// Creating the Order model from the schema
 const Order = mongoose.model("Order", orderSchema);
 
-// Exporting the model so it can be used in other parts of the application
 module.exports = Order;

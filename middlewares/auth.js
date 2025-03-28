@@ -58,7 +58,7 @@ const adminAuth = (req, res, next) => {
 //otp varification middleware
 const ensureOtpExists = (req, res, next) => {
     if (!req.session.userOtp) {
-        return res.redirect('/forgot-password'); // Redirect to forgot password if OTP is missing
+        return res.redirect('/forgot-password'); 
     }
     next();
 
@@ -68,7 +68,7 @@ const ensureOtpExists = (req, res, next) => {
 
 const ensureEmailSession = (req, res, next) => {
     if (!req.session.email) {
-        return res.redirect('/forgot-password'); // Redirects if session is missing
+        return res.redirect('/forgot-password'); 
     }
     next();
 };

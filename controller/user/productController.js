@@ -12,7 +12,9 @@ const productDetails = async (req,res)=>{
         const product = await Product.findById(productId).populate("category");
         const findCategory = product.category;
 
-        
+        const products = await Product.find({category:findCategory._id, 
+            _id:{$nin:[productId]}
+        });
         
         
         const productOffer = product.discountPercentage || 0;
@@ -23,6 +25,7 @@ const productDetails = async (req,res)=>{
             stock:product.stock,
             productOffer,
             category:findCategory,
+            products:products
         });
     } catch (error) {
         console.log("something went wrong while displaying product details page");

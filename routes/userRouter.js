@@ -70,6 +70,7 @@ router.post("/verify-emailOtp",userAuth,profileManagement.verifyOtpEmail)
 
 router.get("/edit-profile",userAuth,profileManagement.getEditProfile);
 
+router.post("/edit-profile",userAuth,profileManagement.editProfile);
 
 
 

@@ -282,7 +282,7 @@
                 .then(response=>{
                     if(!response.ok){
                         return response.json().then(err =>{
-                            throw new Error(err.error);
+                            throw new Error(err.message || err.error || "Something went wrong!");
                         });
                     }
                     return response.json();

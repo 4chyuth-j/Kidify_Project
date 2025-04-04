@@ -147,6 +147,7 @@
         .action-button i {
             margin-right: 8px;
         }
+
         .error-message {
             color: red;
             font-size: 14px;
@@ -188,48 +189,156 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="content-card">
-                <h1>Email Configuration</h1>
+                <h1>Edit Profile</h1>
 
                 <div class="info-section">
-                 <form id="editForm" >
-                    <div class="info-row">
-                        <label class="info-label">Username</label>
-                        <input type="text" id="name" name="name" class="info-value" value="<%=user.name%>" placeholder="Enter user name">
-                        <div id="error1" class="error-message"></div>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Email</span>
-                        <span class="info-value">
-                            <%= user.email %>
-                        </span>
-                    </div>
+                    <form id="editForm">
+                        <div class="info-row">
+                            <label class="info-label">Username</label>
+                            <input type="text" id="name" name="name" class="info-value" value="<%=user.name%>"
+                                placeholder="Enter user name">
+                            <div id="error1" class="error-message"></div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">
+                                <%= user.email %>
+                            </span>
+                        </div>
 
-                    <div class="info-row">
-                     
+                        <div class="info-row">
+
                             <label class="info-label">Phone Number</label>
                             <input id="phone" type="text" class="info-value" name="phone"
                                 placeholder="Enter a valid mobile number" value="<%=user.phone%>">
                             <div id="error2" class="error-message"></div>
-                    </div>
+                        </div>
 
 
                 </div>
 
-                    <div class="action-buttons">
-                      <button class="action-button" type="button" onclick="window.location.href='/userProfile'">
+                <div class="action-buttons">
+                    <button class="action-button" type="button" onclick="window.location.href='/userProfile'">
                         Cancel
-                      </button>
-                    
-                      <button class="action-button" type="submit">
+                    </button>
+
+                    <button class="action-button" type="submit">
                         </i> Save Changes
-                      </button>
-                    </div>
-                 </form>
+                    </button>
+                </div>
+                </form>
             </div>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        
+        const nameId = document.getElementById("name");
+        const phoneId = document.getElementById("phone");
+
+        const error1 = document.getElementById("error1");
+        const error2 = document.getElementById("error2");
+
+        function fieldValidation() {
+            let isValid = true;
+
+            const name = nameId.value.trim();
+            const phone = phoneId.value.trim();
+
+            const phoneRegex = /^\d{10}$/;
+            const nameRegex = /^[A-Za-z]{2,}(?: [A-Za-z]+)*$/;
+
+
+            error1.innerHTML = "";
+            error2.innerHTML = "";
+
+            if (name === "") {
+                error1.style.display = "block";
+                error1.innerHTML = "Please enter this name field";
+                isValid = false;
+            }
+
+            if (phone === "") {
+                error2.style.display = "block";
+                error2.innerHTML = "Please enter phone number";
+                isValid = false;
+            }
+
+
+
+            if (name === "" || phone === "") {
+                if (name === "") {
+                    error1.style.display = "block";
+                    error1.innerHTML = "Please enter this name field";
+                    isValid = false;
+                } else {
+                    error2.style.display = "block";
+                    error2.innerHTML = "Please enter phone number";
+                    isValid = false;
+                }
+            } else if (!nameRegex.test(name) || !phoneRegex.test(phone)) {
+                if (!nameRegex.test(name)) {
+                    error1.style.display = "block";
+                    error1.innerHTML = "Please enter a valid name";
+                    isValid = false;
+                }
+
+                if (!phoneRegex.test(phone)) {
+                    error2.style.display = "block";
+                    error2.innerHTML = "Please enter a valid phone number";
+                    isValid = false;
+                }
+
+            }
+
+            return isValid;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("editForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                if (!fieldValidation()) {
+                    return;
+                }
+
+                const name = nameId.value.trim();
+                const phone = phoneId.value.trim();
+
+                fetch('/edit-profile', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, phone })
+                }).then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || err.error || "Something went wrong!");
+                        });
+                    }
+                    return response.json();
+                })
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Profile Updated',
+                            text: data.message || "Profile updated successfully",
+                            timer: 2000,
+                        }).then(() => {
+                            window.location.href = data.redirectUrl;
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: error.message || 'Something went wrong while updating profile'
+                        });
+                    });
+
+
+
+            })
+        })
 
     </script>
     <%- include("../../views/partials/user/footer") %>

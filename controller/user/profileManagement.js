@@ -181,6 +181,35 @@ const verifyOtpEmail = async (req,res)=>{
 }
 
 
+const editProfile = async (req,res)=>{
+    try {
+       const userId = req.session.user;
+       const {name,phone} = req.body;
+       
+       const userExist = await User.findOne({_id:userId});
+
+       if(!userExist){
+        return res.status(400).json({message:"user don't exist"});
+       }
+
+       const userUpdate = await User.findByIdAndUpdate(
+        userId,
+        {$set:{name:name,phone:phone}},
+        {new:true}
+       );
+
+       if(!userUpdate){
+        return res.status(400).json({message:"Failed to update the changes"})
+       }
+
+       return res.status(200).json({message:"Successfully updated profile info",redirectUrl:'/userProfile'});
+
+    } catch (error) {
+        console.error('error occured while updating user profile',error);
+        res.redirect("/pageNotFound");
+
+    }
+}
 
 
 
@@ -192,5 +221,6 @@ module.exports={
     getEditProfile,
     ChangeEmail,
     loadOtpPage,
-    verifyOtpEmail
+    verifyOtpEmail,
+    editProfile
 }

@@ -64,7 +64,7 @@
                     <li class="nav-item"><a class="nav-link fw-bold" href="#">Contact</a></li>
     
                     <!-- These menu items ONLY appear when screen width ≤ 992px -->
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="#">Account</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="/userProfile">Account</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="#">Wishlist</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="#">Cart</a></li>
                     <%if(locals.user){ %>
@@ -108,7 +108,7 @@
                 
                 <% } %> <!-- End of if-else condition -->
                 
-                <a href="#" class="icon-btn"><i class="fas fa-user"></i></a>
+                <a href="/userProfile" class="icon-btn"><i class="fas fa-user"></i></a>
                 <a href="#" class="icon-btn position-relative">
                     <i class="fas fa-heart"></i>
                     <span class="badge rounded-circle">2</span>

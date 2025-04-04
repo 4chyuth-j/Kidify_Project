@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controller/user/userController.js');
 const profileController = require('../controller/user/profileController.js');
 const productController = require('../controller/user/productController.js');
+const profileManagement = require('../controller/user/profileManagement.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -55,6 +56,23 @@ router.post("/search",userAuth,userController.searchProducts);
 
 // product details page
 router.get("/productDetails",userAuth,productController.productDetails)
+
+// profile management
+router.get("/userProfile",userAuth,profileManagement.userProfile);
+
+router.get("/change-email",userAuth,profileManagement.loadChangeEmail);
+
+router.post("/change-email",userAuth,profileManagement.ChangeEmail);
+
+router.get("/verify-emailOtp",userAuth,profileManagement.loadOtpPage)
+
+router.post("/verify-emailOtp",userAuth,profileManagement.verifyOtpEmail)
+
+router.get("/edit-profile",userAuth,profileManagement.getEditProfile);
+
+
+
+
 
 
 // Route to start Google authentication process

@@ -65,6 +65,7 @@ async function sendVerificationEmail(email, otp) {
 // signup form data handling from front end
 const signup = async (req, res) => {
    try {
+      
       const { email, password, confirm_password } = req.body;
 
       if (password !== confirm_password) {
@@ -308,55 +309,7 @@ const logout = async (req, res) => {
    }
 }
 
-// const loadShopingPage = async (req, res) => {
-//    try {
-//       const user = req.session.user;
-//       const userData = await User.findOne({ _id: user });
-//       const categories = await Category.find({ isListed: true });
-//       const categoryIds = categories.map(category => category._id.toString());
-//       const page = parseInt(req.query.page) || 1;
-//       const limit = 6;
-//       const skip = (page - 1) * limit;
-//       const productBrands = await Product.find({
-//          isBlocked: false,
-//          category: { $in: categoryIds },
-//          stock: { $gt: 0 }
-//       });
 
-//       const brandAll = productBrands.map(product => product.brand);
-//       const brand = [...new Set(brandAll)];
-
-//       const products = await Product.find({
-//          isBlocked: false,
-//          category: { $in: categoryIds },
-//          stock: { $gt: 0 },
-
-//       }).sort({ createdAt: -1 }).skip(skip).limit(limit);
-
-//       const totalProducts = await Product.countDocuments({
-//          isBlocked: false,
-//          category: { $in: categoryIds },
-//          stock: { $gt: 0 },
-
-//       });
-
-//       const totalPages = Math.ceil(totalProducts / limit);
-
-//       const categoriesWithIds = categories.map(category => ({ _id: category._id, name: category.name }));
-
-//       res.render('shop1', {
-//          user: userData,
-//          products: products,
-//          category: categoriesWithIds,
-//          brand: brand,
-//          totalProducts: totalProducts,
-//          currentPage: page,
-//          totalPages: totalPages,
-//       })
-//    } catch (error) {
-//       res.redirect("/pageNotFound");
-//    }
-// }
 
 const loadShopingPage = async (req, res) => {
    try {
@@ -577,7 +530,9 @@ const searchProducts = async (req, res) => {
       const sortOption = req.query.sort || 'new-arrivals';
 
       const categories = await Category.find({ isListed: true }).lean();
+
       let search = req.body.query;
+      
       const categoryIds = categories.map(category => category._id.toString());
 
       const brands = [...new Set(productBrands.map(product => product.brand))];

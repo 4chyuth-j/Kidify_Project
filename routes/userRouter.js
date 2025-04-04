@@ -64,9 +64,17 @@ router.get("/change-email",userAuth,profileManagement.loadChangeEmail);
 
 router.post("/change-email",userAuth,profileManagement.ChangeEmail);
 
-router.get("/verify-emailOtp",userAuth,profileManagement.loadOtpPage)
+router.get("/verify-emailOtp",userAuth,profileManagement.loadOtpPage);
 
-router.post("/verify-emailOtp",userAuth,profileManagement.verifyOtpEmail)
+router.post("/verify-emailOtp",userAuth,profileManagement.verifyOtpEmail);
+
+router.get('/change-password',userAuth,profileManagement.loadChangePassword);
+
+router.post('/change-password',userAuth,profileManagement.otpVerificationChangePassword);
+
+router.get('/setNewPassword',userAuth,profileManagement.loadSetPassword);
+
+router.post('/setNewPassword',userAuth,profileManagement.SetPassword);
 
 router.get("/edit-profile",userAuth,profileManagement.getEditProfile);
 

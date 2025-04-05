@@ -80,8 +80,12 @@ router.get("/edit-profile",userAuth,profileManagement.getEditProfile);
 
 router.post("/edit-profile",userAuth,profileManagement.editProfile);
 
+//address management
+router.get("/address",userAuth,profileManagement.loadAddressManagement);
 
+router.get('/add-address',userAuth,profileManagement.loadAddAddress);
 
+router.post('/add-address',userAuth,profileManagement.addAddress);
 
 
 // Route to start Google authentication process

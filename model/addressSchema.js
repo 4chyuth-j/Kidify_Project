@@ -48,7 +48,8 @@ const addressSchema = new Schema({
 
         altPhone: {
             type: Number,
-            required: true,
+            required: false,
+            default:null
         }
     }]
 },{timestamps:true});

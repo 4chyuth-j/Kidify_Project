@@ -3,6 +3,7 @@ const Address = require("../../model/addressSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 
+
 //otp generation
 function generateOtp() {
     return Math.floor(1000 + Math.random() * 9000).toString();
@@ -293,7 +294,9 @@ const otpVerificationChangePassword = async (req, res) => {
 
 const loadSetPassword = async (req, res) => {
     try {
-        res.render("set-newPassword");
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        res.render("set-newPassword",{user:userData});
     } catch (error) {
         console.error('error occured while loading new password page', error);
         res.redirect("/pageNotFound");
@@ -349,6 +352,69 @@ const SetPassword = async (req, res) => {
 
 
 
+const loadAddressManagement = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        const userAddress = await Address.findOne({userId: userId});
+        res.render("user-addresses",{addresses:userAddress.address,user:userData});
+    } catch (error) {
+        console.error('error occured while loading address', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
+
+const loadAddAddress = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        res.render("add-address",{user:userData});
+    } catch (error) {
+        console.error('error occured while loading add address', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
+
+const addAddress = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+
+        const {addressType,name,phone,altPhone,landMark,city,state, pincode} = req.body;
+
+        const userAddress = await Address.findOne({userId:userId});
+        if(!userAddress){
+            const newAddress = new Address({
+                userId: userData._id,
+                address:[{addressType,name,phone,altPhone,landMark,city,state, pincode}],
+            });
+            await newAddress.save();
+            return res.status(200).json({message:"Addresses added successfully"});
+        } else {
+            userAddress.address.push({addressType,name,phone,altPhone,landMark,city,state, pincode});
+            await userAddress.save();
+            return res.status(200).json({message:"Addresses added successfully"});
+        }
+        
+    } catch (error) {
+        console.error('error occured while adding address in db', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = {
@@ -363,4 +429,7 @@ module.exports = {
     loadSetPassword,
     SetPassword,
     editProfile,
+    loadAddressManagement,
+    loadAddAddress,
+    addAddress,
 }

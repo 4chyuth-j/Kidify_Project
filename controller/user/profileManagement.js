@@ -406,6 +406,39 @@ const addAddress = async (req,res)=>{
 
 
 
+const getEditAddress = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+
+        const addressId = req.query.id;
+
+        const currentAddress = await Address.findOne({
+            "address._id":addressId,
+        })
+
+        if(!currentAddress){
+            console.log("address not found");
+            return res.redirect("/pageNotFound");
+        }
+
+        const addressData = currentAddress.address.find((item)=>{
+            return item._id.toString()===addressId.toString()
+        })
+
+        if(!addressData){
+            console.log("address data not found");
+            return res.redirect("/pageNotFound");
+        }
+
+        res.render("edit-address",{address:addressData,user:userData});
+
+    } catch (error) {
+        console.error('error occured while loading edit address', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
 
 
 
@@ -432,4 +465,5 @@ module.exports = {
     loadAddressManagement,
     loadAddAddress,
     addAddress,
+    getEditAddress,
 }

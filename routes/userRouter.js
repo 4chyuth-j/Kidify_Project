@@ -87,6 +87,13 @@ router.get('/add-address',userAuth,profileManagement.loadAddAddress);
 
 router.post('/add-address',userAuth,profileManagement.addAddress);
 
+router.get('/edit-address',userAuth,profileManagement.getEditAddress);
+
+
+
+
+
+
 
 // Route to start Google authentication process
 router.get("/auth/google", passport.authenticate('google', { scope: ['profile', 'email'] })); // Redirects to Google with scope access

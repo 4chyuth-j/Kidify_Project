@@ -287,10 +287,11 @@
                         </div>
                     <% }); %>
                 </div>
-                
+                <% if (addresses.length < 5) { %>
                 <button class="add-address-button" onclick="window.location.href='/add-address';">
                     <i class="bi bi-plus-circle"></i> Add New Address
                 </button>
+                <% } %>
                 
             <% } else { %>
                 <div class="no-address-container">
@@ -310,7 +311,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    
     function deleteAddress(addressId) {
+        
         Swal.fire({
             title: 'Are you sure?',
             text: "Do you really want to delete this address?",
@@ -321,9 +324,46 @@
             confirmButtonText: 'Yes, delete it!',
             cancelButtonText: 'Cancel'
         }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/delete-address?id=' + addressId;
-            }
+            console.log('entered then');
+            
+            fetch(`/delete-address?id=${addressId}`, {
+                method: 'DELETE', 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.log('entered fetch ');
+                    return response.json().then(err => {
+                        throw new Error(err.error||err.message);
+                    });
+                                }
+                                return response.json();
+
+                            }).then(data => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Address deleted',
+                                    text: data.message,
+                                    timer: 1500,
+                                }).then(() => {
+                                    location.reload();
+
+                                });
+                            })
+                            .catch(error => {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops',
+                                    text: error.message,
+                                    timer: 1200,
+                                });
+                            });
+
+
+
+            // if (result.isConfirmed) {
+            //     window.location.href = '/delete-address?id=' + addressId;
+            // }
         });
     }
 </script>

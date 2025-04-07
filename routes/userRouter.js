@@ -89,6 +89,9 @@ router.post('/add-address',userAuth,profileManagement.addAddress);
 
 router.get('/edit-address',userAuth,profileManagement.getEditAddress);
 
+router.post('/edit-address',userAuth,profileManagement.editAddress);
+
+router.delete('/delete-address',userAuth,profileManagement.deleteAddress);
 
 
 

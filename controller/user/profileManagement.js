@@ -440,6 +440,76 @@ const getEditAddress = async (req,res)=>{
 }
 
 
+const editAddress = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        
+        const {addressId,addressType,name,phone,altPhone,landMark,city,state, pincode} = req.body;
+        const userAddress = await Address.findOne({userId:userId});
+        if(!userAddress){
+            console.log("user address not found");
+            return res.status(400).json({message:"User address don't exist"});
+        }
+        
+        const addressIndex = userAddress.address.findIndex(item=>{
+            return item._id.toString() === addressId.toString();
+        });
+        
+        if(addressIndex ==-1){
+            console.log("Required address don't exist in the collection");
+            return res.status(400).json({message:"User address don't exist"});
+        }
+
+        userAddress.address[addressIndex].addressType = addressType;
+        userAddress.address[addressIndex].name = name;
+        userAddress.address[addressIndex].phone = phone;
+        userAddress.address[addressIndex].altPhone = altPhone;
+        userAddress.address[addressIndex].landMark = landMark;
+        userAddress.address[addressIndex].city = city;
+        userAddress.address[addressIndex].state = state;
+        userAddress.address[addressIndex].pincode = pincode;
+
+        await userAddress.save();
+        res.status(200).json({message:"Address edited and Updated Successfully"});
+
+    } catch (error) {
+        console.error('error occured while editting address', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
+
+const deleteAddress = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const addressId = req.query.id;
+        
+
+        const userAddress = await Address.findOne({userId:userId});
+        if(!userAddress){
+            console.log("User address not found for deleting ");
+            return res.status(400).json({message:"Address not found"});
+        }
+
+        userAddress.address = userAddress.address.filter(
+            (item)=> { 
+                return item._id.toString()!== addressId.toString()
+            }
+        );
+
+        await userAddress.save();
+
+        console.log("Address deleted successfully");
+        
+        return res.status(200).json({ message: "Address deleted successfully" }); 
+
+    } catch (error) {
+        console.error('error occured while deleting address', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
 
 
 
@@ -466,4 +536,6 @@ module.exports = {
     loadAddAddress,
     addAddress,
     getEditAddress,
+    editAddress,
+    deleteAddress,
 }

@@ -259,16 +259,17 @@
                         <label for="addressType" class="form-label required-label">Address Type</label>
                         <select id="addressType" class="form-select" required>
                             <option value="">Select Address Type</option>
-                            <option value="home">Home</option>
-                            <option value="work">Work</option>
-                            <option value="other">Other</option>
+                            <option value="home" <%= address.addressType === 'home' ? 'selected' : '' %>>Home</option>
+                            <option value="work" <%= address.addressType === 'work' ? 'selected' : '' %>>Work</option>
+                            <option value="other" <%= address.addressType === 'other' ? 'selected' : '' %>>Other</option>
                         </select>
+                        
                         <span id="addressType-error" class="form-error">Please select an address type</span>
                     </div>
 
                     <div class="form-group">
                         <label for="name" class="form-label required-label">Full Name</label>
-                        <input type="text" id="name" class="form-input" required>
+                        <input type="text" id="name" class="form-input" value="<%=address.name%>">
                         <span id="name-error" class="form-error">Please enter your full name</span>
                     </div>
 
@@ -276,14 +277,14 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="phone" class="form-label required-label">Phone Number</label>
-                                <input type="tel" id="phone" class="form-input" required>
+                                <input type="tel" id="phone" class="form-input" value="<%=address.phone%>">
                                 <span id="phone-error" class="form-error">Please enter a valid 10-digit phone number</span>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="altPhone" class="form-label">Alternate Phone Number</label>
-                                <input type="tel" id="altPhone" class="form-input">
+                                <input type="tel" id="altPhone" class="form-input" value="<%=address.altPhone%>">
                                 <span id="altPhone-error" class="form-error">Please enter a valid 10-digit phone number</span>
                             </div>
                         </div>
@@ -297,7 +298,7 @@
 
                     <div class="form-group">
                         <label for="landmark" class="form-label required-label">Landmark</label>
-                        <input type="text" id="landmark" class="form-input" required>
+                        <input type="text" id="landmark" class="form-input" value="<%=address.landMark%>">
                         <span id="landmark-error" class="form-error">Please enter a landmark</span>
                     </div>
 
@@ -305,14 +306,14 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="city" class="form-label required-label">City</label>
-                                <input type="text" id="city" class="form-input" required>
+                                <input type="text" id="city" class="form-input" value="<%=address.city%>">
                                 <span id="city-error" class="form-error">Please enter your city</span>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="state" class="form-label required-label">State</label>
-                                <input type="text" id="state" class="form-input" required>
+                                <input type="text" id="state" class="form-input" value="<%=address.state%>">
                                 <span id="state-error" class="form-error">Please enter your state</span>
                             </div>
                         </div>
@@ -320,13 +321,13 @@
 
                     <div class="form-group">
                         <label for="pincode" class="form-label required-label">Pincode</label>
-                        <input type="text" id="pincode" class="form-input" required>
+                        <input type="text" id="pincode" class="form-input" value="<%=address.pincode%>">
                         <span id="pincode-error" class="form-error">Please enter a valid 6-digit pincode</span>
                     </div>
 
                     <div class="action-buttons">
                         <button type="submit" class="action-button">
-                            <i class="bi bi-plus-circle"></i> Add Address
+                            <i class="bi bi-plus-circle"></i> Save Changes
                         </button>
                         <a href="/address" class="action-button" style="background-color: #999;">
                             <i class="bi bi-x-circle"></i> Cancel
@@ -341,6 +342,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    
+    const addressId = "<%=address._id%>";
+
+
     // Form validation
     const addressForm = document.getElementById('addressForm');
     const formInputs = {
@@ -438,6 +443,7 @@
         
         // Collect form data
         const formData = {
+            addressId:addressId,
             addressType: formInputs.addressType.value,
             name: formInputs.name.value,
             phone: formInputs.phone.value,
@@ -450,7 +456,7 @@
         };
         
         // Submit the form data
-        fetch('/add-address', {
+        fetch('/edit-address', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -469,7 +475,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: data.message || 'Address added successfully blA BLA BLA',
+                text: data.message || 'Address added successfully ',
                 timer: 2000
             }).then(() => {
                 window.location.href = '/address';

@@ -4,6 +4,7 @@ const userController = require('../controller/user/userController.js');
 const profileController = require('../controller/user/profileController.js');
 const productController = require('../controller/user/productController.js');
 const profileManagement = require('../controller/user/profileManagement.js');
+const wishlistController = require('../controller/user/wishlistController.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -92,6 +93,18 @@ router.get('/edit-address',userAuth,profileManagement.getEditAddress);
 router.post('/edit-address',userAuth,profileManagement.editAddress);
 
 router.delete('/delete-address',userAuth,profileManagement.deleteAddress);
+
+
+//wishlist management
+router.get('/wishlist',userAuth,wishlistController.loadWishlist);
+
+
+
+
+
+
+
+
 
 
 

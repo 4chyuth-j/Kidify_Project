@@ -1,5 +1,6 @@
 const User = require("../../model/userSchema");
 const Address = require("../../model/addressSchema");
+const Wishlist = require("../../model/wishlistSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 
@@ -492,6 +493,11 @@ const deleteAddress = async (req,res)=>{
             return res.status(400).json({message:"Address not found"});
         }
 
+        //or we can use $pull method in update to remove the address
+
+        // await Address.updateOne({ userId: userId },
+        //     { $pull: { address: { _id: addressId } } });
+
         userAddress.address = userAddress.address.filter(
             (item)=> { 
                 return item._id.toString()!== addressId.toString()
@@ -509,15 +515,6 @@ const deleteAddress = async (req,res)=>{
         res.redirect("/pageNotFound");
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 module.exports = {
@@ -538,4 +535,5 @@ module.exports = {
     getEditAddress,
     editAddress,
     deleteAddress,
+    
 }

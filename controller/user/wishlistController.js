@@ -66,10 +66,41 @@ const addToWishlist = async (req,res)=>{
 }
 
 
+const removeWishlist = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const productId = req.query.id;
+        
+        const userWishlist = await Wishlist.findOne({userId:userId});
+        if(!userWishlist){
+            return res.status(400).json({message:"Failed to fetch the userWishlist"});
+        }
+
+        const productExist = userWishlist.products.find(item=>{
+            return item.productId.toString()===productId.toString();
+        })
+        if(productExist){
+           await Wishlist.updateOne(
+            {userId},
+            {$pull:{products:{productId:productId}}});
+
+            console.log("product removed from wishlist");
+            
+            return res.status(200).json({ message: "Product removed from wishlist" });
+        }
+
+    } catch (error) {
+        console.error('error occured while removing product from wishlist', error);
+        res.redirect("/pageNotFound");
+    }
+}
+
+
 
 
 
 module.exports ={
     loadWishlist,
     addToWishlist,
+    removeWishlist,
 }

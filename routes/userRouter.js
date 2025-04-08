@@ -100,6 +100,8 @@ router.get('/wishlist',userAuth,wishlistController.loadWishlist);
 
 router.post('/add-to-wishlist',userAuth,wishlistController.addToWishlist);
 
+router.post('/remove-wishlist',userAuth,wishlistController.removeWishlist);
+
 
 
 

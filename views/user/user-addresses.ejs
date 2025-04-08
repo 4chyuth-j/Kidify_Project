@@ -313,57 +313,50 @@
 <script>
     
     function deleteAddress(addressId) {
-        
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you really want to delete this address?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            console.log('entered then');
-            
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this address?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
             fetch(`/delete-address?id=${addressId}`, {
-                method: 'DELETE', 
+                method: 'DELETE',
             })
             .then(response => {
                 if (!response.ok) {
-                    console.log('entered fetch ');
                     return response.json().then(err => {
-                        throw new Error(err.error||err.message);
+                        throw new Error(err.error || err.message);
                     });
-                                }
-                                return response.json();
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Address deleted',
+                    text: data.message,
+                    timer: 1500,
+                }).then(() => {
+                    location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops',
+                    text: error.message,
+                    timer: 1200,
+                });
+            });
+        }
+    });
+}
 
-                            }).then(data => {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Address deleted',
-                                    text: data.message,
-                                    timer: 1500,
-                                }).then(() => {
-                                    location.reload();
-
-                                });
-                            })
-                            .catch(error => {
-
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops',
-                                    text: error.message,
-                                    timer: 1200,
-                                });
-                            });
-
-
-
-           
-        });
-    }
 </script>
 
 

@@ -358,7 +358,9 @@ const loadAddressManagement = async (req,res)=>{
         const userId = req.session.user;
         const userData = await User.findById(userId);
         const userAddress = await Address.findOne({userId: userId});
-        res.render("user-addresses",{addresses:userAddress.address,user:userData});
+        
+        const addresses=userAddress? userAddress.address: [];
+        res.render("user-addresses",{addresses:addresses,user:userData});
     } catch (error) {
         console.error('error occured while loading address', error);
         res.redirect("/pageNotFound");

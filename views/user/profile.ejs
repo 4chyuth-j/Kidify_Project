@@ -210,11 +210,28 @@
                     <i class="bi bi-key"></i> Change Password
                 </button>
                 <%}%>
-                <button class="action-button" onclick="window.location.href='/edit-profile';">
+                <button class="action-button" onclick="editProfile()">
                   <i class="bi bi-person-fill-gear"></i> Edit Profile
                 </button>
             </div>
         </div>
     </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function editProfile(){
+        Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to edit this profile?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then(()=>{
+        window.location.href='/edit-profile';
+    });
+    }
+</script>
 <%- include("../../views/partials/user/footer") %>

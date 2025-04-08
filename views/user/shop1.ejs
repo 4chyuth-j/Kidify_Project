@@ -409,7 +409,7 @@
                 <% if (productsFound) { %>
                     <% for(let i=0; i<products.length; i++) { %>
                     <div class="product-card">
-                        <span class="wishlist-btn"><i class="bi bi-heart-fill"></i></span>
+                        <span class="wishlist-btn"  onclick="addToWishlist('<%= products[i]._id %>')"><i class="bi bi-heart-fill"></i></span>
                         <a href="/productDetails?id=<%=products[i]._id%>">
                             <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
                             <h5 title="<%= products[i].productName %>">
@@ -442,6 +442,7 @@
         </div>
     </section>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -476,6 +477,38 @@
           }
       });
   });
+
+  function addToWishlist(productId) {
+        fetch(`/add-to-wishlist?id=${productId}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || err.message);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: data.message || 'Added to wishlist',
+                timer: 1200,
+                showConfirmButton: false,
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: error.message || 'Something went wrong',
+                timer: 1200,
+                showConfirmButton: false,
+            });
+        });
+    }
+  
 </script>
 
 <%- include("../../views/partials/user/footer.ejs") %> 

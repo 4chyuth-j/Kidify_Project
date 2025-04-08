@@ -1,0 +1,167 @@
+<%- include("../../views/partials/user/header.ejs") %>
+<style>
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+   
+    .sidebar {
+      padding: 20px;
+      border: 1px solid #ddd;
+      background-color: #ffe4e1;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      width: 250px;
+      text-align: center;
+    }
+   
+    .filter-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #d14792;
+    }
+   
+    .product-list-container {
+      display: flex;
+      gap: 20px;
+    }
+   
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      width: calc(100% - 270px);
+    }
+   
+    .product-card {
+      width: calc(33.333% - 20px);
+      height: 450px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      background-color: #ffebf0;
+    }
+   
+    .product-card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+   
+    .wishlist-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(237, 247, 247, 0.8);
+      color: #ff1493;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+   
+    .add-to-cart-btn {
+      background-color: #ff69b4;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+   
+    .add-to-cart-btn:hover {
+      background-color: #d14792;
+    }
+   
+    .bi-heart-fill {
+        color: #ec93c4;
+    }
+    .bi-heart-fill:hover {
+        color: #f6144d;
+    }
+   
+    .breadcrumb {
+        background-color: #f8c8dc;
+        padding: 15px;
+        font-size: 14px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+        color: #d14792;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        color: #888;
+    }
+   
+    .no-products-message {
+        width: 100%;
+        text-align: center;
+        padding: 20px;
+        background-color: #ffe4e1;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        color: #d14792;
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="main-container">
+    <section class="wishlist-page container">
+        <div class="breadcrumb-wrap">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span>></span>
+                <span>Wishlist</span>
+            </div>
+        </div>
+        
+        <div class="product-list-container">
+            <aside class="sidebar">
+                <div class="filter-title">Your Wishlist</div>
+                <p>Items you love!</p>
+            </aside>
+    
+            <main class="product-grid">
+                <% if (products && products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                    <div class="product-card">
+                        <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')"><i class="bi bi-trash"></i></span>
+                        <a href="/productDetails?id=<%= product._id %>">
+                            <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+                            <h5 title="<%= product.productName %>">
+                                <%= product.productName.length > 20 ? product.productName.substring(0, 40) + "..." : product.productName %>
+                            </h5>
+                            <p>Brand: <%= product.brand %></p>
+                            <p>Price: ₹<%= product.basePrice %><span class="text-muted"><strike>₹<%= product.basePrice %></strike></span></p>
+                        </a>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
+                    <% }) %>
+               
+                    <% } else{ %>
+                        <div class="no-products-message">Your wishlist is empty! <br>Continue shopping <a href="/shop">Shop Now</a></div>
+                        
+
+                <% } %>
+
+            </main>
+        </div>
+    </section>
+</div>
+
+<%- include("../../views/partials/user/footer.ejs") %>

@@ -98,6 +98,8 @@ router.delete('/delete-address',userAuth,profileManagement.deleteAddress);
 //wishlist management
 router.get('/wishlist',userAuth,wishlistController.loadWishlist);
 
+router.post('/add-to-wishlist',userAuth,wishlistController.addToWishlist);
+
 
 
 

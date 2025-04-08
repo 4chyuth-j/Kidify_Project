@@ -14,12 +14,7 @@ const wishlistSchema = new Schema({
             type:Schema.Types.ObjectId,
             ref:"Product",
             required:true,
-        },
-
-        addedOn:{
-            type:Date,
-            default:Date.now,
-        },
+        }
      }]
 },{timestamps:true});
 

@@ -65,8 +65,8 @@
     
                     <!-- These menu items ONLY appear when screen width ≤ 992px -->
                     <li class="nav-item d-lg-none"><a class="nav-link" href="/userProfile">Account</a></li>
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="#">Wishlist</a></li>
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="#">Cart</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="/wishlist">Wishlist</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="/cart">Cart</a></li>
                     <%if(locals.user){ %>
                         <li class="nav-item d-lg-none"><a class="nav-link" href="/logout">Logout</a></li>
 
@@ -113,7 +113,7 @@
                     <i class="fas fa-heart"></i>
                     <!-- <span class="badge rounded-circle">2</span> -->
                 </a>
-                <a href="#" class="icon-btn position-relative">
+                <a href="/cart" class="icon-btn position-relative">
                     <i class="fas fa-shopping-bag"></i>
                     <!-- <span class="badge rounded-circle">5</span> -->
                 </a>

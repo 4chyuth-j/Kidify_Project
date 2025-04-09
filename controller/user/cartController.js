@@ -22,7 +22,7 @@ const addToCart = async (req, res) => {
         const stock = productData.stock;
 
         if (quantity > stock || stock === 0) {
-            
+
             console.log("stock limit");
             return res.status(400).json({ message: `Only ${stock} left in stock. Please adjust quantity.` });
         }
@@ -71,15 +71,28 @@ const addToCart = async (req, res) => {
 
         console.log("Product added to cart");
         
-        return res.status(200).json({ message: "Product added to cart successfully", totalPrice });
+        return res.status(200).json({ message: "Product added to cart successfully" });
 
     } catch (error) {
 
         console.error("Error adding to cart:", error);
-        return res.status(500).json({ message: "Something went wrong. Please try again later." });
+        res.redirect("/pageNotFound");
 
     }
 };
+
+
+const loadCart = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        res.render("userCart",{user:userData});
+        
+    } catch (error) {
+        console.error("Error loading cart:", error);
+        res.redirect("/pageNotFound");
+    }
+}
 
 
 
@@ -89,4 +102,5 @@ const addToCart = async (req, res) => {
 
 module.exports = {
     addToCart,
+    loadCart,
 }

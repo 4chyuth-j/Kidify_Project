@@ -107,6 +107,8 @@ router.post('/remove-wishlist',userAuth,wishlistController.removeWishlist);
 //cart management
 router.post('/add-to-cart',userAuth,cartController.addToCart);
 
+router.get("/cart",userAuth,cartController.loadCart);
+
 
 
 

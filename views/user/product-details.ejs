@@ -168,6 +168,7 @@
     }
 
     .button-add-to-cart {
+    margin-top: 15px;
         background-color: var(--primary-color);
         color: white;
         padding: 10px 20px;
@@ -379,17 +380,22 @@
                         <div class="rating"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i> (4.5/5)</div>
                     </div>
                     <div class="product-price">
-                        <% if (productOffer && productOffer != 0) { %>
-                            <ins><%=product.basePrice%>/-</ins>
-                            <span class="old-price"><%=product.basePrice%></span>
+                        <% if (productOffer && productOffer != 0) { 
+                            const discountAmount = (product.basePrice * productOffer) / 100;
+                            const discountedPrice = product.basePrice - discountAmount;
+                        %>
+                            <ins><%= discountedPrice.toFixed(0) %>/-</ins>
+                            <span class="old-price"><%= product.basePrice %>/-</span>
                             <span style="color: #ff0000; margin-left: 10px;"><%= productOffer %>% off</span>
                         <% } else { %>
-                            <ins><%=product.basePrice%>/-</ins>
+                            <ins><%= product.basePrice %>/-</ins>
                             <span>No Current Offer</span>
                         <% } %>
                     </div>
+                    
                     <p>Availability: <span class="stock-status"><%=stock%></span></p>
                     <p><%=product.description%></p>
+                    <input type="hidden" id="productId" value="<%=product._id%>">
                     <div class="quantity-selector">
                         <label for="quantity">Quantity:</label>
                         <select id="quantity">
@@ -398,20 +404,13 @@
                             <option value="3">3</option>
                         </select>
                     </div>
-                    <button class="button-add-to-cart">Add to Cart</button>
+                    
                     <div class="warranty-section">
                         <i class="bi bi-shield-check"></i> 1 Year Brand Warranty
                         <i class="bi bi-arrow-repeat"></i> 30 Day Return Policy
                         <i class="bi bi-cash"></i> Cash on Delivery Available
                     </div>
-                    <div class="coupon-section">
-                        <label for="coupons">Apply Discounts or Coupons:</label>
-                        <select id="coupons">
-                            <option value="none">Select a Coupon</option>
-                            <option value="10off">10% Off</option>
-                            <option value="freeShip">Free Shipping</option>
-                        </select>
-                    </div>
+                    <button class="button-add-to-cart" id="addToCartBtn">Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -461,6 +460,9 @@
         </div>
     </div>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function changeImage(imageSrc) {
         const mainImage = document.getElementById('mainImage');
@@ -523,5 +525,55 @@
         const bgY = (lensY / (rect.height - lensHeight)) * (zoomHeight - zoomContainer.offsetHeight);
         zoomContainer.style.backgroundPosition = `-${bgX}px -${bgY}px`;
     });
+
+
+
+
+
+    document.getElementById('addToCartBtn').addEventListener('click', async function (e) {
+    e.preventDefault();
+
+    const productId = document.getElementById('productId').value;
+    const quantity = document.getElementById('quantity').value;
+
+    fetch('/add-to-cart', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ productId, quantity }),
+})
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.message || err.error || 'Something went wrong');
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    Swal.fire({
+      icon: 'success',
+      title: data.message || 'Added to cart!',
+      timer: 1200,
+      showConfirmButton: false,
+    }).then(() => {
+      location.reload();
+    });
+  })
+  .catch(error => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops!',
+      text: error.message || 'Failed to add product to cart.',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  });
+
+});
+
+
+
 </script>
 <%- include("../../views/partials/user/footer") %>

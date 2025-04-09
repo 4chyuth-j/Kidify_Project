@@ -149,8 +149,21 @@
                             <h5 title="<%= product.productName %>">
                                 <%= product.productName.length > 20 ? product.productName.substring(0, 40) + "..." : product.productName %>
                             </h5>
-                            <p>Brand: <%= product.brand %></p>
-                            <p>Price: ₹<%= product.basePrice %><span class="text-muted"><strike>₹<%= product.basePrice %></strike></span></p>
+                            <% const discount=(product.basePrice * product.discountPercentage) / 100; const
+                            discountedPrice=product.basePrice - discount; %>
+        
+                            <% if (product.discountPercentage && product.discountPercentage !==0) { %>
+                              <p>
+                                Price: ₹<%= discountedPrice.toFixed(0) %>
+                                  <span class="text-muted">
+                                    <strike>₹<%= product.basePrice %></strike>
+                                  </span>
+                                  <span style="color: red;">(<%= product.discountPercentage %>% off)</span>
+                              </p>
+                              <% } else { %>
+                                <p>Price: ₹<%= product.basePrice %>
+                                </p>
+                                <% } %>
                         </a>
                         <button class="add-to-cart-btn">Add to Cart</button>
                     </div>

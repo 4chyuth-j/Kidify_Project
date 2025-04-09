@@ -1,17 +1,18 @@
 <%- include("../../views/partials/user/header.ejs") %>
-<style>
+  <style>
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
+
     .shop-topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-   
+
     .search-bar {
       display: flex;
       align-items: center;
@@ -26,7 +27,7 @@
       max-width: 250px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
-   
+
     .search-input {
       flex: 1;
       padding: 8px 10px;
@@ -35,7 +36,7 @@
       outline: none;
       background-color: transparent;
     }
-   
+
     .search-button {
       padding: 8px 15px;
       background-color: #ff69b4;
@@ -47,7 +48,7 @@
       margin-right: 5px;
       transition: background-color 0.3s, transform 0.2s;
     }
-   
+
     .search-button:hover {
       background-color: #d14792;
       transform: scale(1.05);
@@ -135,7 +136,7 @@
     .sort-select-hidden {
       display: none;
     }
-   
+
     .sidebar {
       padding: 20px;
       border: 1px solid #ddd;
@@ -145,29 +146,29 @@
       width: 250px;
       text-align: center;
     }
-   
+
     .filter-title {
       font-weight: bold;
       margin-bottom: 10px;
       font-size: 16px;
       color: #d14792;
     }
-   
+
     .product-list-container {
       display: flex;
       gap: 20px;
     }
-   
+
     .product-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       width: calc(100% - 270px);
     }
-   
+
     .product-card {
       width: calc(33.333% - 20px);
-      height:450px;
+      height: 450px;
       border: 1px solid #ddd;
       padding: 15px;
       border-radius: 8px;
@@ -175,13 +176,13 @@
       position: relative;
       background-color: #ffebf0;
     }
-   
+
     .product-card img {
       max-width: 100%;
       height: auto;
       border-radius: 5px;
     }
-   
+
     .wishlist-btn {
       position: absolute;
       top: 8px;
@@ -192,7 +193,7 @@
       border-radius: 50%;
       cursor: pointer;
     }
-   
+
     .add-to-cart-btn {
       background-color: #ff69b4;
       color: #fff;
@@ -204,18 +205,18 @@
       margin-top: 10px;
       transition: background-color 0.3s;
     }
-   
+
     .add-to-cart-btn:hover {
       background-color: #d14792;
     }
-   
+
     .pagination {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin: 20px 0;
     }
-   
+
     .pagination a {
       padding: 8px 12px;
       background-color: #f0f0f0;
@@ -223,19 +224,19 @@
       color: #333;
       text-decoration: none;
     }
-   
+
     .pagination .active {
       background-color: #ff69b4;
       color: #fff;
     }
-   
+
     .price-filter {
       padding: 10px;
       background-color: #ffe4e1;
       border-radius: 8px;
       margin-top: 20px;
     }
-   
+
     .price-button {
       padding: 12px 20px;
       background-color: #f8c8dc;
@@ -247,205 +248,236 @@
       text-align: center;
       font-size: 14px;
     }
-   
+
     .price-button:hover {
       background-color: #ff69b4;
       color: white;
       transform: scale(1.05);
     }
+
     .bi-heart-fill {
-        color: #ec93c4;
+      color: #ec93c4;
     }
+
     .bi-heart-fill:hover {
-        color: #f6144d;
+      color: #f6144d;
     }
-   
+
     .breadcrumb {
-        background-color: #f8c8dc;
-        padding: 15px;
-        font-size: 14px;
-        color: #333;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+      background-color: #f8c8dc;
+      padding: 15px;
+      font-size: 14px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
 
     .breadcrumb a {
-        color: #d14792;
-        text-decoration: none;
+      color: #d14792;
+      text-decoration: none;
     }
 
     .breadcrumb span {
-        color: #888;
+      color: #888;
     }
-   
+
     .filter-section ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
+
     .filter-section .filter-item {
-        margin: 8px 0;
+      margin: 8px 0;
     }
+
     .filter-section .filter-item a {
-        display: block;
-        padding: 8px 12px;
-        background-color: #f8c8dc;
-        color: #333;
-        text-decoration: none;
-        border-radius: 5px;
-        transition: background-color 0.3s, color 0.3s;
+      display: block;
+      padding: 8px 12px;
+      background-color: #f8c8dc;
+      color: #333;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
     }
+
     .filter-section .filter-item a:hover {
-        background-color: #ff69b4;
-        color: #fff;
+      background-color: #ff69b4;
+      color: #fff;
     }
 
     /* Style for the "Product not found" message */
     .no-products-message {
-        width: 100%;
-        text-align: center;
-        padding: 20px;
-        background-color: #ffe4e1;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        color: #d14792;
-        font-size: 16px;
-        font-weight: bold;
+      width: 100%;
+      text-align: center;
+      padding: 20px;
+      background-color: #ffe4e1;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #d14792;
+      font-size: 16px;
+      font-weight: bold;
     }
-</style>
+  </style>
 
-<div class="main-container">
+  <div class="main-container">
     <section class="shop-page container">
-        <div class="breadcrumb-wrap">
-            <div class="breadcrumb">
-                <a href="/">Home</a>
-                <span>></span>
-                <span>Shop</span>
-            </div>
+      <div class="breadcrumb-wrap">
+        <div class="breadcrumb">
+          <a href="/">Home</a>
+          <span>></span>
+          <span>Shop</span>
         </div>
-        <div class="shop-topbar">
-            <div class="search-bar">
-                <form action="/search" method="POST" class="search-form">
-                    <input type="text" name="query" placeholder="Search items..." class="search-input" />
-                    <button type="submit" class="search-button">Search</button>
-                </form>
-                <button class="clear-button" onclick="window.location.href='/shop'">Clear</button>
-            </div>
-            <div class="sort-container">
-                <form action="/shop" method="GET" id="sort-form">
-                    <div class="sort-button" id="sort-button">
-                        Sort by: 
-                        <span class="sort-display">
-                            <%= sort === 'price-low-to-high' ? 'Price: Low to High' : 
-                               sort === 'price-high-to-low' ? 'Price: High to Low' : 
-                               sort === 'a-z' ? 'A-Z' : 
-                               sort === 'z-a' ? 'Z-A' : 
-                               sort === 'new-arrivals' ? 'New Arrivals' : 'Price: High to Low' %>
-                        </span>
-                    </div>
-                    <div class="sort-dropdown" id="sort-dropdown">
-                        <div class="sort-option" data-value="price-low-to-high">Price: Low to High</div>
-                        <div class="sort-option" data-value="price-high-to-low">Price: High to Low</div>
-                        <div class="sort-option" data-value="a-z">A-Z</div>
-                        <div class="sort-option" data-value="z-a">Z-A</div>
-                        <div class="sort-option" data-value="new-arrivals">New Arrivals</div>
-                    </div>
-                    <select name="sort" id="sort" class="sort-select-hidden">
-                        <option value="price-low-to-high" <%= sort === 'price-low-to-high' ? 'selected' : '' %>>Price: Low to High</option>
-                        <option value="price-high-to-low" <%= sort === 'price-high-to-low' ? 'selected' : '' %>>Price: High to Low</option>
-                        <option value="a-z" <%= sort === 'a-z' ? 'selected' : '' %>>A-Z</option>
-                        <option value="z-a" <%= sort === 'z-a' ? 'selected' : '' %>>Z-A</option>
-                        <option value="new-arrivals" <%= sort === 'new-arrivals' ? 'selected' : '' %>>New Arrivals</option>
-                    </select>
-                </form>
-            </div>
+      </div>
+      <div class="shop-topbar">
+        <div class="search-bar">
+          <form action="/search" method="POST" class="search-form">
+            <input type="text" name="query" placeholder="Search items..." class="search-input" />
+            <button type="submit" class="search-button">Search</button>
+          </form>
+          <button class="clear-button" onclick="window.location.href='/shop'">Clear</button>
         </div>
-        
-        <div class="product-list-container">
-            <aside class="sidebar">
-                <div class="filter-section">
-                    <div class="filter-title">Categories</div>
-                    <div class="category-brand-container">
-                        <ul>
-                            <% for(let i=0; i<category.length; i++) { %>
-                            <li class="filter-item">
-                                <a href="/filter?category=<%=category[i]._id%>"><%=category[i].name%></a>
-                            </li>
-                            <% } %>
-                        </ul>
-                    </div>
-                </div>
-    
-                <div class="filter-section">
-                    <div class="filter-title">Brands</div>
-                    <div class="category-brand-container">
-                        <ul>
-                            <% for(let i=0; i<brand.length; i++) { %>
-                            <li class="filter-item">
-                                <a href="/filter?brand=<%=brand[i]%>"><%=brand[i]%></a>
-                            </li>
-                            <% } %>
-                        </ul>
-                    </div>
-                </div>
-    
-                <div class="price-filter">
-                    <div class="filter-title">Filter by Price</div>
-                    <form id="price-filter-form">
-                        <div class="price-options">
-                            <a href="/filterPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
-                            <a href="/filterPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 - ₹1000</button></a>
-                            <a href="/filterPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000 - ₹1500</button></a>
-                            <a href="/filterPrice?gt=1500&lt=100000"><button type="button" class="price-button">Above ₹1500</button></a>
-                        </div>
-                    </form>
-                </div>
-            </aside>
-    
-            <main class="product-grid">
-                <% if (productsFound) { %>
-                    <% for(let i=0; i<products.length; i++) { %>
-                    <div class="product-card">
-                        <span class="wishlist-btn"  onclick="addToWishlist('<%= products[i]._id %>')"><i class="bi bi-heart-fill"></i></span>
-                        <a href="/productDetails?id=<%=products[i]._id%>">
-                            <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
-                            <h5 title="<%= products[i].productName %>">
-                                <%= products[i].productName.length > 20 ? products[i].productName.substring(0, 40) + "..." : products[i].productName %>
-                            </h5>
-                            <p>Brand: <%= products[i].brand %></p>
-                            <p>Price: ₹<%= products[i].basePrice %><span class="text-muted"><strike>₹<%= products[i].basePrice %></strike></span></p>
-                        </a>
-                        <button class="add-to-cart-btn">Add to Cart</button>
-                    </div>
-                    <% } %>
+        <div class="sort-container">
+          <form action="/shop" method="GET" id="sort-form">
+            <div class="sort-button" id="sort-button">
+              Sort by:
+              <span class="sort-display">
+                <%= sort==='price-low-to-high' ? 'Price: Low to High' : sort==='price-high-to-low'
+                  ? 'Price: High to Low' : sort==='a-z' ? 'A-Z' : sort==='z-a' ? 'Z-A' : sort==='new-arrivals'
+                  ? 'New Arrivals' : 'Price: High to Low' %>
+              </span>
+            </div>
+            <div class="sort-dropdown" id="sort-dropdown">
+              <div class="sort-option" data-value="price-low-to-high">Price: Low to High</div>
+              <div class="sort-option" data-value="price-high-to-low">Price: High to Low</div>
+              <div class="sort-option" data-value="a-z">A-Z</div>
+              <div class="sort-option" data-value="z-a">Z-A</div>
+              <div class="sort-option" data-value="new-arrivals">New Arrivals</div>
+            </div>
+            <select name="sort" id="sort" class="sort-select-hidden">
+              <option value="price-low-to-high" <%=sort==='price-low-to-high' ? 'selected' : '' %>>Price: Low to High
+              </option>
+              <option value="price-high-to-low" <%=sort==='price-high-to-low' ? 'selected' : '' %>>Price: High to Low
+              </option>
+              <option value="a-z" <%=sort==='a-z' ? 'selected' : '' %>>A-Z</option>
+              <option value="z-a" <%=sort==='z-a' ? 'selected' : '' %>>Z-A</option>
+              <option value="new-arrivals" <%=sort==='new-arrivals' ? 'selected' : '' %>>New Arrivals</option>
+            </select>
+          </form>
+        </div>
+      </div>
+
+      <div class="product-list-container">
+        <aside class="sidebar">
+          <div class="filter-section">
+            <div class="filter-title">Categories</div>
+            <div class="category-brand-container">
+              <ul>
+                <% for(let i=0; i<category.length; i++) { %>
+                  <li class="filter-item">
+                    <a href="/filter?category=<%=category[i]._id%>">
+                      <%=category[i].name%>
+                    </a>
+                  </li>
+                  <% } %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">Brands</div>
+            <div class="category-brand-container">
+              <ul>
+                <% for(let i=0; i<brand.length; i++) { %>
+                  <li class="filter-item">
+                    <a href="/filter?brand=<%=brand[i]%>">
+                      <%=brand[i]%>
+                    </a>
+                  </li>
+                  <% } %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="price-filter">
+            <div class="filter-title">Filter by Price</div>
+            <form id="price-filter-form">
+              <div class="price-options">
+                <a href="/filterPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
+                <a href="/filterPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 -
+                    ₹1000</button></a>
+                <a href="/filterPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000 -
+                    ₹1500</button></a>
+                <a href="/filterPrice?gt=1500&lt=100000"><button type="button" class="price-button">Above
+                    ₹1500</button></a>
+              </div>
+            </form>
+          </div>
+        </aside>
+
+        <main class="product-grid">
+          <% if (productsFound) { %>
+            <% for(let i=0; i<products.length; i++) { %>
+              <div class="product-card">
+                <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')"><i
+                    class="bi bi-heart-fill"></i></span>
+                <a href="/productDetails?id=<%=products[i]._id%>">
+                  <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
+                  <h5 title="<%= products[i].productName %>">
+                    <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 40) + "..." :
+                      products[i].productName %>
+                  </h5>
+                  <% const discount=(products[i].basePrice * products[i].discountPercentage) / 100; const
+                    discountedPrice=products[i].basePrice - discount; %>
+
+                    <% if (products[i].discountPercentage && products[i].discountPercentage !==0) { %>
+                      <p>
+                        Price: ₹<%= discountedPrice.toFixed(0) %>
+                          <span class="text-muted">
+                            <strike>₹<%= products[i].basePrice %></strike>
+                          </span>
+                          <span style="color: red;">(<%= products[i].discountPercentage %>% off)</span>
+                      </p>
+                      <% } else { %>
+                        <p>Price: ₹<%= products[i].basePrice %>
+                        </p>
+                        <% } %>
+
+
+                </a>
+                <button class="add-to-cart-btn">Add to Cart</button>
+              </div>
+              <% } %>
                 <% } else { %>
-                    <div class="no-products-message">Product not found</div>
-                <% } %>
-            </main>
-        </div>
-    
-        <div class="pagination">
-            <% if (currentPage > 1) { %>
-                <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-            <% } %>
-        
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-            <% } %>
-        
-            <% if (currentPage < totalPages) { %>
-                <a class="btn" href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-            <% } %>
-        </div>
+                  <div class="no-products-message">Product not found</div>
+                  <% } %>
+        </main>
+      </div>
+
+      <div class="pagination">
+        <% if (currentPage> 1) { %>
+          <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+          <% } %>
+
+            <% for (let i=1; i <=totalPages; i++) { %>
+              <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>&sort=<%= sort %>">
+                <%= i %>
+              </a>
+              <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                  <a class="btn" href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                  <% } %>
+      </div>
     </section>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
       const sortButton = document.getElementById('sort-button');
       const sortDropdown = document.getElementById('sort-dropdown');
       const sortOptions = document.querySelectorAll('.sort-option');
@@ -453,62 +485,62 @@
       const sortForm = document.getElementById('sort-form');
       const sortSelect = document.getElementById('sort');
 
-      sortButton.addEventListener('click', function(e) {
-          e.stopPropagation();
-          sortDropdown.classList.toggle('show');
+      sortButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sortDropdown.classList.toggle('show');
       });
 
       sortOptions.forEach(option => {
-          option.addEventListener('click', function() {
-              const value = this.getAttribute('data-value');
-              const displayText = this.textContent;
+        option.addEventListener('click', function () {
+          const value = this.getAttribute('data-value');
+          const displayText = this.textContent;
 
-              sortDisplay.textContent = displayText;
-              sortSelect.value = value;
-              sortForm.submit();
-              sortDropdown.classList.remove('show');
-          });
+          sortDisplay.textContent = displayText;
+          sortSelect.value = value;
+          sortForm.submit();
+          sortDropdown.classList.remove('show');
+        });
       });
 
-      document.addEventListener('click', function(e) {
-          const sortContainer = e.target.closest('.sort-container');
-          if (!sortContainer) {
-              sortDropdown.classList.remove('show');
-          }
+      document.addEventListener('click', function (e) {
+        const sortContainer = e.target.closest('.sort-container');
+        if (!sortContainer) {
+          sortDropdown.classList.remove('show');
+        }
       });
-  });
+    });
 
-  function addToWishlist(productId) {
-        fetch(`/add-to-wishlist?id=${productId}`, {
-            method: 'POST'
-        })
+    function addToWishlist(productId) {
+      fetch(`/add-to-wishlist?id=${productId}`, {
+        method: 'POST'
+      })
         .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.error || err.message);
-                });
-            }
-            return response.json();
+          if (!response.ok) {
+            return response.json().then(err => {
+              throw new Error(err.error || err.message);
+            });
+          }
+          return response.json();
         })
         .then(data => {
-            Swal.fire({
-                icon: 'success',
-                title: data.message || 'Added to wishlist',
-                timer: 1200,
-                showConfirmButton: false,
-            });
+          Swal.fire({
+            icon: 'success',
+            title: data.message || 'Added to wishlist',
+            timer: 1200,
+            showConfirmButton: false,
+          });
         })
         .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops!',
-                text: error.message || 'Something went wrong',
-                timer: 1200,
-                showConfirmButton: false,
-            });
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: error.message || 'Something went wrong',
+            timer: 1200,
+            showConfirmButton: false,
+          });
         });
     }
-  
-</script>
 
-<%- include("../../views/partials/user/footer.ejs") %> 
+  </script>
+
+  <%- include("../../views/partials/user/footer.ejs") %>

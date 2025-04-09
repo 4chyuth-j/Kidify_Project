@@ -40,16 +40,10 @@ const cartSchema = new Schema({
         },
 
         
-        status: {
-            type: String, 
-            default: "placed", 
-        },
+       
 
         
-        cancellationReason: {
-            type: String, 
-            default: "none", 
-        }
+        
 
     }]
 },{timestamps:true});

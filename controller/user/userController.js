@@ -478,31 +478,56 @@ const filterProduct = async (req, res) => {
 
 const filterByPrice = async (req, res) => {
    try {
-
       const user = req.session.user;
       const userData = await User.findOne({ _id: user });
-      const productBrands = await Product.find({}).lean();
       const categories = await Category.find({ isListed: true }).lean();
 
       const sortOption = req.query.sort || 'new-arrivals';
 
-      const brands = [...new Set(productBrands.map(product => product.brand))];
+      const gt = parseInt(req.query.gt) || 0;
+      const lt = parseInt(req.query.lt) || Number.MAX_SAFE_INTEGER;
 
-      let findProducts = await Product.find({
-         basePrice: { $gt: req.query.gt, $lt: req.query.lt },
-         isBlocked: false,
-         stock: { $gt: 0 },
-      }).lean();
+      const pipeline = [
+         {
+            $addFields: {
+               discountedPrice: {
+                  $subtract: [
+                     "$basePrice",
+                     {
+                        $divide: [
+                           { $multiply: ["$basePrice", "$discountPercentage"] },
+                           100
+                        ]
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            $match: {
+               discountedPrice: { $gt: gt, $lt: lt },
+               isBlocked: false,
+               stock: { $gt: 0 }
+            }
+         },
+         {
+            $sort: { createdAt: -1 }
+         }
+      ];
 
-      findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const findProducts = await Product.aggregate(pipeline);
 
-      let itemsPerPage = 6;
-      let currentPage = parseInt(req.query.page) || 1;
-      let startIndex = (currentPage - 1) * itemsPerPage;
-      let endIndex = startIndex + itemsPerPage;
-      let totalPages = Math.ceil(findProducts.length / itemsPerPage);
+      const brands = [...new Set(findProducts.map(product => product.brand))];
+
+      const itemsPerPage = 6;
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalPages = Math.ceil(findProducts.length / itemsPerPage);
+
       const currentProduct = findProducts.slice(startIndex, endIndex);
       req.session.filteredProducts = findProducts;
+
       res.render("shop1", {
          user: userData,
          category: categories,
@@ -510,16 +535,16 @@ const filterByPrice = async (req, res) => {
          brand: brands,
          totalPages,
          currentPage,
-         sort: sortOption ||'new-arrivals',
-         productsFound:true,
-
+         sort: sortOption,
+         productsFound: true
       });
 
    } catch (error) {
-      console.log("something went wrong while filtering product price", error);
+      console.log("Something went wrong while filtering product price", error);
       res.redirect("/pageNotFound");
    }
 }
+
 
 const searchProducts = async (req, res) => {
    try {

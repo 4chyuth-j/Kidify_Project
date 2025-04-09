@@ -1,12 +1,6 @@
 const mongoose = require("mongoose"); // Importing the Mongoose library for MongoDB interactions
 const { Schema } = mongoose; // Extracting Schema from Mongoose
-const { v4: uuidv4 } = require('uuid'); // Importing UUID package for generating unique order IDs
-
-/* 
-   - UUID (Universally Unique Identifier) is used to generate unique order IDs.
-   - `v4` generates a random UUID.
-   - `{ v4: uuidv4 }` renames `v4` to `uuidv4` for easy use in the code.
-*/
+const { nanoid } = require('nanoid');
 
 
 const orderSchema = new Schema({
@@ -14,7 +8,7 @@ const orderSchema = new Schema({
     
     orderId: {
         type: String,
-        default: () => uuidv4(), 
+        default: () => `ORD-${nanoid(10)}`, 
         unique: true, 
     },
 
@@ -58,14 +52,15 @@ const orderSchema = new Schema({
     
     address: {
         type: Schema.Types.ObjectId,
-        ref: "User", 
+        ref: "Address",
         required: true,
-    },
+      },
 
     // Date when the invoice was generated
     invoiceDate: {
         type: Date,
-    },
+        default: Date.now
+      },
 
     status: {
         type: String,
@@ -79,6 +74,19 @@ const orderSchema = new Schema({
         type: Boolean,
         default: false,
     },
+
+
+    paymentMethod: {
+        type: String,
+        enum: ['COD', 'Online Payment', 'Wallet'],
+        required: true,
+      },
+      
+
+    cancellationReason: {
+        type: String,
+        default: ""
+      }
 
 },{timestamps:true});
 

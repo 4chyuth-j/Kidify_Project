@@ -109,6 +109,8 @@ router.post('/add-to-cart',userAuth,cartController.addToCart);
 
 router.get("/cart",userAuth,cartController.loadCart);
 
+router.post('/remove-from-cart',userAuth,cartController.removeCartProduct);
+
 
 
 

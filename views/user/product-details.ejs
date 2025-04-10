@@ -1,579 +1,694 @@
 <%- include("../../views/partials/user/header") %>
-<style>
-    :root {
-        --primary-color: #ff69b4;
-        --secondary-color: #f8c8dc;
-        --background-color: #ffe4e1;
-        --text-color: #333;
-        --accent-color: #d14792;
-    }
+    <style>
+        :root {
+            --primary-color: #ff69b4;
+            --secondary-color: #f8c8dc;
+            --background-color: #ffe4e1;
+            --text-color: #333;
+            --accent-color: #d14792;
+        }
 
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: var(--background-color);
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+        }
 
-    .breadcrumb {
-        background-color: var(--secondary-color);
-        padding: 15px;
-        font-size: 14px;
-        color: var(--text-color);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+        .breadcrumb {
+            background-color: var(--secondary-color);
+            padding: 15px;
+            font-size: 14px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .breadcrumb a {
-        color: var(--accent-color);
-        text-decoration: none;
-    }
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
 
-    .breadcrumb span {
-        color: #888;
-    }
+        .breadcrumb span {
+            color: #888;
+        }
 
-    .product-section {
-        padding: 50px 0;
-    }
+        .product-section {
+            padding: 50px 0;
+        }
 
-    .product-gallery {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative; /* For zoom positioning */
-    }
+        .product-gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            /* For zoom positioning */
+        }
 
-    .main-image {
-        width: 100%;
-        height: 450px;
-        object-fit: contain;
-        border-radius: 10px;
-    }
+        .main-image {
+            width: 100%;
+            height: 450px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
 
-    .thumbnail-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-    }
+        .thumbnail-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
 
-    .thumbnail-container img {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-        border-radius: 5px;
-        cursor: pointer;
-        margin: 0 5px;
-        border: 2px solid transparent;
-        transition: border-color 0.3s ease;
-    }
+        .thumbnail-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
 
-    .thumbnail-container img:hover {
-        border-color: var(--primary-color);
-    }
+        .thumbnail-container img:hover {
+            border-color: var(--primary-color);
+        }
 
-    /* Zoom styles */
-    .zoom-container {
-        position: absolute;
-        top: 0;
-        left: 100%; /* Right next to the image */
-        width: 300px;
-        height: 300px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #fff;
-        display: none; /* Hidden by default */
-        overflow: hidden;
-        z-index: 1000;
-        margin-left: 10px; /* Small gap from main image */
-    }
+        /* Zoom styles */
+        .zoom-container {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            /* Right next to the image */
+            width: 300px;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            display: none;
+            /* Hidden by default */
+            overflow: hidden;
+            z-index: 1000;
+            margin-left: 10px;
+            /* Small gap from main image */
+        }
 
-    .zoom-lens {
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid #ccc;
-        display: none; /* Hidden by default */
-        pointer-events: none; /* Prevents lens from interfering with mouse events */
-    }
+        .zoom-lens {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #ccc;
+            display: none;
+            /* Hidden by default */
+            pointer-events: none;
+            /* Prevents lens from interfering with mouse events */
+        }
 
-    .zoom-container.active {
-        display: block;
-    }
+        .zoom-container.active {
+            display: block;
+        }
 
-    .zoom-lens.active {
-        display: block;
-    }
+        .zoom-lens.active {
+            display: block;
+        }
 
-    .product-info {
-        padding: 20px;
-        background: #fff;
-        border-radius: 10px;
-        position: relative;
-    }
+        .product-info {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            position: relative;
+        }
 
-    .product-title {
-        color: var(--accent-color);
-        font-size: 24px;
-        margin-bottom: 10px;
-    }
+        .product-title {
+            color: var(--accent-color);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
 
-    .product-meta {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 10px;
-    }
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
 
-    .product-meta p {
-        margin: 0;
-    }
+        .product-meta p {
+            margin: 0;
+        }
 
-    .rating {
-        font-size: 16px;
-        color: gold;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+        .rating {
+            font-size: 16px;
+            color: gold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-    .product-price ins {
-        color: var(--accent-color);
-        font-size: 24px;
-        font-weight: bold;
-        text-decoration: none;
-    }
+        .product-price ins {
+            color: var(--accent-color);
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-    .old-price {
-        text-decoration: line-through;
-        color: #888;
-        margin-left: 10px;
-    }
+        .old-price {
+            text-decoration: line-through;
+            color: #888;
+            margin-left: 10px;
+        }
 
-    .stock-status {
-        color: green;
-        font-weight: bold;
-    }
+        .stock-status {
+            color: green;
+            font-weight: bold;
+        }
 
-    .quantity-selector {
-        display: flex;
-        align-items: center;
-        margin-top: 15px;
-    }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
 
-    .quantity-selector select {
-        padding: 5px;
-        font-size: 16px;
-        margin-left: 10px;
-    }
+        .quantity-selector select {
+            padding: 5px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
 
-    .button-add-to-cart {
-    margin-top: 15px;
-        background-color: var(--primary-color);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
+        .button-add-to-cart {
+            margin-top: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
 
-    .button-add-to-cart:hover {
-        background-color: var(--accent-color);
-    }
+        .button-add-to-cart:hover {
+            background-color: var(--accent-color);
+        }
 
-    .warranty-section {
-        background-color: var(--secondary-color);
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        margin-top: 20px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-around; /* Fixed syntax error */
-        align-items: center;
-    }
+        .warranty-section {
+            background-color: var(--secondary-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-around;
+            /* Fixed syntax error */
+            align-items: center;
+        }
 
-    .coupon-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: var(--secondary-color);
-        padding: 10px;
-        border-radius: 10px;
-        margin-top: 20px;
-        font-weight: bold;
-    }
+        .coupon-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--secondary-color);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
 
-    .coupon-dropdown select {
-        padding: 10px;
-        border-radius: 5px;
-        border: 2px solid var(--accent-color);
-        font-size: 16px;
-        cursor: pointer;
-        margin-left: auto;
-    }
+        .coupon-dropdown select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid var(--accent-color);
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: auto;
+        }
 
-    /* Related Products Styles */
-    .related-products {
-        margin-top: 60px;
-        padding: 30px 0;
-        background-color: #fff;
-        border-radius: 10px;
-    }
+        /* Related Products Styles */
+        .related-products {
+            margin-top: 60px;
+            padding: 30px 0;
+            background-color: #fff;
+            border-radius: 10px;
+        }
 
-    .filter__controls {
-        display: flex;
-        justify-content: center;
-        padding: 0;
-        margin-bottom: 30px;
-        list-style: none;
-    }
+        .filter__controls {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin-bottom: 30px;
+            list-style: none;
+        }
 
-    .filter__controls li {
-        font-size: 18px;
-        color: var(--accent-color);
-        font-weight: bold;
-        cursor: pointer;
-        padding: 5px 20px;
-        position: relative;
-    }
+        .filter__controls li {
+            font-size: 18px;
+            color: var(--accent-color);
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 20px;
+            position: relative;
+        }
 
-    .filter__controls li::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background-color: var(--primary-color);
-        transition: width 0.3s ease;
-    }
+        .filter__controls li::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
 
-    .filter__controls li:hover::after,
-    .filter__controls li.active::after {
-        width: 70%;
-    }
+        .filter__controls li:hover::after,
+        .filter__controls li.active::after {
+            width: 70%;
+        }
 
-    .product__filter {
-        margin-top: 20px;
-    }
+        .product__filter {
+            margin-top: 20px;
+        }
 
-    .product-cart-wrap {
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 30px;
-    }
+        .product-cart-wrap {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
 
-    .product-cart-wrap:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
+        .product-cart-wrap:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    .product-img-action-wrap {
-        position: relative;
-    }
+        .product-img-action-wrap {
+            position: relative;
+        }
 
-    .product-img-zoom {
-        overflow: hidden;
-        border-radius: 10px 10px 0 0;
-    }
+        .product-img-zoom {
+            overflow: hidden;
+            border-radius: 10px 10px 0 0;
+        }
 
-    .product-img-zoom img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
+        .product-img-zoom img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
 
-    .product-img-zoom:hover img {
-        transform: scale(1.1);
-    }
+        .product-img-zoom:hover img {
+            transform: scale(1.1);
+        }
 
-    .wishlist-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: rgba(255, 255, 255, 0.7);
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent-color);
-        transition: all 0.3s ease;
-    }
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
 
-    .wishlist-btn:hover {
-        background-color: var(--primary-color);
-        color: white;
-    }
+        .wishlist-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
 
-    .product-content-wrap {
-        padding: 15px;
-        text-align: center;
-    }
+        .product-content-wrap {
+            padding: 15px;
+            text-align: center;
+        }
 
-    .product-content-wrap h6 {
-        font-size: 14px;
-        margin-bottom: 10px;
-        color: var(--text-color);
-        height: 40px;
-        overflow: hidden;
-    }
+        .product-content-wrap h6 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            height: 40px;
+            overflow: hidden;
+        }
 
-    .product-content-wrap h5 {
-        color: var(--accent-color);
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
+        .product-content-wrap h5 {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
 
-    .product-content-wrap a {
-        display: inline-block;
-        background-color: var(--primary-color);
-        color: white;
-        padding: 8px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background 0.3s ease;
-    }
+        .product-content-wrap span {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
 
-    .product-content-wrap a:hover {
-        background-color: var(--accent-color);
-    }
-</style>
-<main class="product-section">
-    <div class="container">
-        <div class="breadcrumb-wrap">
-            <div class="breadcrumb">
-                <a href="/">Home</a>
-                <span>></span>
-                <a href="/shop">Shop</a>
-                <span>></span>
-                <span>Product Details</span>
+        .product-content-wrap span:hover {
+            cursor: pointer;
+            background-color: var(--accent-color);
+        }
+    </style>
+    <main class="product-section">
+        <div class="container">
+            <div class="breadcrumb-wrap">
+                <div class="breadcrumb">
+                    <a href="/">Home</a>
+                    <span>></span>
+                    <a href="/shop">Shop</a>
+                    <span>></span>
+                    <span>Product Details</span>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="product-gallery">
-                    <img id="mainImage" class="main-image" src="/uploads/re-image/<%=product.productImage[0]%>" alt="Product Image">
-                    <div id="zoomLens" class="zoom-lens"></div>
-                    <div id="zoomContainer" class="zoom-container" style="background-image: url('/uploads/re-image/<%=product.productImage[0]%>');"></div>
-                    <div class="thumbnail-container">
-                        <% for(let i=0; i<product.productImage.length; i++) { %>
-                            <img class="thumbnail" src="/uploads/re-image/<%=product.productImage[i]%>" alt="Thumbnail" onclick="changeImage('<%=product.productImage[i]%>')">
-                        <% } %>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="product-gallery">
+                        <img id="mainImage" class="main-image" src="/uploads/re-image/<%=product.productImage[0]%>"
+                            alt="Product Image">
+                        <div id="zoomLens" class="zoom-lens"></div>
+                        <div id="zoomContainer" class="zoom-container"
+                            style="background-image: url('/uploads/re-image/<%=product.productImage[0]%>');"></div>
+                        <div class="thumbnail-container">
+                            <% for(let i=0; i<product.productImage.length; i++) { %>
+                                <img class="thumbnail" src="/uploads/re-image/<%=product.productImage[i]%>"
+                                    alt="Thumbnail" onclick="changeImage('<%=product.productImage[i]%>')">
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="product-info">
+                        <h2 class="product-title">
+                            <%=product.productName%>
+                        </h2>
+                        <div class="product-meta">
+                            <p>Brand: <%=product.brand%>
+                            </p>
+                            <div class="rating"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                    class="bi bi-star-half"></i> (4.5/5)</div>
+                        </div>
+                        <div class="product-price">
+                            <% if (productOffer && productOffer !=0) { const discountAmount=(product.basePrice *
+                                productOffer) / 100; const discountedPrice=product.basePrice - discountAmount; %>
+                                <ins>
+                                    <%= discountedPrice.toFixed(0) %>/-
+                                </ins>
+                                <span class="old-price">
+                                    <%= product.basePrice %>/-
+                                </span>
+                                <span style="color: #ff0000; margin-left: 10px;">
+                                    <%= productOffer %>% off
+                                </span>
+                                <% } else { %>
+                                    <ins>
+                                        <%= product.basePrice %>/-
+                                    </ins>
+                                    <span>No Current Offer</span>
+                                    <% } %>
+                        </div>
+
+                        <p>Availability: <span class="stock-status">
+                                <%=stock%>
+                            </span></p>
+                        <p>
+                            <%=product.description%>
+                        </p>
+                        <input type="hidden" id="productId" value="<%=product._id%>">
+                        <div class="quantity-selector">
+                            <label for="quantity">Quantity:</label>
+                            <select id="quantity">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <div class="warranty-section">
+                            <i class="bi bi-shield-check"></i> 1 Year Brand Warranty
+                            <i class="bi bi-arrow-repeat"></i> 30 Day Return Policy
+                            <i class="bi bi-cash"></i> Cash on Delivery Available
+                        </div>
+                        <button class="button-add-to-cart" id="addToCartBtn">Add to Cart</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="product-info">
-                    <h2 class="product-title"><%=product.productName%></h2>
-                    <div class="product-meta">
-                        <p>Brand: <%=product.brand%></p>
-                        <div class="rating"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i> (4.5/5)</div>
+
+            <!-- Related Products Section -->
+            <div class="related-products">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="filter__controls">
+                                <li data-filter=".new-arrivals">You May Also Like</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="product-price">
-                        <% if (productOffer && productOffer != 0) { 
-                            const discountAmount = (product.basePrice * productOffer) / 100;
-                            const discountedPrice = product.basePrice - discountAmount;
-                        %>
-                            <ins><%= discountedPrice.toFixed(0) %>/-</ins>
-                            <span class="old-price"><%= product.basePrice %>/-</span>
-                            <span style="color: #ff0000; margin-left: 10px;"><%= productOffer %>% off</span>
-                        <% } else { %>
-                            <ins><%= product.basePrice %>/-</ins>
-                            <span>No Current Offer</span>
-                        <% } %>
-                    </div>
-                    
-                    <p>Availability: <span class="stock-status"><%=stock%></span></p>
-                    <p><%=product.description%></p>
-                    <input type="hidden" id="productId" value="<%=product._id%>">
-                    <div class="quantity-selector">
-                        <label for="quantity">Quantity:</label>
-                        <select id="quantity">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-                    
-                    <div class="warranty-section">
-                        <i class="bi bi-shield-check"></i> 1 Year Brand Warranty
-                        <i class="bi bi-arrow-repeat"></i> 30 Day Return Policy
-                        <i class="bi bi-cash"></i> Cash on Delivery Available
-                    </div>
-                    <button class="button-add-to-cart" id="addToCartBtn">Add to Cart</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Related Products Section -->
-        <div class="related-products">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <ul class="filter__controls">
-                            <li data-filter=".new-arrivals">You May Also Like</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row product__filter">
-                    <% for(let i=0; i<products.length; i++) {%>
-                        <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                            <div class="product-cart-wrap mb-30">
-                                <div class="product-img-action-wrap">
-                                    <div class="product-img product-img-zoom">
-                                        <a href="/productDetails?id=<%=products[i]._id%>">
-                                            <img class="default-img"
-                                                src="/uploads/re-image/<%=products[i].productImage[0]%>"
-                                                alt="<%=products[i].productName%>">
-                                        </a>
+                    <div class="row product__filter">
+                        <% for(let i=0; i<products.length; i++) {%>
+                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                <div class="product-cart-wrap mb-30">
+                                    <div class="product-img-action-wrap">
+                                        <div class="product-img product-img-zoom">
+                                            <a href="/productDetails?id=<%=products[i]._id%>">
+                                                <img class="default-img"
+                                                    src="/uploads/re-image/<%=products[i].productImage[0]%>"
+                                                    alt="<%=products[i].productName%>">
+                                            </a>
+                                        </div>
+                                        <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                                            <i class="bi bi-heart-fill"></i>
+                                        </span>
+
                                     </div>
-                                    <a href="/addToWishlist?id=<%=products[i]._id%>" class="wishlist-btn">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
 
 
-                                <div class="product-content-wrap">
-                                    <h6 title="<%= products[i].productName %>">
-                                        <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 45) +
-                                            "..." : products[i].productName %>
-                                    </h6>
-                                    <h5>₹<%=products[i].basePrice%>
-                                    </h5>
-                                    <a href="/addToCart?id=<%=products[i]._id%>">Add to cart</a>
+                                    <div class="product-content-wrap">
+                                        <h6 title="<%= products[i].productName %>">
+                                            <%= products[i].productName.length> 20 ?
+                                                products[i].productName.substring(0, 45) +
+                                                "..." : products[i].productName %>
+                                        </h6>
+                                        <!-- <h5>₹<%=products[i].basePrice%>
+                                    </h5> -->
+
+
+                                        <h5>
+                                            <% const discount=(products[i].basePrice * products[i].discountPercentage) /
+                                                100; const discountedPrice=products[i].basePrice - discount; %>
+
+                                                ₹<%= discountedPrice.toFixed(0) %>
+
+                                        </h5>
+
+
+
+                                        <!-- <a href="/addToCart?id=<%=products[i]._id%>">Add to cart</a> -->
+                                        <span onclick="addToCart('<%= products[i]._id %>',1)">Add to cart</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <%}%>
+                            <%}%>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    function changeImage(imageSrc) {
+    <script>
+        function changeImage(imageSrc) {
+            const mainImage = document.getElementById('mainImage');
+            const zoomContainer = document.getElementById('zoomContainer');
+            mainImage.src = '/uploads/re-image/' + imageSrc;
+            zoomContainer.style.backgroundImage = "url('/uploads/re-image/" + imageSrc + "')";
+        }
+
+        // Image zoom functionality
         const mainImage = document.getElementById('mainImage');
         const zoomContainer = document.getElementById('zoomContainer');
-        mainImage.src = '/uploads/re-image/' + imageSrc;
-        zoomContainer.style.backgroundImage = "url('/uploads/re-image/" + imageSrc + "')";
-    }
+        const zoomLens = document.getElementById('zoomLens');
 
-    // Image zoom functionality
-    const mainImage = document.getElementById('mainImage');
-    const zoomContainer = document.getElementById('zoomContainer');
-    const zoomLens = document.getElementById('zoomLens');
+        let isZooming = false;
 
-    let isZooming = false;
+        mainImage.addEventListener('mouseenter', function () {
+            isZooming = true;
+            zoomContainer.classList.add('active');
+            zoomLens.classList.add('active');
+        });
 
-    mainImage.addEventListener('mouseenter', function() {
-        isZooming = true;
-        zoomContainer.classList.add('active');
-        zoomLens.classList.add('active');
-    });
+        mainImage.addEventListener('mouseleave', function () {
+            isZooming = false;
+            zoomContainer.classList.remove('active');
+            zoomLens.classList.remove('active');
+        });
 
-    mainImage.addEventListener('mouseleave', function() {
-        isZooming = false;
-        zoomContainer.classList.remove('active');
-        zoomLens.classList.remove('active');
-    });
+        mainImage.addEventListener('mousemove', function (e) {
+            if (!isZooming) return; // Prevent updates when not zooming
 
-    mainImage.addEventListener('mousemove', function(e) {
-        if (!isZooming) return; // Prevent updates when not zooming
+            const rect = mainImage.getBoundingClientRect();
+            const lensWidth = zoomLens.offsetWidth;
+            const lensHeight = zoomLens.offsetHeight;
 
-        const rect = mainImage.getBoundingClientRect();
-        const lensWidth = zoomLens.offsetWidth;
-        const lensHeight = zoomLens.offsetHeight;
+            // Mouse position relative to the image
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
 
-        // Mouse position relative to the image
-        let x = e.clientX - rect.left;
-        let y = e.clientY - rect.top;
+            // Position the lens
+            let lensX = x - lensWidth / 2;
+            let lensY = y - lensHeight / 2;
 
-        // Position the lens
-        let lensX = x - lensWidth / 2;
-        let lensY = y - lensHeight / 2;
+            // Keep lens within image bounds
+            lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth));
+            lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight));
 
-        // Keep lens within image bounds
-        lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth));
-        lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight));
+            zoomLens.style.left = lensX + 'px';
+            zoomLens.style.top = lensY + 'px';
 
-        zoomLens.style.left = lensX + 'px';
-        zoomLens.style.top = lensY + 'px';
+            // Zoom settings
+            const zoomRatio = 2; // 2x zoom, adjust as needed
+            const zoomWidth = rect.width * zoomRatio;
+            const zoomHeight = rect.height * zoomRatio;
 
-        // Zoom settings
-        const zoomRatio = 2; // 2x zoom, adjust as needed
-        const zoomWidth = rect.width * zoomRatio;
-        const zoomHeight = rect.height * zoomRatio;
+            // Set zoom container background size
+            zoomContainer.style.backgroundSize = `${zoomWidth}px ${zoomHeight}px`;
 
-        // Set zoom container background size
-        zoomContainer.style.backgroundSize = `${zoomWidth}px ${zoomHeight}px`;
-
-        // Calculate background position
-        const bgX = (lensX / (rect.width - lensWidth)) * (zoomWidth - zoomContainer.offsetWidth);
-        const bgY = (lensY / (rect.height - lensHeight)) * (zoomHeight - zoomContainer.offsetHeight);
-        zoomContainer.style.backgroundPosition = `-${bgX}px -${bgY}px`;
-    });
+            // Calculate background position
+            const bgX = (lensX / (rect.width - lensWidth)) * (zoomWidth - zoomContainer.offsetWidth);
+            const bgY = (lensY / (rect.height - lensHeight)) * (zoomHeight - zoomContainer.offsetHeight);
+            zoomContainer.style.backgroundPosition = `-${bgX}px -${bgY}px`;
+        });
 
 
 
 
 
-    document.getElementById('addToCartBtn').addEventListener('click', async function (e) {
-    e.preventDefault();
+        document.getElementById('addToCartBtn').addEventListener('click', async function (e) {
+            e.preventDefault();
 
-    const productId = document.getElementById('productId').value;
-    const quantity = document.getElementById('quantity').value;
+            const productId = document.getElementById('productId').value;
+            const quantity = document.getElementById('quantity').value;
 
-    fetch('/add-to-cart', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ productId, quantity }),
-})
-  .then(response => {
-    if (!response.ok) {
-      return response.json().then(err => {
-        throw new Error(err.message || err.error || 'Something went wrong');
-      });
-    }
-    return response.json();
-  })
-  .then(data => {
-    Swal.fire({
-      icon: 'success',
-      title: data.message || 'Added to cart!',
-      timer: 1200,
-      showConfirmButton: false,
-    }).then(() => {
-      location.reload();
-    });
-  })
-  .catch(error => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops!',
-      text: error.message || 'Failed to add product to cart.',
-      timer: 1500,
-      showConfirmButton: false,
-    });
-  });
-
-});
+            fetch('/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, quantity }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || err.error || 'Something went wrong');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Added to cart!',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: error.message || 'Failed to add product to cart.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                });
 
 
 
-</script>
-<%- include("../../views/partials/user/footer") %>
+
+        });
+
+        function addToWishlist(productId) {
+            fetch(`/add-to-wishlist?id=${productId}`, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || err.message);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Added to wishlist',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: error.message || 'Something went wrong',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    });
+                });
+        }
+
+        function addToCart(productId, quantity) {
+
+            fetch('/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, quantity }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || err.error || 'Something went wrong');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Added to cart!',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: error.message || 'Failed to add product to cart.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                });
+
+        }
+
+
+
+    </script>
+    <%- include("../../views/partials/user/footer") %>

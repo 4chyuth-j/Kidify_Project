@@ -448,7 +448,7 @@
 
 
                 </a>
-                <button class="add-to-cart-btn">Add to Cart</button>
+                <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>',1)">Add to Cart</button>
               </div>
               <% } %>
                 <% } else { %>
@@ -540,6 +540,47 @@
           });
         });
     }
+
+    function addToCart(productId, quantity) {
+
+      fetch('/add-to-cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId, quantity }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(err => {
+              throw new Error(err.message || err.error || 'Something went wrong');
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          Swal.fire({
+            icon: 'success',
+            title: data.message || 'Added to cart!',
+            timer: 1200,
+            showConfirmButton: false,
+          }).then(() => {
+            location.reload();
+          });
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: error.message || 'Failed to add product to cart.',
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        });
+
+    }
+
+
 
   </script>
 

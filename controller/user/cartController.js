@@ -214,7 +214,7 @@ const updateCartQuantityCount = async (req, res) => {
             return res.status(404).json({ success: false, message: "Cart not found" });
         }
 
-        // ✅ Find index using cartItemId (not productId)
+        
         const productIndex = userCart.items.findIndex(item =>
             item._id.toString() === cartItemId.toString()
         );
@@ -223,7 +223,7 @@ const updateCartQuantityCount = async (req, res) => {
             return res.status(404).json({ success: false, message: "Cart item not found" });
         }
 
-        // ✅ Update quantity and total price
+        
         userCart.items[productIndex].quantity = quantity;
         userCart.items[productIndex].totalPrice =
             userCart.items[productIndex].price * quantity;

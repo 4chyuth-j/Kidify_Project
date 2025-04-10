@@ -34,17 +34,43 @@
     }
 
     .quantity-btn {
-        border: 1px solid #ddd;
-        background-color: white;
-        padding: 5px;
+        border: none;
+        background-color: #d14792;
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
         cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 5px;
     }
+    .quantity-btn:hover {
+        background-color: #b5367a;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+    }
+
 
     .quantity-input {
         width: 40px;
         text-align: center;
         border: none;
         background-color: #ffebf0;
+        appearance: textfield; 
+    }
+
+     /* Remove spinner arrows for Chrome, Safari, Edge, Opera */
+     .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 
     .remove-btn {
@@ -145,20 +171,18 @@
                         <% const product = item.productId; %>
                         <% const discount = (product.basePrice * product.discountPercentage) / 100; %>
                         <% const discountedPrice = product.basePrice - discount; %>
-                        <tr>
+                        <tr data-product-id="<%= item._id %>">
                             <td>
                                 <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                                <!-- <%= product.productName %> -->
-                                <%= product.productName.length> 45 ? product.productName.substring(0, 50) + "..." :
-                                product.productName %>
+                                <%= product.productName.length > 45 ? product.productName.substring(0, 50) + "..." : product.productName %>
                             </td>
-                            <!-- <td>XL</td>  -->
-                            <!-- Adjust if size is dynamic from variants -->
                             <td>₹<%= discountedPrice.toFixed(0) %></td>
                             <td>
-                                <button class="quantity-btn">-</button>
-                                <input type="number" class="quantity-input" value="<%= item.quantity %>" min="1">
-                                <button class="quantity-btn">+</button>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn decrease-btn" data-product-id="<%= item._id %>">-</button>
+                                    <input type="number" class="quantity-input" value="<%= item.quantity %>" min="1" readonly>
+                                    <button class="quantity-btn increase-btn" data-product-id="<%= item._id %>">+</button>
+                                </div>
                             </td>
                             <td>₹<%= item.totalPrice.toFixed(0) %></td>
                             <td><button class="remove-btn" onclick="removeFromCart('<%= item._id %>')">Remove</button></td>
@@ -193,8 +217,111 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Function to handle quantity change
+    function handleQuantityChange(cartItemId, isIncrease) {
+        const row = document.querySelector(`tr[data-product-id="${cartItemId}"]`);
+        const input = row.querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        const newValue = isIncrease ? value + 1 : Math.max(1, value - 1);
+
+        // Check maximum quantity limit of 3
+        if (isIncrease && newValue > 3) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Quantity Limit Reached',
+                text: 'You can only add up to 3 items of this product!',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+            return;
+        }
+
+        fetch(`/get-product-stock?id=${cartItemId}`)
+            .then(response => response.json())
+            .then(data => {
+                const stockLimit = data.stock; // API returns { stock: number }
+                
+                if (newValue > stockLimit) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Stock Limit Exceeded',
+                        text: `Only ${stockLimit} items available in stock!`,
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                } else {
+                    input.value = newValue;
+                    //API call to update cart quantity 
+                    updateCartQuantity(cartItemId, newValue);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking stock:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to check stock availability',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            });
+    }
+
+    // Add event listeners for decrease buttons
+    document.querySelectorAll('.decrease-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const cartItemId = button.getAttribute('data-product-id');
+            handleQuantityChange(cartItemId, false);
+        });
+    });
+
+    // Add event listeners for increase buttons
+    document.querySelectorAll('.increase-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const cartItemId = button.getAttribute('data-product-id');
+            handleQuantityChange(cartItemId, true);
+        });
+    });
+
+    function updateCartQuantity(cartItemId, quantity) {
+        console.log(`Updating cart: cartItemId=${cartItemId}, quantity=${quantity}`);
+        fetch(`/update-cart-quantity`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cartItemId, quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Quantity of product updated in cart");
+                location.reload(); 
+            } else {
+                console.error('Update failed:', data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: data.message || 'Failed to update cart',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error updating cart:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to update cart',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        });
+    }
+
     function removeFromCart(itemId) {
-        console.log("front end itemID:",itemId);
+        console.log("front end itemID:", itemId);
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to remove this product from your cart?',
@@ -237,67 +364,6 @@
                     });
                 });
             }
-        });
-    }
-
-    // Updated quantity update logic with stock checking
-    document.querySelectorAll('.quantity disorder-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const input = button.parentElement.querySelector('.quantity-input');
-            const row = button.closest('tr');
-            const productId = row.querySelector('.remove-btn').getAttribute('onclick').match(/'(.*?)'/)[1];
-            let value = parseInt(input.value);
-            const newValue = button.textContent === '-' ? Math.max(1, value - 1) : value + 1;
-
-            // Fetch stock information
-            fetch(`/get-product-stock?id=${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const stockLimit = data.stock; // Assuming the API returns { stock: number }
-                    
-                    if (newValue > stockLimit) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Stock Limit Exceeded',
-                            text: `Only ${stockLimit} items available in stock!`,
-                            timer: 2000,
-                            showConfirmButton: false,
-                        });
-                    } else {
-                        input.value = newValue;
-                        // Add API call to update cart quantity here
-                        updateCartQuantity(productId, newValue);
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to check stock availability',
-                        timer: 2000,
-                        showConfirmButton: false,
-                    });
-                });
-        });
-    });
-
-    // Function to update cart quantity
-    function updateCartQuantity(productId, quantity) {
-        fetch(`/update-cart-quantity`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: productId, quantity: quantity })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload(); // Refresh to update totals
-            }
-        })
-        .catch(error => {
-            console.error('Error updating cart:', error);
         });
     }
 </script>

@@ -1,6 +1,7 @@
 const User = require("../../model/userSchema");
 const Product = require("../../model/productSchema");
 const Wishlist = require("../../model/wishlistSchema");
+const Cart = require("../../model/cartSchema");
 
 
 
@@ -31,6 +32,16 @@ const addToWishlist = async (req,res)=>{
     try {
         const userId = req.session.user;
         const productId = req.query.id;
+
+        const userCart = await Cart.findOne({userId});
+        
+        const productInCart = userCart?.items.find(item=>{
+            return item.productId.toString()===productId.toString()
+        });
+
+        if(productInCart){
+            return res.status(200).json({message:"Product is already present in the Cart"});
+        }
 
         const userWishlist = await Wishlist.findOne({userId:userId});
         if(!userWishlist){

@@ -111,6 +111,10 @@ router.get("/cart",userAuth,cartController.loadCart);
 
 router.post('/remove-from-cart',userAuth,cartController.removeCartProduct);
 
+router.get('/get-product-stock',userAuth,cartController.getProductStock);
+
+router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantityCount);
+
 
 
 

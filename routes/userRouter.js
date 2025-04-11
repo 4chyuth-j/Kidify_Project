@@ -6,6 +6,7 @@ const productController = require('../controller/user/productController.js');
 const profileManagement = require('../controller/user/profileManagement.js');
 const wishlistController = require('../controller/user/wishlistController.js');
 const cartController = require('../controller/user/cartController.js');
+const checkoutController = require('../controller/user/checkoutController.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -53,7 +54,9 @@ router.get("/shop",userAuth,userController.loadShopingPage);
 
 // shopping page filter
 router.get("/filter",userAuth,userController.filterProduct);
+
 router.get("/filterPrice",userAuth,userController.filterByPrice);
+
 router.post("/search",userAuth,userController.searchProducts);
 
 // product details page
@@ -114,6 +117,12 @@ router.post('/remove-from-cart',userAuth,cartController.removeCartProduct);
 router.get('/get-product-stock',userAuth,cartController.getProductStock);
 
 router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantityCount);
+
+// checkout management
+
+router.get('/checkout',userAuth,checkoutController.loadCheckout);
+
+router.post('/place-order',userAuth,checkoutController.placeOrder);
 
 
 

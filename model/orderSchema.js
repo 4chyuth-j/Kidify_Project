@@ -4,16 +4,21 @@ const { nanoid } = require('nanoid');
 
 
 const orderSchema = new Schema({
-    
-    
+
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+
     orderId: {
         type: String,
-        default: () => `ORD-${nanoid(10)}`, 
-        unique: true, 
+        default: () => `ORD-${nanoid(10)}`,
+        unique: true,
     },
 
     orderedItems: [{
-        
+
         product: {
             type: Schema.Types.ObjectId,
             ref: "Product",
@@ -29,6 +34,11 @@ const orderSchema = new Schema({
             type: Number,
             default: 0,
         },
+
+        returnedAt: {
+            type: Date,
+            default: null
+        }
     }],
 
     // Total price before applying any discounts
@@ -49,26 +59,50 @@ const orderSchema = new Schema({
         required: true,
     },
 
-    
-    address: {
-        type: Schema.Types.ObjectId,
-        ref: "Address",
+    /*Because a user might edit or delete their address later.
+    But your order invoice should keep the original delivery address as it was.*/
+
+    deliveryAddress: {
+        type: Object, // We'll store the actual selected address object here
         required: true,
-      },
+    },
+    
 
     // Date when the invoice was generated
     invoiceDate: {
         type: Date,
         default: Date.now
-      },
-
-    status: {
+    },
+    
+    paymentMethod: {
         type: String,
+        enum: ['COD', 'ONLINE', 'Wallet'],
         required: true,
-        enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"],
+    },
+    
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Paid', 'Failed', 'Refunded'],
+        default: 'Pending'
     },
 
-   
+    orderStatus: {
+        type: String,
+        enum: ['Placed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'],
+        default: 'Placed'
+    },
+
+    expectedDeliveryDate: {
+        type: Date,
+        default: () => {
+            const now = new Date();
+            now.setDate(now.getDate() + 7);
+            return now;
+        }
+    },
+    
+
+
 
     couponApplied: {
         type: Boolean,
@@ -76,19 +110,21 @@ const orderSchema = new Schema({
     },
 
 
-    paymentMethod: {
-        type: String,
-        enum: ['COD', 'Online Payment', 'Wallet'],
-        required: true,
-      },
-      
+
 
     cancellationReason: {
         type: String,
         default: ""
-      }
+    },
 
-},{timestamps:true});
+    deliveredAt: {
+        type: Date,
+        default: null
+    },
+
+
+
+}, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 

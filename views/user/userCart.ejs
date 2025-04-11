@@ -209,7 +209,7 @@
                 <p>Shipping: Free</p>
                 <p>Coupon Code: <span style="color: #888;">Not Applied</span></p>
                 <p>Total: ₹<span id="total"><%= cart ? cart.items.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(0) : '0.00' %></span></p>
-                <button>Proceed to Checkout</button>
+                <button onclick="window.location.href='/checkout'">Proceed to Checkout</button>
             </div>
         </div>
     </section>

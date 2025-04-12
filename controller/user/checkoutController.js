@@ -99,7 +99,7 @@ const placeOrder = async (req,res)=>{
                 product:item.productId ,
                 quantity:item.quantity ,
                 price:item.price,
-                returnedAt:null,
+            
             })),
             totalPrice:totalPrice,
             finalAmount:totalPrice,
@@ -150,6 +150,28 @@ const placeOrder = async (req,res)=>{
 
 
 
+const loadOrderSuccess = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        const orderId = req.query.id;
+
+        const userData = await User.findById(userId);
+
+        if (!userData) {
+            return res.redirect('/login');
+        }
+
+        const orderData = await Order.findById(orderId);
+        if(!orderData){
+            console.log("Failed to find orderData in db");
+        }
+
+        res.render("order-success",{user:userData,order:orderData});
+
+    } catch (error) {
+        
+    }
+}
 
 
 
@@ -165,4 +187,5 @@ const placeOrder = async (req,res)=>{
 module.exports ={
     loadCheckout,
     placeOrder,
+    loadOrderSuccess,
 }

@@ -1,0 +1,80 @@
+<%- include("../../views/partials/user/header.ejs") %>
+
+<style>
+    .order-status-container {
+        padding: 20px 10px;
+        margin-left: 200px;
+    }
+
+    .text-pink {
+        color: #ff80ab;
+    }
+
+    .continue-btn {
+        background-color: #5c4dbd;
+        border-color: #5c4dbd;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .continue-btn:hover {
+        background-color: #4a3da9;
+        border-color: #4a3da9;
+    }
+
+    .view-btn {
+        background-color: white;
+        border-color: #5c4dbd;
+        color: #5c4dbd;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+        background-color: #f0f0ff;
+    }
+
+    .order-success-image {
+       
+        height:400px;
+        margin-left: -200px;
+    }
+
+    .success-message {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row g-0"> 
+        <div class="col-md-6 p-0"> 
+            <div class="order-status-container px-3">
+                <b><h2 class="mb-4">Order Status</h2></b>
+                <div class="success-message">
+                    <h2 class="text-pink">Congratulations..!</h2>
+                    <p class="mt-3">Your order is placed ;)</p>
+
+                    <% if (order && order.expectedDeliveryDate) { %>
+                        <p>Item will be delivered on <%= new Date(order.expectedDeliveryDate).toLocaleDateString('en-US', {day: 'numeric', month: 'long', year: 'numeric'}) %></p>
+                        
+                        <div class="action-buttons mt-4">
+                            <a href="/shop" class="btn btn-primary continue-btn">Continue Shopping</a>
+                            <a href="/orders" class="btn btn-outline-primary view-btn">View orders</a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 p-0 d-flex justify-content-center align-items-center"> <!-- Remove padding on the image column -->
+            <img src="/images/happy-baby-animate.svg" alt="Order Success Illustration" class="img-fluid order-success-image">
+        </div>
+    </div>
+</div>
+
+<%- include("../../views/partials/user/footer.ejs") %>

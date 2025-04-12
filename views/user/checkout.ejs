@@ -350,7 +350,7 @@
                                     <td class="quantity">
                                         <%= item.quantity %>
                                     </td>
-                                    <td>$<%= item.totalPrice.toFixed(2) %>
+                                    <td>₹<%= item.totalPrice.toFixed(2) %>
                                     </td>
                                 </tr>
                                 <% }); %>
@@ -372,18 +372,18 @@
                 totalAmount = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
                 }
                 %>
-                <p>Price (<%= totalItems %> items) <span>$<%= totalAmount.toFixed(2) %></span></p>
+                <p>Price (<%= totalItems %> items) <span>₹<%= totalAmount.toFixed(2) %></span></p>
 
                 <p>Delivery charge <span>Free</span></p>
 
                 <p>Available Coupon <span>
                         <select id="couponSelect">
                             <option value="">Select Available Coupon</option>
-                            <option value="DISCOUNT10">10% Off - Min. order: $200</option>
-                            <option value="DISCOUNT20">20% Off - Min. order: $500</option>
+                            <option value="DISCOUNT10">10% Off - Min. order: ₹200</option>
+                            <option value="DISCOUNT20">20% Off - Min. order: ₹500</option>
                         </select>
                     </span></p>
-                <p>Total <span id="orderTotal">$<%= totalAmount.toFixed(2) %></span></p>
+                <p>Total <span id="orderTotal">₹<%= totalAmount.toFixed(2) %></span></p>
 
                 <!-- Payment Method Selection -->
                 <div class="payment-methods">

@@ -35,10 +35,17 @@ const orderSchema = new Schema({
             default: 0,
         },
 
-        returnedAt: {
-            type: Date,
-            default: null
-        }
+        returnedAt: { type: Date, default: null },
+
+        returnStatus: { type: String, enum: ['None', 'Pending', 'Approved', 'Rejected'], default: 'None' },
+
+        returnReason: { type: String, default: '' },
+
+        cancelled: { type: Boolean, default: false },
+
+        cancelledAt: { type: Date, default: null },
+        
+        cancelReason: { type: String, default: '' }
     }],
 
     // Total price before applying any discounts

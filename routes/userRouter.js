@@ -124,6 +124,8 @@ router.get('/checkout',userAuth,checkoutController.loadCheckout);
 
 router.post('/place-order',userAuth,checkoutController.placeOrder);
 
+router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
+
 
 
 

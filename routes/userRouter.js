@@ -133,6 +133,8 @@ router.get('/orders',userAuth,orderController.loadOrders);
 
 router.get('/order-details',userAuth,orderController.loadOrderDetails);
 
+router.get('/download-invoice',userAuth,orderController.downloadInvoice);
+
 
 
 

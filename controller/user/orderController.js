@@ -6,6 +6,10 @@ const Address = require("../../model/addressSchema");
 const Order = require("../../model/orderSchema");
 const Coupon = require("../../model/couponSchema");
 
+const { generateInvoice } = require('../../helpers/pdfHelper');
+const path = require('path');
+const fs = require('fs-extra');
+
 
 
 const loadOrders = async (req, res) => {
@@ -78,10 +82,69 @@ const loadOrderDetails = async (req,res)=>{
 
 
 
+const downloadInvoice = async (req, res) => {
+    try {
+      const orderId = req.query.id;
+      if (!orderId) {
+        return res.status(400).send('Order ID is required');
+      }
+  
+      const userId = req.session.user;
+      if (!userId) {
+        return res.redirect('/login');
+      }
+  
+      // Find the order and populate product details
+      const order = await Order.findById(orderId).populate("orderedItems.product").lean();
+      console.log("order:",order);
+      if (!order) {
+        return res.status(404).send('Order not found');
+      }
+  
+   
+      // Create directory for invoices if it doesn't exist
+      const invoicesDir = path.join(__dirname, '../public/invoices');
+      await fs.ensureDir(invoicesDir);
+  
+      // Generate a unique filename
+      const filename = `invoice-${order.orderId}-${Date.now()}.pdf`;
+      const filePath = path.join(invoicesDir, filename);
+  
+      // Generate the PDF
+      await generateInvoice(order, filePath);
+  
+      // Set headers for download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  
+      // Stream the file to the response
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
+  
+      // Delete the file after sending
+      fileStream.on('close', () => {
+        fs.unlink(filePath, (err) => {
+          if (err) console.error('Error deleting temporary invoice file:', err);
+        });
+      });
+  
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      res.status(500).send('Error generating invoice');
+    }
+  };
+
+
+
+
+
+
+
 
 
 
 module.exports = {
     loadOrders,
     loadOrderDetails,
+    downloadInvoice,
 }

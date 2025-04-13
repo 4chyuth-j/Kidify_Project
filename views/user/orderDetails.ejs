@@ -1,0 +1,505 @@
+<%- include("../../views/partials/user/header") %>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        main {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        .account-side-nav {
+            width: 250px;
+            background-color: #ffe6ea;
+            padding: 20px;
+        }
+        
+        .account-side-nav h2 {
+            color: #d25f8c;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f8c1d2;
+        }
+        
+        .account-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: #d25f8c;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background-color: #ffd0dd;
+        }
+        
+        .account-nav-item:hover {
+            background-color: #ffbcce;
+        }
+        
+        .account-nav-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .account-logout-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6f9c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .account-logout-button:hover {
+            background-color: #ff5a8f;
+        }
+        
+        .account-logout-button i {
+            margin-right: 8px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .order-details-section {
+            margin-bottom: 20px;
+        }
+        
+        .order-info-item {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .order-info-label {
+            font-weight: bold;
+            color: #777;
+        }
+        
+        .price-breakdown {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .total-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .invoice-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .invoice-button:hover {
+            background-color: #333;
+        }
+        
+        .shipping-address {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .items-section {
+            margin-top: 20px;
+        }
+        
+        .item-card {
+            display: flex;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .item-image {
+            width: 120px;
+            height: 120px;
+            overflow: hidden;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .item-quantity {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        
+        .item-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .item-discount {
+            font-size: 14px;
+            color: #2ecc71;
+            margin-top: 5px;
+        }
+        
+        .item-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-returned, .status-return-requested {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-delivered {
+            background-color: #e1f5fe;
+            color: #0277bd;
+        }
+        
+        .status-processing, .status-placed {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        .action-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .return-button {
+            background-color: #ff6f9c;
+            color: white;
+        }
+        
+        .return-button:hover {
+            background-color: #ff5a8f;
+        }
+        
+        .cancel-button {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .cancel-button:hover {
+            background-color: #e53935;
+        }
+        
+        .cancel-return-button {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .cancel-return-button:hover {
+            background-color: #e53935;
+        }
+    </style>
+
+<main>
+    <!-- Side Navigation -->
+    <nav class="account-side-nav">
+        <h2>My Account</h2>
+        
+        <a href="/userProfile" class="account-nav-item">
+            <i class="bi bi-person"></i> Personal Information
+        </a>
+        
+        <a href="/address" class="account-nav-item">
+            <i class="bi bi-geo-alt"></i> Address
+        </a>
+        
+        <a href="/orders" class="account-nav-item">
+            <i class="bi bi-cart"></i> My Orders
+        </a>
+        
+        <a href="/account/wallet" class="account-nav-item">
+            <i class="bi bi-wallet2"></i> Wallet
+        </a>
+        
+        <a href="/change-password" class="account-nav-item">
+            <i class="bi bi-key"></i> Change Password
+        </a>
+        
+        <a href="/logout" class="account-logout-button">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Order Details Card -->
+        <div class="content-card">
+           <!-- <b> <h1></h1></b> -->
+           <p class="fs-3 fw-bold">Order Details</p>
+            
+            <div class="order-details-section">
+                <div class="order-info-item">
+                    <span class="order-info-label">Order ID:</span> #<%= order.orderId %>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Order Date:</span> <%= new Date(order.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Payment Method:</span> <%= order.paymentMethod %>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Payment Status:</span> <%= order.paymentStatus %>
+                </div>
+                
+                <div class="price-breakdown">
+                    <h4>Price Breakdown</h4>
+                    <div class="price-row">
+                        <span>Subtotal:</span>
+                        <span>₹<%= order.totalPrice %></span>
+                    </div>
+                    <% if (order.couponApplied) { %>
+                    <div class="price-row">
+                        <span>Total Offer Redemption:</span>
+                        <span>₹<%= Math.round((order.totalPrice - order.finalAmount) / 2) %></span>
+                    </div>
+                    <div class="price-row">
+                        <span>Total Coupon Redemption:</span>
+                        <span>₹<%= Math.round((order.totalPrice - order.finalAmount) / 2) %></span>
+                    </div>
+                    <% } else if (order.discount > 0) { %>
+                    <div class="price-row">
+                        <span>Discount:</span>
+                        <span>₹<%= order.totalPrice - order.finalAmount %></span>
+                    </div>
+                    <% } %>
+                    
+                    <div class="total-amount">
+                        <span>Total Amount:</span>
+                        <span>₹<%= order.finalAmount %></span>
+                    </div>
+                </div>
+                
+                <a href="/download-invoice?id=<%= order._id %>" class="invoice-button">
+                    Download Invoice
+                </a>
+            </div>
+        </div>
+        
+        <!-- Shipping Address Card -->
+        <div class="content-card">
+            
+            <p class="fs-4 fw-semibold">Shipping Address</p>
+            <div class="shipping-address">
+                <p><%= order.deliveryAddress.name %></p>
+                <p><%= order.deliveryAddress.landMark %>, <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %> - <%= order.deliveryAddress.pincode %></p>
+                <p>Phone: <%= order.deliveryAddress.phone %></p>
+                <%if(order.deliveryAddress.altPhone){%>
+
+                   <p>Alternate Phone: <%= order.deliveryAddress.altPhone %></p>
+
+                <%}%>
+            </div>
+        </div>
+        
+        <!-- Items Card -->
+        <div class="content-card">
+            <h3>Items</h3>
+            <div class="items-section">
+              <% order.orderedItems.forEach(item => { %>
+                <div class="item-card">
+                    <div class="item-image">
+                        <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
+                    </div>
+                    
+                    <div class="item-details">
+                        <div class="item-name" title="<%= item.product.productName%>"><%= item.product.productName.length> 60 ? item.product.productName.substring(0, 90) + "..." :
+                            item.product.productName %></div>
+                        <div class="item-quantity">Qty: <%= item.quantity %></div>
+                        <div class="item-price">₹<%= item.price * item.quantity %></div>
+                        <!-- <% if (item.product.discountPercentage > 0) { %>
+                        <div class="item-discount">Offer: <%= item.product.discountPercentage %>% Off</div>
+                        <div class="item-discount">Discount: ₹<%= Math.round((item.product.basePrice * item.quantity) * (item.product.discountPercentage / 100)) %></div>
+                        <% } %> -->
+                    </div>
+                    
+                    <% if (item.returnStatus === 'Pending') { %>
+                    <div class="item-status status-return-requested">Return Requested</div>
+                    <button class="action-button cancel-return-button" onclick="cancelReturn('<%= order._id %>', '<%= item.product._id %>')">Cancel Return</button>
+                    <% } else if (item.cancelled) { %>
+                    <div class="item-status">Cancelled</div>
+                    <% } else if (order.orderStatus === 'Delivered') { %>
+                    <div class="item-status status-delivered">Delivered</div>
+                    <button class="action-button return-button" onclick="returnItem('<%= order._id %>', '<%= item.product._id %>')">Return</button>
+                    <% } else if (order.orderStatus === 'Placed' || order.orderStatus === 'Processing') { %>
+                    <div class="item-status status-<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></div>
+                    <button class="action-button cancel-button" onclick="cancelItem('<%= order._id %>', '<%= item.product._id %>')">Cancel Order</button>
+                    <% } else { %>
+                    <div class="item-status"><%= order.orderStatus %></div>
+                    <% } %>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function returnItem(orderId, productId) {
+        Swal.fire({
+            title: 'Return Item',
+            text: 'Please select a reason for return',
+            input: 'select',
+            inputOptions: {
+                'defective': 'Defective Product',
+                'damaged': 'Damaged Product',
+                'wrong': 'Wrong Product Delivered',
+                'not_as_described': 'Product Not As Described',
+                'other': 'Other'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Submit Return',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value) {
+                        resolve();
+                    } else {
+                        resolve('You need to select a reason');
+                    }
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/return-item?orderId=${orderId}&productId=${productId}&reason=${result.value}`;
+            }
+        });
+    }
+    
+    function cancelItem(orderId, productId) {
+        Swal.fire({
+            title: 'Cancel Item',
+            text: 'Please select a reason for cancellation',
+            input: 'select',
+            inputOptions: {
+                'changed_mind': 'Changed My Mind',
+                'ordered_wrong': 'Ordered Wrong Item',
+                'found_better_price': 'Found Better Price Elsewhere',
+                'other': 'Other'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Cancel Order',
+            cancelButtonText: 'Keep Order',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value) {
+                        resolve();
+                    } else {
+                        resolve('You need to select a reason');
+                    }
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/cancel-item?orderId=${orderId}&productId=${productId}&reason=${result.value}`;
+            }
+        });
+    }
+    
+    function cancelReturn(orderId, productId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to cancel your return request?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, cancel return',
+            cancelButtonText: 'No, keep request',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/cancel-return?orderId=${orderId}&productId=${productId}`;
+            }
+        });
+    }
+</script>
+
+<%- include("../../views/partials/user/footer") %>

@@ -7,6 +7,7 @@ const profileManagement = require('../controller/user/profileManagement.js');
 const wishlistController = require('../controller/user/wishlistController.js');
 const cartController = require('../controller/user/cartController.js');
 const checkoutController = require('../controller/user/checkoutController.js');
+const orderController = require('../controller/user/orderController.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -118,13 +119,18 @@ router.get('/get-product-stock',userAuth,cartController.getProductStock);
 
 router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantityCount);
 
-// checkout management
 
+// checkout management
 router.get('/checkout',userAuth,checkoutController.loadCheckout);
 
 router.post('/place-order',userAuth,checkoutController.placeOrder);
 
 router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
+
+
+//order management 
+router.get('/orders',userAuth,orderController.loadOrders);
+
 
 
 

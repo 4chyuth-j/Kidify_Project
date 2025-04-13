@@ -36,8 +36,9 @@ const loadCheckout = async (req, res) => {
         });
     } catch (error) {
         console.error("Error in loadCheckout:", error);
-        res.status(500).render('error', { message: "Something went wrong!" });
+        res.redirect("/pageNotFound");
     }
+
 };
 
 
@@ -130,11 +131,19 @@ const placeOrder = async (req,res)=>{
         console.log("cart cleared successfully");
         
 
+        await User.findOneAndUpdate(
+            {_id:userId},
+            {$push:{orderHistory:newOrder._id}}
+        );
+        console.log("added order to order History");
+        
+
         return res.status(200).json({ 
             success: true, 
             message: 'Order placed successfully',
             orderId: newOrder._id
         });
+
 
 
     } catch (error) {
@@ -169,13 +178,10 @@ const loadOrderSuccess = async (req,res)=>{
         res.render("order-success",{user:userData,order:orderData});
 
     } catch (error) {
-        
+        console.error("Error in loading order success page:", error);
+        res.redirect("/pageNotFound");
     }
 }
-
-
-
-
 
 
 

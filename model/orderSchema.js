@@ -54,7 +54,7 @@ const orderSchema = new Schema({
         required: true,
     },
 
-    // Discount amount applied on the order
+    // Discount amount applied on the order(in percentage)
     discount: {
         type: Number,
         default: 0,

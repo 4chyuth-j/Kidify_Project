@@ -42,6 +42,39 @@ const loadOrders = async (req, res) => {
 };
 
 
+const loadOrderDetails = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        const userData = await User.findById(userId);
+        if (!userData) {
+            console.log("User data not found");
+            return res.redirect('/login');
+        }
+
+        const orderId = req.query.id;
+        if (!req.query.id) {
+            console.log("Order ID missing from query");
+            return res.redirect("/orders");
+        }
+
+
+        const orderDetails = await Order.findById(orderId).populate("orderedItems.product").lean();
+        if(!orderDetails){
+            console.log("order details not found");
+            return;
+        }
+
+        res.render("orderDetails",{user:userData,order:orderDetails});
+        
+    } catch (error) {
+        console.error("Error in loading order Details:", error);
+        res.redirect("/pageNotFound");
+    }
+}
 
 
 
@@ -50,4 +83,5 @@ const loadOrders = async (req, res) => {
 
 module.exports = {
     loadOrders,
+    loadOrderDetails,
 }

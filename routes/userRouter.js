@@ -131,6 +131,7 @@ router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
 //order management 
 router.get('/orders',userAuth,orderController.loadOrders);
 
+router.get('/order-details',userAuth,orderController.loadOrderDetails);
 
 
 

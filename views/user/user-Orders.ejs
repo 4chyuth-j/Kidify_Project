@@ -121,6 +121,9 @@
             color: #777;
         }
         
+        /* .paymentiteral: 0px 0px 0px;
+        }
+         */
         .payment-details {
             text-align: right;
         }
@@ -252,6 +255,47 @@
             text-align: center;
             color: #777;
         }
+
+        /* Search Bar Styles */
+        .search-form {
+            margin-bottom: 20px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            max-width: 350px;
+        }
+
+        .search-form input[type="text"] {
+            padding: 10px 15px;
+            width: 250px;
+            border: 1px solid #f8c1d2;
+            border-radius: 5px 0 0 5px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .search-form input[type="text"]:focus {
+            outline: none;
+            border-color: #d25f8c;
+            box-shadow: 0 0 5px rgba(210, 95, 140, 0.3);
+        }
+
+        .search-form button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #d25f8c;
+            color: white;
+            font-size: 14px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-form button:hover {
+            background-color: #ff5a8f;
+        }
     </style>
 
 <main>
@@ -288,6 +332,12 @@
     <div class="main-content">
         <h1>My Orders</h1>
         
+        <!-- Search Bar -->
+        <form method="GET" action="/orders" class="search-form">
+            <input type="text" name="search" placeholder="Search orders..." />
+            <button type="submit">Search</button>
+        </form>
+        
         <% if (orders && orders.length > 0) { %>
             <% orders.forEach(order => { %>
                 <div class="content-card">
@@ -314,7 +364,7 @@
                         <% order.orderedItems.forEach(item => { %>
                             <div class="order-item">
                                 <div class="item-image">
-                                    <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
+                                    <img src="/Uploads/re-image/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
                                 </div>
                                 
                                 <div class="item-details">

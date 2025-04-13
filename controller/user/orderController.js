@@ -16,23 +16,37 @@ const loadOrders = async (req, res) => {
     try {
         const userId = req.session.user;
 
-        
+        const search = req.query.search || "";
+        console.log("search query :", search);
+
         if (!userId) {
             return res.redirect('/login');
         }
 
-        
+
         const userData = await User.findById(userId);
         if (!userData) {
             console.log("User data not found");
             return res.redirect('/login');
         }
 
-        
-        const userOrders = await Order.find({ userId })
+
+        let userOrders = await Order.find({ userId })
             .sort({ createdAt: -1 })
             .populate("orderedItems.product")
             .lean(); // Optional: converts Mongoose docs to plain JS objects for better performance in templates
+
+        if (search) {
+            const lowerSearch = search.toLowerCase();
+            console.log("search lower searchquery :", lowerSearch);
+            userOrders = userOrders.filter((order) => {
+                return (order.orderId.toLowerCase().includes(lowerSearch) ||
+                    order.orderStatus.toLowerCase().includes(lowerSearch) ||
+                    order.orderedItems.some(item =>
+                        item.product.productName.toLowerCase().includes(lowerSearch)
+                    ));
+            })
+        }
 
         res.render("user-Orders", {
             user: userData,
@@ -46,7 +60,7 @@ const loadOrders = async (req, res) => {
 };
 
 
-const loadOrderDetails = async (req,res)=>{
+const loadOrderDetails = async (req, res) => {
     try {
         const userId = req.session.user;
         if (!userId) {
@@ -67,13 +81,13 @@ const loadOrderDetails = async (req,res)=>{
 
 
         const orderDetails = await Order.findById(orderId).populate("orderedItems.product").lean();
-        if(!orderDetails){
+        if (!orderDetails) {
             console.log("order details not found");
             return;
         }
 
-        res.render("orderDetails",{user:userData,order:orderDetails});
-        
+        res.render("orderDetails", { user: userData, order: orderDetails });
+
     } catch (error) {
         console.error("Error in loading order Details:", error);
         res.redirect("/pageNotFound");
@@ -84,55 +98,55 @@ const loadOrderDetails = async (req,res)=>{
 
 const downloadInvoice = async (req, res) => {
     try {
-      const orderId = req.query.id;
-      if (!orderId) {
-        return res.status(400).send('Order ID is required');
-      }
-  
-      const userId = req.session.user;
-      if (!userId) {
-        return res.redirect('/login');
-      }
-  
-      // Find the order and populate product details
-      const order = await Order.findById(orderId).populate("orderedItems.product").lean();
-      console.log("order:",order);
-      if (!order) {
-        return res.status(404).send('Order not found');
-      }
-  
-   
-      // Create directory for invoices if it doesn't exist
-      const invoicesDir = path.join(__dirname, '../public/invoices');
-      await fs.ensureDir(invoicesDir);
-  
-      // Generate a unique filename
-      const filename = `invoice-${order.orderId}-${Date.now()}.pdf`;
-      const filePath = path.join(invoicesDir, filename);
-  
-      // Generate the PDF
-      await generateInvoice(order, filePath);
-  
-      // Set headers for download
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-  
-      // Stream the file to the response
-      const fileStream = fs.createReadStream(filePath);
-      fileStream.pipe(res);
-  
-      // Delete the file after sending
-      fileStream.on('close', () => {
-        fs.unlink(filePath, (err) => {
-          if (err) console.error('Error deleting temporary invoice file:', err);
+        const orderId = req.query.id;
+        if (!orderId) {
+            return res.status(400).send('Order ID is required');
+        }
+
+        const userId = req.session.user;
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        // Find the order and populate product details
+        const order = await Order.findById(orderId).populate("orderedItems.product").lean();
+        console.log("order:", order);
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+
+        // Create directory for invoices if it doesn't exist
+        const invoicesDir = path.join(__dirname, '../public/invoices');
+        await fs.ensureDir(invoicesDir);
+
+        // Generate a unique filename
+        const filename = `invoice-${order.orderId}-${Date.now()}.pdf`;
+        const filePath = path.join(invoicesDir, filename);
+
+        // Generate the PDF
+        await generateInvoice(order, filePath);
+
+        // Set headers for download
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+
+        // Stream the file to the response
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+
+        // Delete the file after sending
+        fileStream.on('close', () => {
+            fs.unlink(filePath, (err) => {
+                if (err) console.error('Error deleting temporary invoice file:', err);
+            });
         });
-      });
-  
+
     } catch (error) {
-      console.error('Error generating invoice:', error);
-      res.status(500).send('Error generating invoice');
+        console.error('Error generating invoice:', error);
+        res.status(500).send('Error generating invoice');
     }
-  };
+};
 
 
 

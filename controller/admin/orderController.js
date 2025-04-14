@@ -14,11 +14,16 @@ const loadOrders = async (req,res)=>{
         let query = {};
         if(search){
             query={
-                'deliveryAddress.name':{ $regex: ".*" + search + ".*", $options: "i" },
-                orderId:{ $regex: ".*" + search + ".*", $options: "i" }
+                $or:[
+                    {'deliveryAddress.name':{ $regex: ".*" + search + ".*", $options: "i" }},
+                    {orderId:{ $regex: ".*" + search + ".*", $options: "i" }}
+                ]
             }
         }
+
+        
         const userOrders = await Order.find(query).skip((page-1)*limit).limit(limit).sort({createdAt:-1}).exec();
+        console.log("userOrders:",userOrders);
 
         const count = await Order.find(query).countDocuments();
 

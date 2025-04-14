@@ -240,11 +240,11 @@
                         <a class="page-link" href="?page=<%= i %>"><%= i %></a>
                     </li>
                 <% } %>
-                <!-- <% if(currentPage < totalPages) { %>
+                <% if(currentPage < totalPages) { %>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %><%= search ? '&search=' + search : '' %>">Next</a>
+                        <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %>">Next</a>
                     </li>
-                <% } %> -->
+                <% } %>
             </ul>
         </nav>
     </div>

@@ -81,16 +81,55 @@
         font-weight: 500;
     }
 
-    .status-active {
+    .status-placed {
         background: #e0f9eb;
         color: #219653;
         border: 1px solid #219653;
     }
 
-    .status-blocked {
+    .status-processing {
+        background: #e6f6fd;
+        color: #2d9cdb;
+        border: 1px solid #2d9cdb;
+    }
+
+    .status-shipped {
+        background: #f0e6fd;
+        color: #9b51e0;
+        border: 1px solid #9b51e0;
+    }
+
+    .status-delivered {
+        background: #e0f9eb;
+        color: #219653;
+        border: 1px solid #219653;
+    }
+
+    .status-cancelled {
         background: #fde6e6;
         color: #eb5757;
         border: 1px solid #eb5757;
+    }
+
+    .status-returned {
+        background: #fdf6e6;
+        color: #f2994a;
+        border: 1px solid #f2994a;
+    }
+
+    /* Action Button Styling */
+    .action-btn {
+        background-color: #6c43c1;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .action-btn:hover {
+        background-color: #563d7c;
     }
 
     /* Pagination Styling */
@@ -133,14 +172,14 @@
 
 <div class="content-container">
     <div class="content-header row d-flex justify-content-between align-items-center">
-        <h2 class="content-title">📌 Customers</h2>
+        <h2 class="content-title">📦 Orders</h2>
     </div>
   
     <!-- Search Bar -->
     <div class="search-container">
-        <form action="/admin/users/" method="get" class="d-flex">
+        <form action="/admin/orders" method="get" class="d-flex">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search customers..." name="search">
+                <input type="text" class="form-control" placeholder="Search by customer name or order ID..." name="search">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
@@ -152,36 +191,38 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th><b>Name</b></th>
-                        <th><b>Email</b></th>
-                        <th><b>Customer ID</b></th>
+                        <th><b>S.No</b></th>
+                        <th><b>User Name</b></th>
+                        <th><b>Order ID</b></th>
+                        <th><b>Date</b></th>
+                        <th><b>Total Price</b></th>
                         <th><b>Status</b></th>
                         <th><b>Action</b></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% for(let i = 0; i < data.length; i++) { %>
+                    <% for(let i = 0; i < orders.length; i++) { %>
                         <tr>
-                            <td><%= data[i].name %></td>
-                            <td><%= data[i].email %></td>
-                            <td><%= data[i].userId.slice(0,8) %></td>
+                            <td><%= (currentPage - 1) * 7 + i + 1 %></td>
+                            <td><%= orders[i].deliveryAddress.name %></td>
+                            <td><%= orders[i].orderId %></td>
+                            <td><%= new Date(orders[i].createdAt).toLocaleDateString('en-US', { 
+                                month: 'long', 
+                                day: 'numeric', 
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) %></td>
+                            <td>₹<%= orders[i].finalAmount %></td>
                             <td>
-                                <% if (data[i].isBlocked === false) { %>
-                                    <span class="status-badge status-active">Active</span>
-                                <% } else { %>
-                                    <span class="status-badge status-blocked">Blocked</span>
-                                <% } %>
+                                <span class="status-badge status-<%= orders[i].orderStatus.toLowerCase() %>">
+                                    <%= orders[i].orderStatus %>
+                                </span>
                             </td>
                             <td>
-                                <% if(data[i].isBlocked === false) { %>
-                                    <button class="btn btn-danger" style="width: 80px;">
-                                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Block</a>
-                                    </button>
-                                <% } else { %>
-                                    <button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Unblock</a>
-                                    </button>
-                                <% } %>
+                                <a href="/admin/order-details/<%= orders[i]._id %>" class="btn action-btn">
+                                    More Details
+                                </a>
                             </td>
                         </tr>
                     <% } %>
@@ -199,6 +240,11 @@
                         <a class="page-link" href="?page=<%= i %>"><%= i %></a>
                     </li>
                 <% } %>
+                <!-- <% if(currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %><%= search ? '&search=' + search : '' %>">Next</a>
+                    </li>
+                <% } %> -->
             </ul>
         </nav>
     </div>

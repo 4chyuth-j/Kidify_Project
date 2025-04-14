@@ -22,8 +22,9 @@ const customerInfo = async (req, res)=>{
                 { name: { $regex: ".*" + search + ".*", $options: "i" } },
                 { email: { $regex: ".*" + search + ".*", $options: "i" } },
             ],
-        }).limit(limit * 1)
+        }) 
             .skip((page - 1) * limit)
+            .limit(limit * 1)
             .sort({createdAt:-1})
             .exec();
 
@@ -37,7 +38,7 @@ const customerInfo = async (req, res)=>{
 
         }).countDocuments();
 
-        // console.log("UserData fetched:", UserData); // ✅ Debugging step
+        // console.log("UserData  fetched:", UserData); // ✅ Debugging step
 
         res.render("customers",{ 
             data: UserData, 
@@ -80,7 +81,7 @@ const customerUnblocked = async (req,res)=>{
     } catch (error) {
         console.log("Error occured while Unblocking the user",error);
         res.status(500).send("Internal server error");
-        res.redirect("/pageError");
+        
     }
 }
 

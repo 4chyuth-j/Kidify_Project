@@ -352,6 +352,17 @@
                                 minute: '2-digit',
                                 hour12: true
                             }) %></span>
+                            <%if(order.deliveredAt && order.orderStatus=="Delivered"){%>
+                                <span class="order-date">Delivered Date: <%= new Date(order.deliveredAt).toLocaleString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true
+                                }) %></span>
+                                
+                            <%}%>
                         </div>
                         
                         <div class="payment-details">

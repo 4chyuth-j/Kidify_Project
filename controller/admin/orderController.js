@@ -83,6 +83,12 @@ const loadOrderDetails = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Failed to find Order Details' });
       }
   
+      if (orderDetails.orderStatus === orderStatus) {
+        return res.status(400).json({
+          success: false,
+          message: `Order is already marked as "${orderStatus}". No changes made.`
+        });
+      }
       
       const statusFlow = ['Placed', 'Processing', 'Shipped', 'Delivered'];
   
@@ -90,7 +96,7 @@ const loadOrderDetails = async (req, res) => {
       const newIndex = statusFlow.indexOf(orderStatus);
   
       //  Prevent going backward in status
-      if (newIndex < currentIndex) {
+      if (newIndex < currentIndex ) {
         return res.status(400).json({
           success: false,
           message: `Invalid status update. Cannot change status from "${orderDetails.orderStatus}" to "${orderStatus}".`
@@ -102,6 +108,7 @@ const loadOrderDetails = async (req, res) => {
       // If COD and Delivered, mark payment as Paid
       if (orderDetails.paymentMethod === 'COD' && orderStatus === 'Delivered') {
         updateFields.paymentStatus = 'Paid';
+        updateFields.deliveredAt = new Date();
       }
   
       await Order.findOneAndUpdate({ orderId }, updateFields);

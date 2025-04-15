@@ -83,6 +83,8 @@ router.get("/orders",adminAuth,orderController.loadOrders);
 
 router.get('/order-details',adminAuth,orderController.loadOrderDetails);
 
+router.post('/update-order-status',adminAuth,orderController.updateOrderStatus)
+
 
 
 

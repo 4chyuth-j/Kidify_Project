@@ -81,6 +81,8 @@ router.post("/addBanner",adminAuth,uploads.single("images"),bannerController.add
 //order management
 router.get("/orders",adminAuth,orderController.loadOrders);
 
+router.get('/order-details',adminAuth,orderController.loadOrderDetails);
+
 
 
 

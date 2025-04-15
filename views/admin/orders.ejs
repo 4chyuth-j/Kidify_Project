@@ -196,7 +196,7 @@
                         <th><b>Order ID</b></th>
                         <th><b>Date</b></th>
                         <th><b>Total Price</b></th>
-                        <th><b>Status</b></th>
+                        <!-- <th><b>Status</b></th> -->
                         <th><b>Action</b></th>
                     </tr>
                 </thead>
@@ -214,13 +214,13 @@
                                 minute: '2-digit'
                             }) %></td>
                             <td>₹<%= orders[i].finalAmount %></td>
-                            <td>
+                            <!-- <td>
                                 <span class="status-badge status-<%= orders[i].orderStatus.toLowerCase() %>">
                                     <%= orders[i].orderStatus %>
                                 </span>
-                            </td>
+                            </td> -->
                             <td>
-                                <a href="/admin/order-details/<%= orders[i]._id %>" class="btn action-btn">
+                                <a href="/admin/order-details?id=<%= orders[i]._id %>" class="btn action-btn">
                                     More Details
                                 </a>
                             </td>

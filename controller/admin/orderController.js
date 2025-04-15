@@ -44,6 +44,52 @@ const loadOrders = async (req,res)=>{
 
 
 
+const loadOrderDetails = async (req, res) => {
+    try {
+      const orderId = req.query.id;
+  
+      if (!orderId) {
+        return res.status(400).send("Order ID is required");
+      }
+  
+      const orderDetails = await Order.findOne({ _id: orderId })
+
+        .populate("orderedItems.product")
+        .lean();
+  
+      if (!orderDetails) {
+        return res.status(404).send("Order not found");
+      }
+  
+      res.render("admin-orderDetails", {
+        order: orderDetails,
+        pageTitle: "Order Details"
+      });
+      
+    } catch (error) {
+      console.error("Error loading order details:", error);
+      res.status(500).send("Server Error");
+    }
+  };
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports ={
     loadOrders,
+    loadOrderDetails
 }

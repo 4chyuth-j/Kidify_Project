@@ -404,7 +404,7 @@
                     <% } else if (order.orderStatus === 'Delivered') { %>
                     <div class="item-status status-delivered">Delivered</div>
                     <button class="action-button return-button" onclick="returnItem('<%= order._id %>', '<%= item.product._id %>')">Return</button>
-                    <% } else if (order.orderStatus === 'Placed' || order.orderStatus === 'Processing') { %>
+                    <% } else if (order.orderStatus === 'Placed') { %>
                     <div class="item-status status-<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></div>
                     <button class="action-button cancel-button" onclick="cancelItem('<%= order._id %>', '<%= item.product._id %>')">Cancel Order</button>
                     <% } else { %>

@@ -128,12 +128,14 @@ router.post('/place-order',userAuth,checkoutController.placeOrder);
 router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
 
 
-//order management 
+// order management 
 router.get('/orders',userAuth,orderController.loadOrders);
 
 router.get('/order-details',userAuth,orderController.loadOrderDetails);
 
 router.get('/download-invoice',userAuth,orderController.downloadInvoice);
+
+router.post('/cancel-item',userAuth,orderController.cancelItem);
 
 
 

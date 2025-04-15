@@ -38,7 +38,7 @@ const loadOrders = async (req, res) => {
 
         if (search) {
             const lowerSearch = search.toLowerCase();
-            console.log("search lower searchquery :", lowerSearch);
+            
             userOrders = userOrders.filter((order) => {
                 return (order.orderId.toLowerCase().includes(lowerSearch) ||
                     order.orderStatus.toLowerCase().includes(lowerSearch) ||
@@ -149,6 +149,57 @@ const downloadInvoice = async (req, res) => {
 };
 
 
+const cancelItem = async (req, res) => {
+    try {
+        const { orderId, productId, reason } = req.body;
+
+        const orderDetails = await Order.findOne({ orderId }).populate("orderedItems.product");
+
+        if (!orderDetails) {
+            return res.status(404).send("Order not found");
+        }
+
+        
+        const item = orderDetails.orderedItems.find(i => i.product._id.toString() === productId);
+
+        if (!item) {
+            return res.status(404).send("Product not found in the order");
+        }
+
+        const reStock = item.quantity;
+
+        await Product.findOneAndUpdate(
+            {_id:productId},
+            {$inc:{stock:reStock}}
+        );
+
+        
+        item.quantity = 0;
+        item.price = 0;
+        item.cancelled = true;
+        item.cancelReason = reason;
+        item.cancelledAt = new Date();
+
+        // Recalculate total price
+        let newTotal = 0;
+        for (const i of orderDetails.orderedItems) {
+            newTotal += i.quantity * i.price;
+        }
+
+        orderDetails.totalPrice = newTotal;
+        orderDetails.finalAmount = newTotal;//discount not applied yet when the discount is applied change this 
+
+        await orderDetails.save();
+
+        return res.status(200).json({ message: "Item cancelled successfully" });
+
+
+    } catch (error) {
+        console.error("Cancel item error:", error);
+        return res.status(500).send("Server error");
+    }
+};
+
 
 
 
@@ -161,4 +212,5 @@ module.exports = {
     loadOrders,
     loadOrderDetails,
     downloadInvoice,
+    cancelItem,
 }

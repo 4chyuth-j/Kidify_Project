@@ -253,9 +253,21 @@
             </div>
             <div class="order-meta">
                 Current Status: 
+                <%if(order.orderedItems.length==1 && (order.orderedItems[0].cancelled || order.orderedItems[0].returnStatus==='Approved')){%>
+                    <%if(order.orderedItems[0].cancelled){%>
+                        <span class="status-badge status-cancelled">
+                            cancelled
+                        </span>
+                     <%} else{%>
+                        <span class="status-badge status-<%= order.orderStatus.returned %>">
+                            Returned
+                        </span>
+                        <%}%>
+                <%} else{%>
                 <span class="status-badge status-<%= order.orderStatus.toLowerCase() %>">
                     <%= order.orderStatus %>
                 </span>
+                <%}%>
             </div>
             <div class="order-meta">
                 Expected Delivery: <%= new Date(order.expectedDeliveryDate).toLocaleDateString('en-US', { 
@@ -383,7 +395,7 @@
                         <% } %>
                     </div>
                 </div>
-                <div class="item-price">₹<%= item.price %></div>
+                <div class="item-price">₹<%= item.price*item.quantity %></div>
             </div>
         <% }); %>
     </div>

@@ -381,6 +381,7 @@
                         <div class="item-meta">Qty: <%= item.quantity %>
                         </div>
 
+                        
                         <!-- Item Status and Actions -->
                         <div class="item-meta mt-2">
                             <% if(item.cancelled) { %>
@@ -388,37 +389,36 @@
                                 <div class="mt-1">Reason: <%= item.cancelReason %>
                                 </div>
                                 <% } else if(item.returnStatus !=='None' ) { %>
-                                    <span class="status-badge status-<%= item.returnStatus.toLowerCase() %>">Return <%=
+                                    <span class="status-badge status-cancelled">Return <%=
                                             item.returnStatus %></span>
-                                    <% if(item.returnReason) { %>
-                                        <div class="mt-1">Reason: <%= item.returnReason %>
-                                        </div>
-                                        <% } %>
-                                            <% } else { %>
-                                                <span
-                                                    class="status-badge status-<%= order.orderStatus.toLowerCase() %>">
-                                                    <%= order.orderStatus %>
-                                                </span>
+                                            <% if(item.returnReason) { %>
+                                                <div class="mt-1" style="color: #e67e22;">
+                                                  Reason: <%= item.returnReason %>
+                                                </div>
+                                              <% } %>
+                                              
 
-                                                <% if(order.orderStatus==='Delivered' ) { %>
-                                                    <% if(item.returnStatus==='Pending' && item.returnReason) { %>
-                                                        <form action="/admin/process-return-request" method="POST"
-                                                            class="d-inline-block ml-2">
-                                                            <input type="hidden" name="orderId"
-                                                                value="<%= order._id %>">
-                                                            <input type="hidden" name="itemIndex" value="<%= index %>">
-                                                            <select name="returnStatus"
-                                                                class="form-control form-control-sm d-inline-block return-select">
-                                                                <option value="">Return Actions</option>
-                                                                <option value="Approved">Approve Return</option>
-                                                                <option value="Rejected">Reject Return</option>
-                                                            </select>
-                                                            <button type="submit"
-                                                                class="btn btn-sm action-btn">Submit</button>
-                                                        </form>
+                                            <!-- Add this block to show return approval form when status is Pending -->
+                                            <% if(item.returnStatus==='Pending' ) { %>
+                                                <form action="/admin/process-return-request" method="POST"
+                                                    class="d-inline-block ml-2 mt-2">
+                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                    <input type="hidden" name="itemIndex" value="<%= index %>">
+                                                    <select name="returnStatus"
+                                                        class="form-control form-control-sm d-inline-block return-select">
+                                                        <option value="">Return Actions</option>
+                                                        <option value="Approved">Approve Return</option>
+                                                        <option value="Rejected">Reject Return</option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm action-btn">Submit</button>
+                                                </form>
+                                                <% } %>
+                                                    <% } else { %>
+                                                        <span
+                                                            class="status-badge status-<%= order.orderStatus.toLowerCase() %>">
+                                                            <%= order.orderStatus %>
+                                                        </span>
                                                         <% } %>
-                                                            <% } %>
-                                                                <% } %>
                         </div>
                     </div>
                     <div class="item-price">₹<%= item.price*item.quantity %>

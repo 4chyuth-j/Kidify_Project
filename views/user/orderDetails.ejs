@@ -423,8 +423,8 @@
                             </div>
 
                             <% const deliveredAt=new Date(order.deliveredAt); const returnDeadline=new
-                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30); if
-                                (item.returnStatus==='Pending' ) { %>
+                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30);
+                                if(item.returnStatus==='Pending' ) { %>
                                 <div class="item-status status-return-requested">Return Requested</div>
                                 <button class="action-button cancel-return-button"
                                     onclick="cancelReturn('<%= order._id %>', '<%= item.product._id %>')">Cancel
@@ -435,7 +435,7 @@
                                         <div class="item-status status-delivered">Delivered</div>
                                         <% if( new Date() <=returnDeadline ) {%>
                                             <button class="action-button return-button"
-                                                onclick="returnItem('<%= order._id %>', '<%= item.product._id %>')">Return</button>
+                                                onclick="returnItem('<%= order.orderId %>', '<%= item.product._id %>')">Return</button>
                                             <%}%>
                                                 <% } else if (order.orderStatus==='Placed' ) { %>
                                                     <div
@@ -459,6 +459,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        
         function returnItem(orderId, productId) {
             Swal.fire({
                 title: 'Return Item',
@@ -487,10 +488,48 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `/return-item?orderId=${orderId}&productId=${productId}&reason=${result.value}`;
+                    fetch('/return-item', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId: orderId,
+                            productId: productId,
+                            returnReason: result.value
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || err.error || 'Something went wrong');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: data.message || 'Return requested successfully',
+                                timer: 1200,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops!',
+                                text: error.message || 'Failed to send return request.',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        });
                 }
             });
         }
+
 
         function cancelItem(orderId, productId) {
             Swal.fire({
@@ -534,7 +573,7 @@
                             if (res.ok) {
                                 Swal.fire('Cancelled!', 'Your item has been cancelled.', 'success')
                                     .then(() => {
-                                        location.reload(); 
+                                        location.reload();
                                     });
                             } else {
                                 return res.text().then(text => { throw new Error(text); });

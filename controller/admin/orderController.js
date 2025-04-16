@@ -1,4 +1,5 @@
 const User = require("../../model/userSchema");
+const Product = require("../../model/productSchema");
 const Order = require("../../model/orderSchema");
 
 
@@ -122,7 +123,84 @@ const loadOrderDetails = async (req, res) => {
   };
   
 
+const processReturnRequest = async (req,res)=>{
+  try {
+    const {orderId, itemIndex, returnStatus}=req.body;
+    
+    const orderDetails = await Order.findOne({orderId}).populate("orderedItems.product");
 
+    if (!orderDetails || !orderDetails.orderedItems[itemIndex]) {
+      return res.status(404).json({ message: "Order or item not found." });
+    }
+    
+
+    const productDetails = orderDetails.orderedItems[itemIndex];
+
+    const reStock = productDetails.quantity;
+    const refundAmount = productDetails.quantity * productDetails.price;
+
+    const productId = productDetails.product._id;
+    const userId = orderDetails.userId;
+
+    if(productDetails.returnStatus === 'Approved') {
+      return res.status(400).json({ message: "Item already returned." });
+    }
+
+    if(returnStatus=='Approved'){
+
+      productDetails.returnStatus=returnStatus;
+      productDetails.returnedAt = new Date();
+      productDetails.quantity = 0;
+      productDetails.price = 0;
+
+      let newTotalPrice = 0;
+      for(let i of orderDetails.orderedItems){
+        newTotalPrice += i.price * i.quantity;
+      }
+
+      orderDetails.totalPrice = newTotalPrice;
+      orderDetails.finalAmount = newTotalPrice; //change when adding coupon or discount
+
+      await orderDetails.save();
+
+      await Product.findOneAndUpdate(
+        {_id:productId},
+        {$inc:{stock:reStock}}
+      );
+      
+      await User.findOneAndUpdate(
+        {_id:userId},
+        {$inc:{wallet:refundAmount},
+        $push:{walletHistory:{
+          amount:refundAmount,
+          type:'refund',
+          orderId,
+          date:new Date(),
+          note:`Refund for returned item in order #${orderId}`
+        }}
+      }
+
+      );
+      
+      return res.status(200).json({message:"Return Approved"});
+      
+      
+    }
+    
+    if(returnStatus=='Rejected'){
+      productDetails.returnStatus=returnStatus;
+      await orderDetails.save();
+      
+      return res.status(200).json({message:"Return Rejected "});
+
+    }
+
+
+  } catch (error) {
+    console.error("Return request failed:", error);
+    return res.status(500).json({ message: "Server error while processing return." });
+  }
+}
 
 
 
@@ -141,5 +219,6 @@ const loadOrderDetails = async (req, res) => {
 module.exports ={
     loadOrders,
     loadOrderDetails,
-    updateOrderStatus
+    updateOrderStatus,
+    processReturnRequest
 }

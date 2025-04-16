@@ -381,7 +381,7 @@
                         <div class="item-meta">Qty: <%= item.quantity %>
                         </div>
 
-                        
+
                         <!-- Item Status and Actions -->
                         <div class="item-meta mt-2">
                             <% if(item.cancelled) { %>
@@ -389,30 +389,31 @@
                                 <div class="mt-1">Reason: <%= item.cancelReason %>
                                 </div>
                                 <% } else if(item.returnStatus !=='None' ) { %>
-                                    <span class="status-badge status-cancelled">Return <%=
-                                            item.returnStatus %></span>
-                                            <% if(item.returnReason) { %>
-                                                <div class="mt-1" style="color: #e67e22;">
-                                                  Reason: <%= item.returnReason %>
-                                                </div>
-                                              <% } %>
-                                              
+                                    <span class="status-badge status-cancelled">Return <%= item.returnStatus %></span>
+                                    <% if(item.returnReason) { %>
+                                        <div class="mt-1" style="color: #e67e22;">
+                                            Reason: <%= item.returnReason %>
+                                        </div>
+                                        <% } %>
+
 
                                             <!-- Add this block to show return approval form when status is Pending -->
                                             <% if(item.returnStatus==='Pending' ) { %>
-                                                <form action="/admin/process-return-request" method="POST"
-                                                    class="d-inline-block ml-2 mt-2">
-                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                <form id="returnForm-<%= index %>" class="d-inline-block ml-2 mt-2">
+                                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
                                                     <input type="hidden" name="itemIndex" value="<%= index %>">
                                                     <select name="returnStatus"
-                                                        class="form-control form-control-sm d-inline-block return-select">
+                                                        class="form-control form-control-sm d-inline-block return-select"
+                                                        id="returnStatus-<%= index %>">
                                                         <option value="">Return Actions</option>
                                                         <option value="Approved">Approve Return</option>
                                                         <option value="Rejected">Reject Return</option>
                                                     </select>
-                                                    <button type="submit" class="btn btn-sm action-btn">Submit</button>
+                                                    <button type="button" class="btn btn-sm action-btn"
+                                                        onclick="processReturn('<%= index %>')">Submit</button>
                                                 </form>
                                                 <% } %>
+
                                                     <% } else { %>
                                                         <span
                                                             class="status-badge status-<%= order.orderStatus.toLowerCase() %>">
@@ -431,10 +432,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            
             const form = document.getElementById("order-status-form");
 
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
+
 
                 const orderId = form.orderId.value;
                 const orderStatus = form.orderStatus.value;
@@ -471,7 +474,65 @@
                     });
                 }
             });
+
+
+
+
+
+            
+
         });
+
+
+        function processReturn(index) {
+                const status = document.getElementById(`returnStatus-${index}`).value;
+                const form = document.getElementById(`returnForm-${index}`);
+                const orderId = form.querySelector('input[name="orderId"]').value;
+                const itemIndex = form.querySelector('input[name="itemIndex"]').value;
+
+                if (!status) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please select an action',
+                        text: 'You must choose to approve or reject the return.',
+                    });
+                    return;
+                }
+
+                fetch('/admin/process-return-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, itemIndex, returnStatus: status })
+                })
+                    .then(res => {
+                        if (!res.ok) {
+                            return res.json().then(err => {
+                                throw new Error(err.message || 'Failed to process request');
+                            });
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: data.message || 'Return status updated',
+                            timer: 1200,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: error.message || 'Something went wrong',
+                        });
+                    });
+            }
+            
     </script>
 
 

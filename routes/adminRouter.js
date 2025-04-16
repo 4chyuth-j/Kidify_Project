@@ -85,6 +85,7 @@ router.get('/order-details',adminAuth,orderController.loadOrderDetails);
 
 router.post('/update-order-status',adminAuth,orderController.updateOrderStatus)
 
+router.post('/process-return-request',adminAuth,orderController.processReturnRequest);
 
 
 

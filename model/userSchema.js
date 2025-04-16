@@ -73,8 +73,7 @@ const userSchema = new Schema({
             enum: ['refund', 'top-up', 'purchase', 'withdrawal'], 
         },
         orderId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Order',
+            type: String,
             required: false          // Only for refund or purchase type
         },
         transactionId: {

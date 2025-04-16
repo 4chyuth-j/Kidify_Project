@@ -180,7 +180,7 @@ const cancelItem = async (req, res) => {
         item.cancelReason = reason;
         item.cancelledAt = new Date();
 
-        // Recalculate total price
+        // Recalculate  total price
         let newTotal = 0;
         for (const i of orderDetails.orderedItems) {
             newTotal += i.quantity * i.price;
@@ -239,7 +239,34 @@ const returnOrder = async (req,res)=>{
     }
 }
 
+const cancelReturnRequest = async (req,res)=>{
+    try {
+        const {orderId, productId}=req.body;
+        
+        const orderDetails = await Order.findOne({orderId}).populate("orderedItems.product");
+        if(!orderDetails){
+            console.log("order details for return is not found, orderId:",orderId);
+            return res.status(404).json({message:"Something Went wrong with cart"});
+        }
 
+        const productTobeReturned = orderDetails.orderedItems.find(item=>
+            item.product._id.toString()===productId.toString()
+        );
+        if(!productTobeReturned){
+            console.log("failed to find product inside the order, ProductId:",productId);
+            return res.status(404).json({message:"Failed to fetch the product Details"});
+        }
+
+        productTobeReturned.returnStatus='None';
+
+        await orderDetails.save();
+        return res.status(200).json({message:"Return request cancelled Successfully"});
+
+    } catch (error) {
+        console.error("failed to cancel return request",error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
 
 
 
@@ -252,4 +279,5 @@ module.exports = {
     downloadInvoice,
     cancelItem,
     returnOrder,
+    cancelReturnRequest
 }

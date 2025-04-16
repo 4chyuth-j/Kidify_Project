@@ -70,7 +70,7 @@ const userSchema = new Schema({
         amount: Number,              // +ve for credit, -ve for debit
         type: {
             type: String,         
-            enum: ['refund', 'top-up', 'purchase', 'withdrawal'], 
+            enum: ['refund', 'top-up', 'purchase'], 
         },
         orderId: {
             type: String,

@@ -8,6 +8,7 @@ const wishlistController = require('../controller/user/wishlistController.js');
 const cartController = require('../controller/user/cartController.js');
 const checkoutController = require('../controller/user/checkoutController.js');
 const orderController = require('../controller/user/orderController.js');
+const walletController = require('../controller/user/walletController.js');
 const passport = require("passport");
 const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
@@ -138,6 +139,13 @@ router.get('/download-invoice',userAuth,orderController.downloadInvoice);
 router.post('/cancel-item',userAuth,orderController.cancelItem);
 
 router.post('/return-item',userAuth,orderController.returnOrder);
+
+router.post('/cancel-return',userAuth,orderController.cancelReturnRequest);
+
+//wallet management
+router.get('/wallet',userAuth,walletController.loadWalletPage);
+
+
 
 
 

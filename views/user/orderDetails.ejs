@@ -293,7 +293,7 @@
                 <i class="bi bi-cart"></i> My Orders
             </a>
 
-            <a href="/account/wallet" class="account-nav-item">
+            <a href="/wallet" class="account-nav-item">
                 <i class="bi bi-wallet2"></i> Wallet
             </a>
 
@@ -423,44 +423,45 @@
                             </div>
 
                             <% const deliveredAt=new Date(order.deliveredAt); const returnDeadline=new
-                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30); 
-                                if(item.returnStatus==='Approved'){%>
-                                  
-                                    <div class="item-status status-returned">Returned</div>
-                                    <div class="item-quantity mt-5">Date of approval: <%= new Date(item.returnedAt).toLocaleString('en-US', { year: 'numeric' , month: 'long' ,
-                                        day: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
-                                    </div>
+                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30);
+                                if(item.returnStatus==='Approved' ){%>
+
+                                <div class="item-status status-returned">Returned</div>
+                                <div class="item-quantity mt-5">Date of approval: <%= new
+                                        Date(item.returnedAt).toLocaleString('en-US', { year: 'numeric' , month: 'long'
+                                        , day: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+                                </div>
 
                                 <%} else if(item.returnStatus==='Pending' ) { %>
-                                <div class="item-status status-return-requested">Return Requested</div>
-                                <button class="action-button cancel-return-button"
-                                    onclick="cancelReturn('<%= order._id %>', '<%= item.product._id %>')">Cancel
-                                    Return</button>
-                                <%} else if(item.returnStatus==='Rejected' ) { %>
-                                    <div class="item-status status-processing">Request for Return Rejected</div>
+                                    <div class="item-status status-return-requested">Return Requested</div>
+                                    <button class="action-button cancel-return-button"
+                                        onclick="cancelReturn('<%= order.orderId%>', '<%= item.product._id %>')">Cancel
+                                        Return</button>
+                                    <%} else if(item.returnStatus==='Rejected' ) { %>
+                                        <div class="item-status status-processing">Request for Return Rejected</div>
 
-                                <% } else if (item.cancelled) { %>
-                                    <div class="item-status">Cancelled</div>
-                                    <% } else if (order.orderStatus==='Delivered' ) { %>
-                                        <div class="item-status status-delivered">Delivered</div>
-                                        <% if( new Date() <=returnDeadline ) {%>
-                                            <button class="action-button return-button"
-                                                onclick="returnItem('<%= order.orderId %>', '<%= item.product._id %>')">Return</button>
-                                            <%}%>
-                                                <% } else if (order.orderStatus==='Placed' ) { %>
-                                                    <div
-                                                        class="item-status status-<%= order.orderStatus.toLowerCase() %>">
-                                                        <%= order.orderStatus %>
-                                                    </div>
-                                                    <button class="action-button cancel-button"
-                                                        onclick="cancelItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel
-                                                        Order</button>
-                                                      
-                                                    <% } else { %>
-                                                        <div class="item-status">
-                                                            <%= order.orderStatus %>
-                                                        </div>
-                                                        <% } %>
+                                        <% } else if (item.cancelled) { %>
+                                            <div class="item-status">Cancelled</div>
+                                            <% } else if (order.orderStatus==='Delivered' ) { %>
+                                                <div class="item-status status-delivered">Delivered</div>
+                                                <% if( new Date() <=returnDeadline ) {%>
+                                                    <button class="action-button return-button"
+                                                        onclick="returnItem('<%= order.orderId %>', '<%= item.product._id %>')">Return</button>
+                                                    <%}%>
+                                                        <% } else if (order.orderStatus==='Placed' ) { %>
+                                                            <div
+                                                                class="item-status status-<%= order.orderStatus.toLowerCase() %>">
+                                                                <%= order.orderStatus %>
+                                                            </div>
+                                                            <button class="action-button cancel-button"
+                                                                onclick="cancelItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel
+                                                                Order</button>
+
+                                                            <% } else { %>
+                                                                <div class="item-status">
+                                                                    <%= order.orderStatus %>
+                                                                </div>
+                                                                <% } %>
                         </div>
                         <% }); %>
                 </div>
@@ -470,7 +471,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        
+
         function returnItem(orderId, productId) {
             Swal.fire({
                 title: 'Return Item',
@@ -610,10 +611,32 @@
                 cancelButtonColor: '#3085d6'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `/cancel-return?orderId=${orderId}&productId=${productId}`;
+                    fetch('/cancel-return', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ orderId, productId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Return request cancelled Successfully") {
+                                Swal.fire('Cancelled!', data.message, 'success')
+                                    .then(() => {
+                                        location.reload(); // Reload page to reflect changes
+                                    });
+                            } else {
+                                Swal.fire('Error', data.message || 'Something went wrong.', 'error');
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire('Error', 'Failed to cancel the return request.', 'error');
+                        });
                 }
             });
         }
+
     </script>
 
     <%- include("../../views/partials/user/footer") %>

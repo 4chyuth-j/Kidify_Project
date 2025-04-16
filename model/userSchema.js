@@ -66,10 +66,36 @@ const userSchema = new Schema({
         default: 0, 
     },
 
+    walletHistory: [{
+        amount: Number,              // +ve for credit, -ve for debit
+        type: {
+            type: String,         
+            enum: ['refund', 'top-up', 'purchase', 'withdrawal'], 
+        },
+        orderId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Order',
+            required: false          // Only for refund or purchase type
+        },
+        transactionId: {
+            type: String,
+            required: false          // Razorpay or refund reference
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        },
+        note: {
+            type: String,            // Optional description like "Refund for product XYZ"
+        }
+    }],
+
+
     wishlist: [{
         type: Schema.Types.ObjectId,
         ref: "Wishlist", // References the Wishlist collection
     }],
+    
 
     orderHistory: [{
         type: Schema.Types.ObjectId,

@@ -417,18 +417,28 @@
                                 <div class="item-price">₹<%= item.price * item.quantity %>
                                 </div>
                                 <!-- <% if (item.product.discountPercentage > 0) { %>
-                        <div class="item-discount">Offer: <%= item.product.discountPercentage %>% Off</div>
-                        <div class="item-discount">Discount: ₹<%= Math.round((item.product.basePrice * item.quantity) * (item.product.discountPercentage / 100)) %></div>
-                        <% } %> -->
+                                <div class="item-discount">Offer: <%= item.product.discountPercentage %>% Off</div>
+                                <div class="item-discount">Discount: ₹<%= Math.round((item.product.basePrice * item.quantity) * (item.product.discountPercentage / 100)) %></div>
+                                <% } %> -->
                             </div>
 
                             <% const deliveredAt=new Date(order.deliveredAt); const returnDeadline=new
-                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30);
-                                if(item.returnStatus==='Pending' ) { %>
+                                Date(deliveredAt); returnDeadline.setDate(returnDeadline.getDate() + 30); 
+                                if(item.returnStatus==='Approved'){%>
+                                  
+                                    <div class="item-status status-returned">Returned</div>
+                                    <div class="item-quantity mt-5">Date of approval: <%= new Date(item.returnedAt).toLocaleString('en-US', { year: 'numeric' , month: 'long' ,
+                                        day: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+                                    </div>
+
+                                <%} else if(item.returnStatus==='Pending' ) { %>
                                 <div class="item-status status-return-requested">Return Requested</div>
                                 <button class="action-button cancel-return-button"
                                     onclick="cancelReturn('<%= order._id %>', '<%= item.product._id %>')">Cancel
                                     Return</button>
+                                <%} else if(item.returnStatus==='Rejected' ) { %>
+                                    <div class="item-status status-processing">Request for Return Rejected</div>
+
                                 <% } else if (item.cancelled) { %>
                                     <div class="item-status">Cancelled</div>
                                     <% } else if (order.orderStatus==='Delivered' ) { %>
@@ -445,6 +455,7 @@
                                                     <button class="action-button cancel-button"
                                                         onclick="cancelItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel
                                                         Order</button>
+                                                      
                                                     <% } else { %>
                                                         <div class="item-status">
                                                             <%= order.orderStatus %>
@@ -466,11 +477,11 @@
                 text: 'Please select a reason for return',
                 input: 'select',
                 inputOptions: {
-                    'defective': 'Defective Product',
-                    'damaged': 'Damaged Product',
-                    'wrong': 'Wrong Product Delivered',
-                    'not_as_described': 'Product Not As Described',
-                    'other': 'Other'
+                    'Defective_product': 'Defective Product',
+                    'Damaged_product': 'Damaged Product',
+                    'Wrong_product_delivered': 'Wrong Product Delivered',
+                    'Not_as_described': 'Product Not As Described',
+                    'Other': 'Other'
                 },
                 showCancelButton: true,
                 confirmButtonText: 'Submit Return',

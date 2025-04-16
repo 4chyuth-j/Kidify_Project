@@ -388,10 +388,15 @@
                                 </div>
                                 
                                 <div class="item-status">
-                                    <span class="status-badge status-<%= order.orderStatus %>">
-                                        Status: <%= order.orderStatus %>
-                                    </span>
+                                    <% if (item.cancelled) { %>
+                                        <span class="status-badge status-Cancelled">Status: Cancelled</span>
+                                    <% } else if (item.returnStatus==='Approved') { %>
+                                        <span class="status-badge status-Returned">Status: Returned</span>
+                                    <% } else { %>
+                                        <span class="status-badge status-<%= order.orderStatus %>">Status: <%= order.orderStatus %></span>
+                                    <% } %>
                                 </div>
+                                
                             </div>
                         <% }); %>
                     </div>

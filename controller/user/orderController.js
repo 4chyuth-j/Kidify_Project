@@ -191,6 +191,13 @@ const cancelItem = async (req, res) => {
 
         await orderDetails.save();
 
+        const allCancelled = orderDetails.orderedItems.every(i=>i.cancelled);
+        
+        if(allCancelled){
+          orderDetails.orderStatus = 'Cancelled';
+          await orderDetails.save();
+        }
+
         return res.status(200).json({ message: "Item cancelled successfully" });
 
 

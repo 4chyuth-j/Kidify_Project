@@ -118,12 +118,6 @@ const orderSchema = new Schema({
 
 
 
-
-    cancellationReason: {
-        type: String,
-        default: ""
-    },
-
     deliveredAt: {
         type: Date,
         default: null

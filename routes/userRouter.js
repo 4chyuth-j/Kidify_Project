@@ -120,6 +120,8 @@ router.get('/get-product-stock',userAuth,cartController.getProductStock);
 
 router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantityCount);
 
+router.post("/clearCartProducts",userAuth,cartController.clearCart);
+
 
 // checkout management
 router.get('/checkout',userAuth,checkoutController.loadCheckout);

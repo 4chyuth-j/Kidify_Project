@@ -239,7 +239,27 @@ const updateCartQuantityCount = async (req, res) => {
 };
 
 
+const clearCart = async (req,res)=>{
+    try {
+        const userId = req.session.user;
 
+        const userCart = await Cart.findOne({userId})
+        if (!userCart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+
+        userCart.items=[];
+
+        await userCart.save();
+
+        return res.status(200).json({ message:"Cart Cleared Successfully"});
+        
+    } catch (error) {
+        console.error("Error in clearing cart", error);
+        res.status(500).json({ message: "Internal server error" });
+
+    }
+}
 
 
 
@@ -250,4 +270,5 @@ module.exports = {
     removeCartProduct,
     getProductStock,
     updateCartQuantityCount,
+    clearCart
 }

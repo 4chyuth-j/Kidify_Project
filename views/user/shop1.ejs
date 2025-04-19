@@ -420,6 +420,7 @@
 
         <main class="product-grid">
           <% if (productsFound) { %>
+            
             <% for(let i=0; i<products.length; i++) { %>
               <div class="product-card">
                 <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')"><i

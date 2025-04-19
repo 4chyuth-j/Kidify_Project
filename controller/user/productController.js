@@ -6,6 +6,7 @@ const User = require("../../model/userSchema");
 
 const productDetails = async (req,res)=>{
     try {
+        
         const userId = req.session.user;
         const userData = await User.findById(userId);
         const productId = req.query.id;

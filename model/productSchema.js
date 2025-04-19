@@ -56,16 +56,7 @@ const productSchema = new Schema({
         default:"Available",
     },
     
-    // Variants (if any)
-  variants: [
-    {
-      size: String,
-      color: String,
-      price: Number,
-      stock: Number,
-      images: [String],
-    },
-  ],
+
 
    
 },{timestamps:true});

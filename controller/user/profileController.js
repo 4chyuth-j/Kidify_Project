@@ -166,7 +166,7 @@ const loadResetPassword = async (req, res) => {
 }
 
 
-// change password and make these changes in db
+// change password 
 const resetPassword = async (req, res) => {
     try {
         console.log("entered reset password section");

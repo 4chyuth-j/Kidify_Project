@@ -75,7 +75,7 @@ const orderSchema = new Schema({
     },
     
 
-    // Date when the invoice was generated
+    
     invoiceDate: {
         type: Date,
         default: Date.now

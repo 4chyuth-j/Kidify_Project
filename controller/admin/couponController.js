@@ -29,12 +29,57 @@ const loadCoupon = async (req, res) => {
             pageTitle: "Coupons" 
         });
     } catch (error) {
+        console.log("Error in loading coupon listing page:", error);
+        res.redirect("/pageError");
+    }
+}
+
+
+const loadAddCoupon = async (req,res)=>{
+    try {
+        return res.render("addCoupon", { pageTitle: "Add Coupon" });
+    } catch (error) {
+        console.log("Error in loading add coupon page:", error);
         res.redirect("/pageError");
     }
 }
 
 
 
+const addCoupon = async (req,res)=>{
+    try {
+        const {name,startOn,expireOn,offerPrice,minimumPrice,maxUsage,isList} = req.body;
+        
+        const couponExists = await Coupon.findOne({name});
+        if(couponExists){
+            return res.status(400).json({message:`Coupon with ${name} already exists. `});
+        }
+
+        const newCoupon = new Coupon({
+            name,
+            startOn,
+            expireOn,
+            offerPrice,
+            minimumPrice,
+            maxUsage,
+            isList
+        });
+
+        await newCoupon.save();
+        return res.status(200).json({ message: "Coupon added successfully" });
+
+
+    } catch (error) {
+        console.log("Error in loading add coupon page:", error);
+        res.status(500).json({message:"Something went wrong!"});
+    }
+}
+
+
+
+
 module.exports = {
     loadCoupon,
+    loadAddCoupon,
+    addCoupon,
 }

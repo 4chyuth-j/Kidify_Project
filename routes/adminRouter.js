@@ -91,6 +91,10 @@ router.post('/process-return-request',adminAuth,orderController.processReturnReq
 //Coupon management 
 router.get('/coupon',adminAuth,couponController.loadCoupon);
 
+router.get('/addCoupon',adminAuth,couponController.loadAddCoupon);
+
+router.post('/addCoupon',adminAuth,couponController.addCoupon);
+
 
 
 module.exports = router;

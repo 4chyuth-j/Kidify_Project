@@ -1,0 +1,295 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+    .form-container {
+        
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 50%;
+        margin: auto;
+        margin-left: 500px;
+        margin-top: 60px;
+    }
+
+    .form-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #563d7c;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid #6c43c1;
+        color: #6c43c1;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .btn-save {
+        background: #6c43c1;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Add New Coupon</h2>
+    <form id="addCoupon" action="/admin/addCoupon" method="post">
+        <div class="form-group">
+            <label class="form-label">Coupon Name</label>
+            <input id="name" type="text" class="form-control" name="name" placeholder="Enter coupon name">
+            <div id="error1" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input id="startOn" type="date" class="form-control" name="startOn">
+            <div id="error2" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Expiration Date</label>
+            <input id="expireOn" type="date" class="form-control" name="expireOn">
+            <div id="error3" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Offer Price</label>
+            <input id="offerPrice" type="number" class="form-control" name="offerPrice" placeholder="Enter offer price">
+            <div id="error4" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Minimum Purchase Price</label>
+            <input id="minimumPrice" type="number" class="form-control" name="minimumPrice" placeholder="Enter minimum price">
+            <div id="error5" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Maximum Usage</label>
+            <input id="maxUsage" type="number" class="form-control" name="maxUsage" placeholder="Enter max usage count" value="100">
+            <div id="error6" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Listing Status</label>
+            <select id="isList" class="form-control" name="isList">
+                <option value="true">Listed</option>
+                <option value="false">Unlisted</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <a href="/admin/coupons" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save">Save</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const couponNameId = document.getElementById("name");
+    const startOnId = document.getElementById("startOn");
+    const expireOnId = document.getElementById("expireOn");
+    const offerPriceId = document.getElementById("offerPrice");
+    const minimumPriceId = document.getElementById("minimumPrice");
+    const maxUsageId = document.getElementById("maxUsage");
+
+    const error1 = document.getElementById("error1");
+    const error2 = document.getElementById("error2");
+    const error3 = document.getElementById("error3");
+    const error4 = document.getElementById("error4");
+    const error5 = document.getElementById("error5");
+    const error6 = document.getElementById("error6");
+
+    const formId = document.getElementById("addCoupon");
+
+    function fieldValidation() {
+        let isValid = true;
+
+        const couponName = couponNameId.value.trim();
+        const startOn = startOnId.value;
+        const expireOn = expireOnId.value;
+        const offerPrice = offerPriceId.value.trim();
+        const minimumPrice = minimumPriceId.value.trim();
+        const maxUsage = maxUsageId.value.trim();
+
+        // Reset previous errors
+        error1.innerHTML = "";
+        error2.innerHTML = "";
+        error3.innerHTML = "";
+        error4.innerHTML = "";
+        error5.innerHTML = "";
+        error6.innerHTML = "";
+
+        // Coupon Name Validation
+        if (couponName === "") {
+            error1.style.display = "block";
+            error1.innerHTML = "Please enter the coupon name";
+            isValid = false;
+        } else if (couponName.length < 3) {
+            error1.style.display = "block";
+            error1.innerHTML = "Name should be at least 3 characters";
+            isValid = false;
+        }
+
+        // Start Date Validation
+        if (!startOn) {
+            error2.style.display = "block";
+            error2.innerHTML = "Please select a start date";
+            isValid = false;
+        } else {
+            const startDate = new Date(startOn);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (startDate < today) {
+                error2.style.display = "block";
+                error2.innerHTML = "Start date cannot be in the past";
+                isValid = false;
+            }
+        }
+
+        // Expiration Date Validation
+        if (!expireOn) {
+            error3.style.display = "block";
+            error3.innerHTML = "Please select an expiration date";
+            isValid = false;
+        } else {
+            const startDate = new Date(startOn);
+            const expireDate = new Date(expireOn);
+            if (expireDate <= startDate) {
+                error3.style.display = "block";
+                error3.innerHTML = "Expiration date must be after start date";
+                isValid = false;
+            }
+        }
+
+        // Offer Price Validation
+        if (offerPrice === "") {
+            error4.style.display = "block";
+            error4.innerHTML = "Please enter the offer price";
+            isValid = false;
+        } else if (isNaN(offerPrice) || offerPrice <= 0) {
+            error4.style.display = "block";
+            error4.innerHTML = "Offer price must be a positive number";
+            isValid = false;
+        }
+
+        // Minimum Price Validation
+        if (minimumPrice === "") {
+            error5.style.display = "block";
+            error5.innerHTML = "Please enter the minimum purchase price";
+            isValid = false;
+        } else if (isNaN(minimumPrice) || minimumPrice <= 0) {
+            error5.style.display = "block";
+            error5.innerHTML = "Minimum price must be a positive number";
+            isValid = false;
+        } else if (parseFloat(minimumPrice) < parseFloat(offerPrice)) {
+            error5.style.display = "block";
+            error5.innerHTML = "Minimum price must be greater than offer price";
+            isValid = false;
+        }
+
+        // Max Usage Validation
+        if (maxUsage === "") {
+            error6.style.display = "block";
+            error6.innerHTML = "Please enter the maximum usage count";
+            isValid = false;
+        } else if (isNaN(maxUsage) || maxUsage <= 0) {
+            error6.style.display = "block";
+            error6.innerHTML = "Maximum usage must be a positive number";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        formId.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (!fieldValidation()) {
+                return;
+            }
+
+            const couponName = couponNameId.value.trim();
+            const startOn = startOnId.value;
+            const expireOn = expireOnId.value;
+            const offerPrice = offerPriceId.value.trim();
+            const minimumPrice = minimumPriceId.value.trim();
+            const maxUsage = maxUsageId.value.trim();
+            const isList = document.getElementById("isList").value === "true";
+
+            fetch('/admin/addCoupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: couponName,
+                    startOn: startOn,
+                    expireOn: expireOn,
+                    offerPrice: offerPrice,
+                    minimumPrice: minimumPrice,
+                    maxUsage: maxUsage,
+                    isList: isList
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Successfully Added',
+                    text: data.message,
+                    timer: 2500,
+                }).then(() => {
+                    window.location.href = '/admin/coupon';
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops',
+                    text: error.message === "Coupon Already exists"
+                        ? "Coupon already exists"
+                        : "An error occurred while adding the coupon"
+                });
+            });
+        });
+    });
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

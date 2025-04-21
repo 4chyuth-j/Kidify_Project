@@ -54,7 +54,7 @@ router.post("/reset-Password",ensureEmailSession,profileController.resetPassword
 // load home and shop page 
 router.get("/shop",userAuth,userController.loadShopingPage);
 
-// shopping page filter
+// shopping page filters  
 router.get("/filter",userAuth,userController.filterProduct);
 
 router.get("/filterPrice",userAuth,userController.filterByPrice);

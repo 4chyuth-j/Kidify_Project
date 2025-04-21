@@ -6,6 +6,7 @@ const categoryController = require('../controller/admin/categoryController.js');
 const productController = require('../controller/admin/productController.js');
 const bannerController = require('../controller/admin/bannerController.js');
 const orderController = require('../controller/admin/orderController.js');
+const couponController = require('../controller/admin/couponController.js');
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const uploads = multer({storage:storage});
@@ -86,6 +87,9 @@ router.get('/order-details',adminAuth,orderController.loadOrderDetails);
 router.post('/update-order-status',adminAuth,orderController.updateOrderStatus)
 
 router.post('/process-return-request',adminAuth,orderController.processReturnRequest);
+
+//Coupon management 
+router.get('/coupon',adminAuth,couponController.loadCoupon);
 
 
 

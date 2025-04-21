@@ -606,7 +606,7 @@
                 const orderData = {
                     addressId: selectedAddress.value,
                     paymentMethod: paymentMethod,
-                    // couponCode: couponSelect.value
+                    // couponCode: couponSelect.value  
                 };
 
                 // Send order to server
@@ -621,7 +621,7 @@
                         if (!response.ok) {
                             return response.json().then(err => {
                                 throw new Error(err.message || 'Something went wrong');
-                            });
+                            }) ;
                         }
                         return response.json();
                     })

@@ -2,7 +2,6 @@
 
 <style>
     .form-container {
-        
         background: white;
         padding: 20px;
         border-radius: 10px;
@@ -10,7 +9,7 @@
         width: 50%;
         margin: auto;
         margin-left: 500px;
-        margin-top: 60px;
+        margin-top: 80px;
     }
 
     .form-title {
@@ -68,47 +67,48 @@
 </style>
 
 <div class="form-container">
-    <h2 class="form-title">Add New Coupon</h2>
-    <form id="addCoupon" action="/admin/addCoupon" method="post">
+    <h2 class="form-title">Edit Coupon</h2>
+    <form id="editCoupon" action="/admin/editCoupon" method="post">
+        <input type="hidden" name="couponId" value="<%= coupon._id %>">
         <div class="form-group">
             <label class="form-label">Coupon Name</label>
-            <input id="name" type="text" class="form-control" name="name" placeholder="Enter coupon name">
+            <input id="name" type="text" class="form-control" name="name" placeholder="Enter coupon name" value="<%= coupon.name %>">
             <div id="error1" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Start Date</label>
-            <input id="startOn" type="date" class="form-control" name="startOn">
+            <input id="startOn" type="date" class="form-control" name="startOn" value="<%= coupon.startOn.toISOString().split('T')[0] %>">
             <div id="error2" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Expiration Date</label>
-            <input id="expireOn" type="date" class="form-control" name="expireOn">
+            <input id="expireOn" type="date" class="form-control" name="expireOn" value="<%= coupon.expireOn.toISOString().split('T')[0] %>">
             <div id="error3" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Offer Price</label>
-            <input id="offerPrice" type="number" class="form-control" name="offerPrice" placeholder="Enter offer price">
+            <input id="offerPrice" type="number" class="form-control" name="offerPrice" placeholder="Enter offer price" value="<%= coupon.offerPrice %>">
             <div id="error4" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Minimum Purchase Price</label>
-            <input id="minimumPrice" type="number" class="form-control" name="minimumPrice" placeholder="Enter minimum price">
+            <input id="minimumPrice" type="number" class="form-control" name="minimumPrice" placeholder="Enter minimum price" value="<%= coupon.minimumPrice %>">
             <div id="error5" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Maximum Usage</label>
-            <input id="maxUsage" type="number" class="form-control" name="maxUsage" placeholder="Enter max usage count" value="100">
+            <input id="maxUsage" type="number" class="form-control" name="maxUsage" placeholder="Enter max usage count" value="<%= coupon.maxUsage %>">
             <div id="error6" class="error-message"></div>
         </div>
         <div class="form-group">
             <label class="form-label">Listing Status</label>
             <select id="isList" class="form-control" name="isList">
-                <option value="true">Listed</option>
-                <option value="false">Unlisted</option>
+                <option value="true" <%= coupon.isList ? 'selected' : '' %>>Listed</option>
+                <option value="false" <%= !coupon.isList ? 'selected' : '' %>>Unlisted</option>
             </select>
         </div>
         <div class="form-actions">
-            <a href="/admin/coupons" class="btn-cancel">Cancel</a>
+            <a href="/admin/coupon" class="btn-cancel">Cancel</a>
             <button type="submit" class="btn-save">Save</button>
         </div>
     </form>
@@ -129,7 +129,7 @@
     const error5 = document.getElementById("error5");
     const error6 = document.getElementById("error6");
 
-    const formId = document.getElementById("addCoupon");
+    const formId = document.getElementById("editCoupon");
 
     function fieldValidation() {
         let isValid = true;
@@ -165,15 +165,6 @@
             error2.style.display = "block";
             error2.innerHTML = "Please select a start date";
             isValid = false;
-        } else {
-            const startDate = new Date(startOn);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (startDate < today) {
-                error2.style.display = "block";
-                error2.innerHTML = "Start date cannot be in the past";
-                isValid = false;
-            }
         }
 
         // Expiration Date Validation
@@ -238,6 +229,7 @@
                 return;
             }
 
+            const couponId = document.querySelector('input[name="couponId"]').value;
             const couponName = couponNameId.value.trim();
             const startOn = startOnId.value;
             const expireOn = expireOnId.value;
@@ -246,12 +238,13 @@
             const maxUsage = maxUsageId.value.trim();
             const isList = document.getElementById("isList").value === "true";
 
-            fetch('/admin/addCoupon', {
+            fetch(`/admin/editCoupon`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    couponId: couponId,
                     name: couponName,
                     startOn: startOn,
                     expireOn: expireOn,
@@ -264,7 +257,7 @@
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(err => {
-                        throw new Error(err.message);
+                        throw new Error(err.message || err.error || "Unknown error");
                     });
                 }
                 return response.json();
@@ -272,7 +265,7 @@
             .then(data => {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Successfully Added',
+                    title: 'Successfully Updated',
                     text: data.message,
                     timer: 2500,
                 }).then(() => {
@@ -284,8 +277,8 @@
                     icon: 'error',
                     title: 'Oops',
                     text: error.message === "Coupon Already exists"
-                        ? "Coupon already exists"
-                        : "An error occurred while adding the coupon"
+                        ? "Coupon name already exists"
+                        : "An error occurred while updating the coupon"
                 });
             });
         });

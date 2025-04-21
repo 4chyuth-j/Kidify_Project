@@ -95,6 +95,10 @@ router.get('/addCoupon',adminAuth,couponController.loadAddCoupon);
 
 router.post('/addCoupon',adminAuth,couponController.addCoupon);
 
+router.get('/editCoupon',adminAuth,couponController.loadEditCoupon);
+
+router.post('/editCoupon',adminAuth,couponController.editCoupon);
+
 
 
 module.exports = router;

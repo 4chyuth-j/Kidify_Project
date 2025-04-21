@@ -189,8 +189,8 @@
                                 <td><%= coupons[i].name %></td>
                                 <td><%= new Date(coupons[i].startOn).toLocaleDateString() %></td>
                                 <td><%= new Date(coupons[i].expireOn).toLocaleDateString() %></td>
-                                <td>$<%= coupons[i].minimumPrice %></td>
-                                <td>$<%= coupons[i].offerPrice %></td>
+                                <td>₹<%= coupons[i].minimumPrice %></td>
+                                <td>₹<%= coupons[i].offerPrice %></td>
                                 <td><%= coupons[i].userId.length %>/<%= coupons[i].maxUsage %></td>
                                 <td>
                                     <% if (coupons[i].isList) { %>

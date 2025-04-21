@@ -11,7 +11,10 @@ const couponSchema = new Schema({
         unique: true, 
     },
 
-    
+    startOn: {
+        type: Date,
+        required: true,
+    },
 
     
     expireOn: {
@@ -35,7 +38,13 @@ const couponSchema = new Schema({
         default: true, 
     },
 
-    // List of users who have used or are eligible to use the coupon
+    //how many times this coupon can be used among all the users combined
+    maxUsage: {
+        type: Number,
+        default: 100,
+    },
+
+    // List of users who have used the coupon
     userId: [{
         type: Schema.Types.ObjectId,
         ref: 'User', 

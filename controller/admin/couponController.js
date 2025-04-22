@@ -142,6 +142,30 @@ const editCoupon = async (req, res) => {
       res.status(500).json({ message: "Something went wrong!" });
     }
   };
+
+
+  const deleteCoupon = async (req, res) => {
+    try {
+        const couponId = req.query.id;
+
+        if (!couponId) {
+            return res.status(400).json({ message: "Failed to retrieve coupon ID from query" });
+        }
+
+        const deletedCoupon = await Coupon.findByIdAndDelete(couponId);
+
+        if (!deletedCoupon) {
+            return res.status(404).json({ message: "Coupon not found" });
+        }
+
+        return res.status(200).json({ message: "Coupon deleted successfully" });
+
+    } catch (error) {
+        console.log(`Error deleting coupon with ID ${req.query.id}:`, error);
+        res.status(500).json({ message: "Something went wrong!" });
+    }
+};
+
   
 
 
@@ -153,5 +177,6 @@ module.exports = {
     loadAddCoupon,
     addCoupon,
     loadEditCoupon,
-    editCoupon
+    editCoupon,
+    deleteCoupon
 }

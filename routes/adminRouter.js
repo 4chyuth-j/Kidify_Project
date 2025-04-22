@@ -99,6 +99,8 @@ router.get('/editCoupon',adminAuth,couponController.loadEditCoupon);
 
 router.post('/editCoupon',adminAuth,couponController.editCoupon);
 
+router.delete('/deleteCoupon',adminAuth,couponController.deleteCoupon);
+
 
 
 module.exports = router;

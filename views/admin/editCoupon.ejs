@@ -276,9 +276,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops',
-                    text: error.message === "Coupon Already exists"
-                        ? "Coupon name already exists"
-                        : "An error occurred while updating the coupon"
+                    text: error.message 
                 });
             });
         });

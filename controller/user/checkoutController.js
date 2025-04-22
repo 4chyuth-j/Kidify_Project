@@ -27,12 +27,22 @@ const loadCheckout = async (req, res) => {
 
         // Calculate totals
         const cartTotal = userCart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+
+        const coupons = await Coupon.find({
+            isList: true,
+            maxUsage: { $gt: 0 },
+            minimumPrice: { $lte: cartTotal },
+            startOn: { $lte: new Date() },
+            expireOn: { $gte: new Date() }
+          });
+          
         
         res.render('checkout', {
             user: userData, 
             address: userAddress, 
             cart: userCart,
-            cartTotal: cartTotal
+            cartTotal: cartTotal,
+            coupons
         });
     } catch (error) {
         console.error("Error in loadCheckout:", error);
@@ -40,7 +50,6 @@ const loadCheckout = async (req, res) => {
     }
 
 };
-
 
 
 

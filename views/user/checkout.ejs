@@ -126,8 +126,8 @@
         }
 
         .price-details {
-            width: 30%;
-            height: 440px;
+            width: 38%;
+            height: 490px;
             background-color: #f8c8dc;
             padding: 15px;
             border-radius: 8px;
@@ -289,6 +289,73 @@
         .save-address-btn:hover {
             background-color: #b13f7d;
         }
+
+        /* Coupon styles */
+        .coupon-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .coupon-container select {
+            flex-grow: 1;
+            margin-right: 10px;
+            margin-bottom: 0;
+            max-width: 75%;
+        }
+
+        .apply-coupon-btn {
+            background-color: #d14792;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .apply-coupon-btn:hover {
+            background-color: #b13f7d;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dotted #d1479260;
+        }
+
+        .price-item.total {
+            border-bottom: none;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #d14792;
+        }
+
+        .coupon-discount-row {
+            color: #d14792;
+        }
+
+        /* Fix for coupon dropdown */
+        #couponSelect {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        #couponSelect option {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        #couponSelect::-webkit-scrollbar {
+            width: 5px;
+        }
     </style>
 
     <div class="breadcrumb-wrap">
@@ -372,18 +439,45 @@
                 totalAmount = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
                 }
                 %>
-                <p>Price (<%= totalItems %> items) <span>₹<%= totalAmount.toFixed(2) %></span></p>
+                <div class="price-item">
+                    <span>Price (<%= totalItems %> items)</span>
+                    <span>₹<%= totalAmount.toFixed(2) %></span>
+                </div>
 
-                <p>Delivery charge <span>Free</span></p>
+                <div class="price-item">
+                    <span>Delivery charge</span>
+                    <span>Free</span>
+                </div>
 
-                <p>Available Coupon <span>
+                <div class="price-item">
+                    <span>Available Coupon</span>
+                    <div class="coupon-container">
                         <select id="couponSelect">
                             <option value="">Select Available Coupon</option>
-                            <option value="DISCOUNT10">10% Off - Min. order: ₹200</option>
-                            <option value="DISCOUNT20">20% Off - Min. order: ₹500</option>
+                            <% if (coupons && coupons.length > 0) { %>
+                                <% coupons.forEach(coupon => { %>
+                                    <option value="<%= coupon._id %>" 
+                                            data-discount="<%= coupon.offerPrice %>" 
+                                            data-name="<%= coupon.name %>"
+                                            data-min="<%= coupon.minimumPrice %>">
+                                        <%= coupon.name %> - ₹<%= coupon.offerPrice %> Off (Min: ₹<%= coupon.minimumPrice %>)
+                                    </option>
+                                <% }); %>
+                            <% } %>
                         </select>
-                    </span></p>
-                <p>Total <span id="orderTotal">₹<%= totalAmount.toFixed(2) %></span></p>
+                        <button id="applyCouponBtn" class="apply-coupon-btn">Apply</button>
+                    </div>
+                </div>
+
+                <div id="couponDiscountRow" class="price-item coupon-discount-row" style="display: none;">
+                    <span>Coupon Discount</span>
+                    <span id="couponDiscount">-₹0.00</span>
+                </div>
+
+                <div class="price-item total">
+                    <span>Total Amount</span>
+                    <span id="orderTotal">₹<%= totalAmount.toFixed(2) %></span>
+                </div>
 
                 <!-- Payment Method Selection -->
                 <div class="payment-methods">
@@ -457,11 +551,40 @@
         document.addEventListener('DOMContentLoaded', function () {
             const placeOrderBtn = document.getElementById('placeOrderBtn');
             const couponSelect = document.getElementById('couponSelect');
+            const applyCouponBtn = document.getElementById('applyCouponBtn');
             const addAddressBtn = document.getElementById('addAddressBtn');
             const addressModal = document.getElementById('addressModal');
             const closeModal = document.querySelector('.close-modal');
             const addressForm = document.getElementById('addressForm');
             let totalAmount = '<%= totalAmount %>';
+            let appliedCouponId = null;
+            let appliedCouponDiscount = 0;
+
+            // Format coupon options to display shorter text when selected
+            function formatCouponOptions() {
+                document.querySelectorAll('#couponSelect option').forEach(option => {
+                    if (option.value) {
+                        // Store the full text for reference
+                        option.setAttribute('data-full-text', option.text);
+                    }
+                });
+            }
+            
+            // When a coupon is selected, ensure the display text is condensed
+            couponSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                
+                if (selectedOption && selectedOption.value) {
+                    const couponName = selectedOption.dataset.name;
+                    const discount = selectedOption.dataset.discount;
+                    
+                    // Update the selected text to a shorter version
+                    selectedOption.text = `${couponName} - ₹${discount} Off`;
+                }
+            });
+            
+            // Initialize coupon options
+            formatCouponOptions();
 
             // Open modal
             addAddressBtn.addEventListener('click', function () {
@@ -561,28 +684,44 @@
                     });
             });
 
+            // Apply coupon button click handler
+            applyCouponBtn.addEventListener('click', function() {
+                const selectedCoupon = couponSelect.options[couponSelect.selectedIndex];
+                const couponId = couponSelect.value;
+                
+                if (!couponId) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No Coupon Selected',
+                        text: 'Please select a coupon from the dropdown.',
+                        confirmButtonColor: '#d14792'
+                    });
+                    return;
+                }
 
-
-            // Update total when coupon is selected (dummy implementation)
-            // couponSelect.addEventListener('change', function () {
-            //     const couponValue = this.value;
-            //     let discountPercentage = 0;
-
-            //     if (couponValue === 'DISCOUNT10') {
-            //         discountPercentage = 10;
-            //     } else if (couponValue === 'DISCOUNT20') {
-            //         discountPercentage = 20;
-            //     }
-
-            //     // Calculate new total with discount
-            //     const discount = (totalAmount * discountPercentage) / 100;
-            //     const newTotal = totalAmount - discount;
-
-            //     // Update display
-            //     document.getElementById('orderTotal').textContent = '$' + newTotal.toFixed(2);
-            // });
-
-
+                const discount = parseFloat(selectedCoupon.dataset.discount) || 0;
+                const couponName = selectedCoupon.dataset.name || 'Coupon';
+                
+                // Display the coupon discount
+                document.getElementById('couponDiscount').textContent = `-₹${discount.toFixed(2)}`;
+                document.getElementById('couponDiscountRow').style.display = 'flex';
+                
+                // Calculate new total with discount
+                const newTotal = Math.max(0, totalAmount - discount);
+                document.getElementById('orderTotal').textContent = `₹${newTotal.toFixed(2)}`;
+                
+                // Store the applied coupon info
+                appliedCouponId = couponId;
+                appliedCouponDiscount = discount;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Applied!',
+                    text: `${couponName} has been applied to your order.`,
+                    confirmButtonColor: '#d14792',
+                    timer: 1500
+                });
+            });
 
             // Place order button click handler
             placeOrderBtn.addEventListener('click', function () {
@@ -605,9 +744,13 @@
                 // Prepare order data
                 const orderData = {
                     addressId: selectedAddress.value,
-                    paymentMethod: paymentMethod,
-                    // couponCode: couponSelect.value  
+                    paymentMethod: paymentMethod
                 };
+
+                // Add coupon ID if one is applied
+                if (appliedCouponId) {
+                    orderData.couponId = appliedCouponId;
+                }
 
                 // Send order to server
                 fetch('/place-order', {

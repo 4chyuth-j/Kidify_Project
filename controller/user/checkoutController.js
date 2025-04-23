@@ -34,12 +34,12 @@ const loadCheckout = async (req, res) => {
             minimumPrice: { $lte: cartTotal },
             startOn: { $lte: new Date() },
             expireOn: { $gte: new Date() }
-          });
-          
-        
+        });
+
+
         res.render('checkout', {
-            user: userData, 
-            address: userAddress, 
+            user: userData,
+            address: userAddress,
             cart: userCart,
             cartTotal: cartTotal,
             coupons
@@ -52,123 +52,96 @@ const loadCheckout = async (req, res) => {
 };
 
 
-
-const placeOrder = async (req,res)=>{
+const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user;
-        const {addressId,paymentMethod} = req.body;
+        const { addressId, paymentMethod, couponId } = req.body;
 
-        if(!addressId || !paymentMethod){
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Either addressId or paymentMethod is not received to backend' 
-            });
+        if (!addressId || !paymentMethod) {
+            return res.status(400).json({ success: false, message: 'Address or payment method missing' });
         }
 
         const userData = await User.findById(userId);
+        if (!userData) throw new Error("User Not Found");
 
-        if(!userData){
-            return res.status(400).json({ 
-                success: false, 
-                message: 'User Not Found' 
-            });
+        const userCart = await Cart.findOne({ userId });
+        if (!userCart || !userCart.items.length) throw new Error("Cart is empty or not found");
+
+        const userAddresses = await Address.findOne({ userId });
+        const selectedAddress = userAddresses?.address.find(addr => addr._id.toString() === addressId);
+        if (!selectedAddress) throw new Error("Selected address not found");
+
+        let totalPrice = userCart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+        let discount = 0;
+
+        if (couponId) {
+            const coupon = await Coupon.findById(couponId);
+            if (!coupon) throw new Error("Coupon not found");
+            discount = coupon.offerPrice || 0;
         }
 
-        const userCart = await Cart.findOne({userId});
-
-        if(!userCart){
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Cart not found' 
-            });
-        }
-
-        const userAddresses = await Address.findOne({userId});
-        if(!userAddresses){
-            return res.status(400).json({ 
-                success: false, 
-                message: 'User Addresses not found' 
-            });
-        }
-
-        const selectedAddress = userAddresses.address.find(addr=>{
-            return addr._id.toString()===addressId.toString()
-        });
-        if(!selectedAddress){
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Selected Address not found' 
-            });
-        }
-
-        const totalPrice = userCart.items.reduce((curr,item)=>curr+item.totalPrice,0);
+        const finalAmount = totalPrice - discount;
 
         const newOrder = new Order({
             userId,
-            orderedItems:userCart.items.map(item=>({
-                product:item.productId ,
-                quantity:item.quantity ,
-                price:item.price,
-            
+            orderedItems: userCart.items.map(item => ({
+                product: item.productId,
+                quantity: item.quantity,
+                price: item.price,
             })),
-            totalPrice:totalPrice,
-            finalAmount:totalPrice,
-            deliveryAddress:selectedAddress,
+            totalPrice,
+            discount,
+            finalAmount,
+            deliveryAddress: selectedAddress,
             paymentMethod,
             paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Paid',
             orderStatus: 'Placed'
         });
 
         await newOrder.save();
-        console.log("order saved in db");
-
+        console.log("order placed ");
 
         for (const item of userCart.items) {
             await Product.findByIdAndUpdate(
                 item.productId,
-                { $inc: { stock: -item.quantity } }, // Reduce stock by item quantity
+                { $inc: { stock: -item.quantity } },
                 { new: true }
             );
         }
-        console.log("stock count reduced");
-        
+        console.log("Stock count reduced");
 
         await Cart.findOneAndUpdate(
             { userId },
             { $set: { items: [] } }
         );
-        console.log("cart cleared successfully");
-        
+        console.log("Cart cleared");
 
-        await User.findOneAndUpdate(
-            {_id:userId},
-            {$push:{orderHistory:newOrder._id}}
+        await User.findByIdAndUpdate(
+            userId,
+            { $push: { orderHistory: newOrder._id } }
         );
-        console.log("added order to order History");
-        
+        console.log("Order history pushed");
 
-        return res.status(200).json({ 
-            success: true, 
+        return res.status(200).json({
+            success: true,
             message: 'Order placed successfully',
             orderId: newOrder._id
         });
 
-
-
     } catch (error) {
-
         console.error("Error in placeOrder:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: 'Failed to place order. Please try again.' 
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to place order. Please try again.'
         });
-
     }
-}
+};
 
 
 
-const loadOrderSuccess = async (req,res)=>{
+
+
+const loadOrderSuccess = async (req, res) => {
     try {
         const userId = req.session.user;
         const orderId = req.query.id;
@@ -180,11 +153,11 @@ const loadOrderSuccess = async (req,res)=>{
         }
 
         const orderData = await Order.findById(orderId);
-        if(!orderData){
+        if (!orderData) {
             console.log("Failed to find orderData in db");
         }
 
-        res.render("order-success",{user:userData,order:orderData});
+        res.render("order-success", { user: userData, order: orderData });
 
     } catch (error) {
         console.error("Error in loading order success page:", error);
@@ -199,7 +172,7 @@ const loadOrderSuccess = async (req,res)=>{
 
 
 
-module.exports ={
+module.exports = {
     loadCheckout,
     placeOrder,
     loadOrderSuccess,

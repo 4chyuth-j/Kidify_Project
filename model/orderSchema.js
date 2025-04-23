@@ -48,7 +48,7 @@ const orderSchema = new Schema({
         cancelReason: { type: String, default: '' }
     }],
 
-    // Total price before applying any discounts
+    // Total price before applying any discount
     totalPrice: {
         type: Number,
         required: true,

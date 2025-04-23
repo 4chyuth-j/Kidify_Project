@@ -137,7 +137,21 @@ const processReturnRequest = async (req, res) => {
     const productDetails = orderDetails.orderedItems[itemIndex];
 
     const reStock = productDetails.quantity;
-    const refundAmount = productDetails.quantity * productDetails.price;
+
+    // 1. Full item total
+    const itemTotal = productDetails.quantity * productDetails.price;
+
+    // 2. Original discount amount
+    const totalOrderPrice = orderDetails.totalPrice;
+    const totalDiscount = orderDetails.discount;
+
+    // 3. Discount share for this item
+    const itemDiscountShare = (itemTotal / totalOrderPrice) * totalDiscount;
+
+    // 4. Final refund
+    const refundAmount = Math.round(itemTotal - itemDiscountShare);
+
+
     console.log("Refund amount:", refundAmount);
 
 
@@ -161,7 +175,8 @@ const processReturnRequest = async (req, res) => {
       }
 
       orderDetails.totalPrice = newTotalPrice;
-      orderDetails.finalAmount = newTotalPrice; //change when adding coupon or discount
+      // orderDetails.finalAmount = newTotalPrice; //change when adding coupon or discount
+      orderDetails.finalAmount =  Math.round(newTotalPrice - (orderDetails.discount-itemDiscountShare)); //change when adding coupon or discount
 
       await orderDetails.save();
 
@@ -194,7 +209,7 @@ const processReturnRequest = async (req, res) => {
         { new: true }
       );
 
-      
+
 
 
       return res.status(200).json({ message: "Return Approved" });

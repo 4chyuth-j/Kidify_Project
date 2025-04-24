@@ -146,7 +146,10 @@ const processReturnRequest = async (req, res) => {
     const totalDiscount = orderDetails.discount;
 
     // 3. Discount share for this item
-    const itemDiscountShare = (itemTotal / totalOrderPrice) * totalDiscount;
+    const itemDiscountShare = totalOrderPrice === 0
+      ? 0
+      : (itemTotal / totalOrderPrice) * totalDiscount;
+
 
     // 4. Final refund
     const refundAmount = Math.round(itemTotal - itemDiscountShare);
@@ -175,8 +178,10 @@ const processReturnRequest = async (req, res) => {
       }
 
       orderDetails.totalPrice = newTotalPrice;
+      orderDetails.discount = orderDetails.discount - itemDiscountShare;
+
       // orderDetails.finalAmount = newTotalPrice; //change when adding coupon or discount
-      orderDetails.finalAmount =  Math.round(newTotalPrice - (orderDetails.discount-itemDiscountShare)); //change when adding coupon or discount
+      orderDetails.finalAmount = Math.round(newTotalPrice - orderDetails.discount); //change when adding coupon or discount
 
       await orderDetails.save();
 

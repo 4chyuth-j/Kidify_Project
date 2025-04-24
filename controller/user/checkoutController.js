@@ -33,7 +33,11 @@ const loadCheckout = async (req, res) => {
             maxUsage: { $gt: 0 },
             minimumPrice: { $lte: cartTotal },
             startOn: { $lte: new Date() },
-            expireOn: { $gte: new Date() }
+            expireOn: { $gte: new Date() },
+            $expr: {
+                $lt: [{ $size: "$userId" }, "$maxUsage"]
+            },
+            userId: { $nin: [userId] },
         });
 
 
@@ -78,6 +82,11 @@ const placeOrder = async (req, res) => {
             const coupon = await Coupon.findById(couponId);
             if (!coupon) throw new Error("Coupon not found");
             discount = coupon.offerPrice || 0;
+
+            if (!coupon.userId.includes(userId)) {
+                coupon.userId.push(userId);
+                await coupon.save(); // ✅ save the change
+            }
         }
 
         const finalAmount = totalPrice - discount;

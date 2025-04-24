@@ -345,10 +345,7 @@
                                     <span>₹<%= order.totalPrice %></span>
                                 </div>
                                 <% if (order.couponApplied) { %>
-                                    <div class="price-row">
-                                        <span>Total Offer Redemption:</span>
-                                        <span>₹<%= Math.round((order.totalPrice - order.finalAmount) ) %></span>
-                                    </div>
+                                 
                                     <div class="price-row">
                                         <span>Total Coupon Redemption:</span>
                                         <span>₹<%= Math.round((order.totalPrice - order.finalAmount) ) %></span>

@@ -298,12 +298,7 @@
                         <span>-₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></span>
                     </div>
                     <% } %>
-                        <% if(order.couponApplied) { %>
-                            <div class="price-row">
-                                <span>Coupon Redemption:</span>
-                                <span>-₹<%= (order.totalPrice * order.discount / 100).toFixed(2) %></span>
-                            </div>
-                            <% } %>
+                     
                                 <div class="price-row total-amount">
                                     <span>Total Amount:</span>
                                     <span>₹<%= order.finalAmount %></span>

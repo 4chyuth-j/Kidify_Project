@@ -85,7 +85,7 @@ const placeOrder = async (req, res) => {
 
             if (!coupon.userId.includes(userId)) {
                 coupon.userId.push(userId);
-                await coupon.save(); // ✅ save the change
+                await coupon.save(); //  save the change made in coupon
             }
         }
 
@@ -104,7 +104,8 @@ const placeOrder = async (req, res) => {
             deliveryAddress: selectedAddress,
             paymentMethod,
             paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Paid',
-            orderStatus: 'Placed'
+            orderStatus: 'Placed',
+            couponApplied: couponId ? true : false,
         });
 
         await newOrder.save();

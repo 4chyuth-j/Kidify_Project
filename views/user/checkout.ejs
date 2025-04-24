@@ -346,13 +346,13 @@
             white-space: nowrap;
             width: 100%;
         }
-        
+
         #couponSelect option {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
+
         #couponSelect::-webkit-scrollbar {
             width: 5px;
         }
@@ -454,16 +454,15 @@
                     <div class="coupon-container">
                         <select id="couponSelect">
                             <option value="">Select Available Coupon</option>
-                            <% if (coupons && coupons.length > 0) { %>
-                                <% coupons.forEach(coupon => { %>
-                                    <option value="<%= coupon._id %>" 
-                                            data-discount="<%= coupon.offerPrice %>" 
-                                            data-name="<%= coupon.name %>"
-                                            data-min="<%= coupon.minimumPrice %>">
-                                        <%= coupon.name %> - ₹<%= coupon.offerPrice %> Off (Min: ₹<%= coupon.minimumPrice %>)
+                            <% if (coupons && coupons.length> 0) { %>
+                                <% coupons.forEach(coupon=> { %>
+                                    <option value="<%= coupon._id %>" data-discount="<%= coupon.offerPrice %>"
+                                        data-name="<%= coupon.name %>" data-min="<%= coupon.minimumPrice %>">
+                                        <%= coupon.name %> - ₹<%= coupon.offerPrice %> Off (Min: ₹<%=
+                                                    coupon.minimumPrice %>)
                                     </option>
-                                <% }); %>
-                            <% } %>
+                                    <% }); %>
+                                        <% } %>
                         </select>
                         <button id="applyCouponBtn" class="apply-coupon-btn">Apply</button>
                     </div>
@@ -546,6 +545,8 @@
         </div>
     </div>
 
+    <!-- The main change is in the JavaScript section - I'll preserve all other code -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -559,6 +560,7 @@
             let totalAmount = '<%= totalAmount %>';
             let appliedCouponId = null;
             let appliedCouponDiscount = 0;
+            let originalTotal = parseFloat(totalAmount);
 
             // Format coupon options to display shorter text when selected
             function formatCouponOptions() {
@@ -569,20 +571,20 @@
                     }
                 });
             }
-            
+
             // When a coupon is selected, ensure the display text is condensed
-            couponSelect.addEventListener('change', function() {
+            couponSelect.addEventListener('change', function () {
                 const selectedOption = this.options[this.selectedIndex];
-                
+
                 if (selectedOption && selectedOption.value) {
                     const couponName = selectedOption.dataset.name;
                     const discount = selectedOption.dataset.discount;
-                    
+
                     // Update the selected text to a shorter version
                     selectedOption.text = `${couponName} - ₹${discount} Off`;
                 }
             });
-            
+
             // Initialize coupon options
             formatCouponOptions();
 
@@ -618,7 +620,7 @@
                     pincode: document.getElementById('pincode').value
                 };
 
-                
+
                 const phoneRegex = /^[6-9]\d{9}$/;
                 const pincodeRegex = /^\d{6}$/;
 
@@ -684,11 +686,49 @@
                     });
             });
 
-            // Apply coupon button click handler
-            applyCouponBtn.addEventListener('click', function() {
+            // Apply/Remove coupon button click handler
+            applyCouponBtn.addEventListener('click', function () {
+                // If a coupon is already applied, this will be a "Remove" action
+                if (appliedCouponId) {
+                    // Remove coupon discount
+                    appliedCouponId = null;
+                    appliedCouponDiscount = 0;
+
+                    // Hide the coupon discount row
+                    document.getElementById('couponDiscountRow').style.display = 'none';
+
+                    // Reset total to original amount
+                    document.getElementById('orderTotal').textContent = `₹${originalTotal.toFixed(2)}`;
+
+                    const selectedOption = couponSelect.options[couponSelect.selectedIndex];
+                    if (selectedOption.dataset.fullText) {
+                        selectedOption.text = selectedOption.dataset.fullText;
+                    }
+
+                    // Reset the select dropdown
+                    couponSelect.disabled = false;
+                    couponSelect.selectedIndex = 0;
+
+                    // Change button text back to "Apply"
+                    applyCouponBtn.textContent = 'Apply';
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Coupon Removed',
+                        text: 'The coupon has been removed from your order.',
+                        confirmButtonColor: '#d14792',
+                        timer: 1500
+                    }).then(()=>{
+                        location.reload();
+                    })
+
+                    return;
+                }
+
+                // This is an "Apply" action
                 const selectedCoupon = couponSelect.options[couponSelect.selectedIndex];
                 const couponId = couponSelect.value;
-                
+
                 if (!couponId) {
                     Swal.fire({
                         icon: 'warning',
@@ -701,19 +741,37 @@
 
                 const discount = parseFloat(selectedCoupon.dataset.discount) || 0;
                 const couponName = selectedCoupon.dataset.name || 'Coupon';
-                
+                const minAmount = parseFloat(selectedCoupon.dataset.min) || 0;
+
+                // Check if order meets minimum amount requirement
+                if (originalTotal < minAmount) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot Apply Coupon',
+                        text: `This coupon requires a minimum order of ₹${minAmount.toFixed(2)}.`,
+                        confirmButtonColor: '#d14792'
+                    });
+                    return;
+                }
+
                 // Display the coupon discount
                 document.getElementById('couponDiscount').textContent = `-₹${discount.toFixed(2)}`;
                 document.getElementById('couponDiscountRow').style.display = 'flex';
-                
+
                 // Calculate new total with discount
-                const newTotal = Math.max(0, totalAmount - discount);
+                const newTotal = Math.max(0, originalTotal - discount);
                 document.getElementById('orderTotal').textContent = `₹${newTotal.toFixed(2)}`;
-                
+
                 // Store the applied coupon info
                 appliedCouponId = couponId;
                 appliedCouponDiscount = discount;
-                
+
+                // Disable the select dropdown while coupon is applied
+                couponSelect.disabled = true;
+
+                // Change button text to "Remove"
+                applyCouponBtn.textContent = 'Remove';
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Coupon Applied!',
@@ -725,7 +783,7 @@
 
             // Place order button click handler
             placeOrderBtn.addEventListener('click', function () {
-                // Get selected address
+
                 const selectedAddress = document.querySelector('input[name="address"]:checked');
 
                 if (!selectedAddress) {
@@ -764,7 +822,7 @@
                         if (!response.ok) {
                             return response.json().then(err => {
                                 throw new Error(err.message || 'Something went wrong');
-                            }) ;
+                            });
                         }
                         return response.json();
                     })

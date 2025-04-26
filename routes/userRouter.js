@@ -128,7 +128,9 @@ router.get('/checkout',userAuth,checkoutController.loadCheckout);
 
 router.post('/place-order',userAuth,checkoutController.placeOrder);
 
-router.post('/placeOrderOnlinePayment',userAuth,checkoutController.placeOrderOnlinePayment)
+router.post('/placeOrderOnlinePayment',userAuth,checkoutController.placeOrderOnlinePayment);
+
+router.post('/verify-payment-and-place-order',userAuth,checkoutController.verifyAndPlaceOrder);
 
 router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
 

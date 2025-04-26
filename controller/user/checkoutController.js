@@ -1,4 +1,5 @@
 const Razorpay = require('razorpay');
+const crypto = require('crypto');
 const User = require("../../model/userSchema");
 const Product = require("../../model/productSchema");
 const Cart = require("../../model/cartSchema");
@@ -125,9 +126,121 @@ const placeOrderOnlinePayment = async (req, res) => {
 
 
     } catch (error) {
-
+        console.error("Error in online payment:", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to place order. Please try again.'
+        });
     }
 }
+
+
+
+
+const verifyAndPlaceOrder = async (req,res)=>{
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            addressId,
+            couponId
+        } = req.body;
+
+        const userId = req.session.user;
+
+        // Step 1: Verify signature
+        const generatedSignature = crypto
+            .createHmac('sha256', RAZORPAY_SECRET_KEY)
+            .update(razorpay_order_id + "|" + razorpay_payment_id)
+            .digest('hex');
+
+        if (generatedSignature !== razorpay_signature) {
+            return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+        }
+
+        // Step 2: Place the order (same as your earlier logic)
+        const userCart = await Cart.findOne({ userId });
+        if (!userCart || !userCart.items.length) throw new Error("Cart is empty or not found");
+
+        const userAddresses = await Address.findOne({ userId });
+        const selectedAddress = userAddresses?.address.find(addr => addr._id.toString() === addressId);
+        if (!selectedAddress) throw new Error("Selected address not found");
+
+        let totalPrice = userCart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+        let discount = 0;
+
+        if (couponId) {
+            const coupon = await Coupon.findById(couponId);
+            if (!coupon) throw new Error("Coupon not found");
+            discount = coupon.offerPrice || 0;
+
+            if (!coupon.userId.includes(userId)) {
+                coupon.userId.push(userId);
+                await coupon.save();
+            }
+        }
+
+        const finalAmount = totalPrice - discount;
+
+        const newOrder = new Order({
+            userId,
+            orderedItems: userCart.items.map(item => ({
+                product: item.productId,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            totalPrice,
+            discount,
+            finalAmount,
+            deliveryAddress: selectedAddress,
+            paymentMethod: 'ONLINE',
+            paymentStatus: 'Paid',
+            orderStatus: 'Placed',
+            couponApplied: couponId ? true : false,
+            razorpay: {
+                order_id: razorpay_order_id,
+                payment_id: razorpay_payment_id,
+                signature: razorpay_signature
+            }
+        });
+
+        await newOrder.save();
+
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    "walletHistory.transactionId": razorpay_payment_id
+                }
+            }
+        );
+
+        for (const item of userCart.items) {
+            await Product.findByIdAndUpdate(
+                item.productId,
+                { $inc: { stock: -item.quantity } },
+                { new: true }
+            );
+        }
+
+        await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+
+        await User.findByIdAndUpdate(userId, { $push: { orderHistory: newOrder._id } });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Order placed successfully',
+            orderId: newOrder._id
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
+
 
 
 const placeOrder = async (req, res) => {
@@ -260,5 +373,6 @@ module.exports = {
     loadCheckout,
     placeOrder,
     placeOrderOnlinePayment,
+    verifyAndPlaceOrder,
     loadOrderSuccess,
 }

@@ -883,11 +883,25 @@
                                 };
                                 var razorpayObject = new Razorpay(options);
                                 razorpayObject.on('payment.failed', function (response) {
-                                    alert("Payment Failed");
+                                   
+                                     // Payment failed function
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Payment Failed',
+                                        text:  'Failed to complete the payment. Please try again.',
+                                        confirmButtonColor: '#d14792'
+                                    });
+                                    
                                 });
                                 razorpayObject.open();
                             } else {
-                                alert(res.msg);                            //add swal for error and redirect to show payment failure page
+                                //add swal for error and redirect to show payment failure page
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Something went wrong',
+                                    text: res.msg,
+                                    confirmButtonColor: '#d14792'
+                                });
                             }
                         })
                         .catch(error => {

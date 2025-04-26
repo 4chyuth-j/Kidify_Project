@@ -1,3 +1,4 @@
+const Razorpay = require('razorpay');
 const User = require("../../model/userSchema");
 const Product = require("../../model/productSchema");
 const Cart = require("../../model/cartSchema");
@@ -6,6 +7,12 @@ const Address = require("../../model/addressSchema");
 const Order = require("../../model/orderSchema");
 const Coupon = require("../../model/couponSchema");
 const mongoose = require("mongoose");
+const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
+
+const razorpayInstance = new Razorpay({
+    key_id: RAZORPAY_ID_KEY,
+    key_secret: RAZORPAY_SECRET_KEY
+});
 
 
 
@@ -54,6 +61,73 @@ const loadCheckout = async (req, res) => {
     }
 
 };
+
+
+
+const placeOrderOnlinePayment = async (req, res) => {
+    try {
+
+        const userId = req.session.user;
+        const { addressId, paymentMethod, couponId } = req.body;
+
+        const userData = await User.findById(userId);
+        if (!userData) throw new Error("User not found");
+
+        if (!addressId || !paymentMethod) {
+            return res.status(400).json({ success: false, message: 'Address or payment method missing' });
+        }
+
+        const userCart = await Cart.findOne({ userId });
+        if (!userCart || !userCart.items.length) throw new Error("Cart is empty or not found");
+
+        const userAddresses = await Address.findOne({ userId });
+        const selectedAddress = userAddresses?.address.find(addr => addr._id.toString() === addressId);
+        if (!selectedAddress) throw new Error("Selected address not found");
+
+        let totalPrice = userCart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+        let discount = 0;
+
+        if (couponId) {
+            const coupon = await Coupon.findById(couponId);
+            if (!coupon) throw new Error("Coupon not found");
+            discount = coupon.offerPrice || 0;
+        }
+
+        const finalAmount = totalPrice - discount;
+        const amount = finalAmount * 100;
+
+        const options = {
+            amount: amount,
+            currency: 'INR',
+            receipt: 'receipt_order_' + Date.now()
+        };
+
+        razorpayInstance.orders.create(options, (err, order) => {
+            if (!err) {
+                return res.status(200).send({
+                    success: true,
+                    msg: 'Order Created',
+                    order_id: order.id,
+                    amount: amount,
+                    key_id: RAZORPAY_ID_KEY,
+                    product_name: 'Kidify Cart Order',
+                    description: 'Purchase from Kidify',
+                    contact: selectedAddress.phone,
+                    name: selectedAddress.name,
+                    email: userData.email,
+                    addressId,
+                    couponId
+                });
+            } else {
+                return res.status(400).send({ success: false, msg: 'Something went wrong!' });
+            }
+        });
+
+
+    } catch (error) {
+
+    }
+}
 
 
 const placeOrder = async (req, res) => {
@@ -185,5 +259,6 @@ const loadOrderSuccess = async (req, res) => {
 module.exports = {
     loadCheckout,
     placeOrder,
+    placeOrderOnlinePayment,
     loadOrderSuccess,
 }

@@ -718,7 +718,7 @@
                         text: 'The coupon has been removed from your order.',
                         confirmButtonColor: '#d14792',
                         timer: 1500
-                    }).then(()=>{
+                    }).then(() => {
                         location.reload();
                     })
 
@@ -810,41 +810,136 @@
                     orderData.couponId = appliedCouponId;
                 }
 
-                // Send order to server
-                fetch('/place-order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.message || 'Something went wrong');
+                if (paymentMethod == 'ONLINE') {
+
+                    fetch('/placeOrderOnlinePayment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || 'Something went wrong');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(res => {
+                            if (res.success) {
+                                var options = {
+                                    "key": "" + res.key_id + "",
+                                    "amount": "" + res.amount + "",
+                                    "currency": "INR",
+                                    "name": "" + res.product_name + "",
+                                    "description": "" + res.description + "",
+                                    "image": "/images/bgremovedlogo.png",
+                                    "order_id": "" + res.order_id + "",
+                                    "handler": function (response) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Payment Successful!',
+                                            text: 'Redirecting to order confirmation...',
+                                            timer: 2000,
+                                            confirmButtonColor: '#d14792',
+                                            willClose: () => {
+                                                fetch('/verify-payment-and-place-order', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({
+                                                        razorpay_order_id: response.razorpay_order_id,
+                                                        razorpay_payment_id: response.razorpay_payment_id,
+                                                        razorpay_signature: response.razorpay_signature,
+                                                        addressId: selectedAddress.value,
+                                                        couponId: appliedCouponId
+                                                    })
+                                                })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            window.location.href = '/order-success?id=' + data.orderId;
+                                                        } else {
+                                                            Swal.fire('Error', data.message, 'error');
+                                                        }
+                                                    });
+                                            }
+                                        });
+                                    },
+                                    "prefill": {
+                                        "contact": "" + res.contact + "",
+                                        "name": "" + res.name + "",
+                                        "email": "" + res.email + ""
+                                    },
+                                    "notes": {
+                                        "description": "" + res.description + ""
+                                    },
+                                    "theme": {
+                                        "color": "#2300a3"
+                                    }
+                                };
+                                var razorpayObject = new Razorpay(options);
+                                razorpayObject.on('payment.failed', function (response) {
+                                    alert("Payment Failed");
+                                });
+                                razorpayObject.open();
+                            } else {
+                                alert(res.msg);                            //add swal for error and redirect to show payment failure page
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                                text: error.message || 'Failed to place order. Please try again.',
+                                confirmButtonColor: '#d14792'
                             });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Order Placed!',
-                            text: data.message,
-                            confirmButtonColor: '#d14792'
-                        }).then(() => {
-                            window.location.href = '/order-success?id=' + data.orderId;
                         });
+
+
+
+                } else {
+
+                    // Send order to server for COD 
+                    fetch('/place-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                            text: error.message || 'Failed to place order. Please try again.',
-                            confirmButtonColor: '#d14792'
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || 'Something went wrong');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Order Placed!',
+                                text: data.message,
+                                confirmButtonColor: '#d14792'
+                            }).then(() => {
+                                window.location.href = '/order-success?id=' + data.orderId;
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                                text: error.message || 'Failed to place order. Please try again.',
+                                confirmButtonColor: '#d14792'
+                            });
                         });
-                    });
+                }
             });
 
         });

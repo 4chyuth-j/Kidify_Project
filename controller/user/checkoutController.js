@@ -126,7 +126,7 @@ const placeOrderOnlinePayment = async (req, res) => {
 
 
     } catch (error) {
-        console.error("Error in online payment:", error);
+        console.log("Error in online payment:", error);
         return res.status(500).json({
             success: false,
             message: error.message || 'Failed to place order. Please try again.'
@@ -198,11 +198,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
             paymentStatus: 'Paid',
             orderStatus: 'Placed',
             couponApplied: couponId ? true : false,
-            razorpay: {
-                order_id: razorpay_order_id,
-                payment_id: razorpay_payment_id,
-                signature: razorpay_signature
-            }
+           
         });
 
         await newOrder.save();
@@ -235,7 +231,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
         });
 
     } catch (error) {
-        console.error(error);
+        console.log("Error in varifyandPlaceOrder section:",error);
         return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 }

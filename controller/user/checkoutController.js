@@ -203,11 +203,19 @@ const verifyAndPlaceOrder = async (req,res)=>{
 
         await newOrder.save();
 
+
         await User.findByIdAndUpdate(
             userId,
             {
-                $set: {
-                    "walletHistory.transactionId": razorpay_payment_id
+                $push: {
+                    "walletHistory": {
+                        amount: -finalAmount, 
+                        type: 'purchase',
+                        orderId: newOrder.orderId,
+                        transactionId: razorpay_payment_id,
+                        date: new Date(),
+                        note: `Payment for order #${newOrder.orderId}`
+                    }
                 }
             }
         );

@@ -339,6 +339,23 @@ const placeOrder = async (req, res) => {
 };
 
 
+const loadPaymentFailed = async (req,res)=>{
+    try {
+        const userId = req.session.user;
+        
+        const userData = await User.findById(userId);
+
+        if (!userData) {
+            return res.redirect('/login');
+        }
+
+        res.render("paymentFailure", { user: userData });
+
+    } catch (error) {
+        console.error("Error in loading payment failure page:", error);
+        res.redirect("/pageNotFound");
+    }
+}
 
 
 
@@ -379,4 +396,5 @@ module.exports = {
     placeOrderOnlinePayment,
     verifyAndPlaceOrder,
     loadOrderSuccess,
+    loadPaymentFailed,
 }

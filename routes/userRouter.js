@@ -134,6 +134,8 @@ router.post('/verify-payment-and-place-order',userAuth,checkoutController.verify
 
 router.get('/order-success',userAuth,checkoutController.loadOrderSuccess);
 
+router.get('/paymentFailed',userAuth,checkoutController.loadPaymentFailed);
+
 
 // order management 
 router.get('/orders',userAuth,orderController.loadOrders);

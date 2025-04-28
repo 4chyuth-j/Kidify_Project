@@ -65,19 +65,27 @@ async function sendVerificationEmail(email, otp) {
 // signup form data handling from front end
 const signup = async (req, res) => {
    try {
-      
-      const { email, password, confirm_password } = req.body;
+
+      const { email, password, confirm_password, referralCode } = req.body;
 
       if (password !== confirm_password) {
-         return res.status(400).json({message:"Passwords don't match :("});
+         return res.status(400).json({ message: "Passwords don't match :(" });
          // return res.render("signup", { message: "Passwords don't match:(", error_msg: "" });
       }
-      
+
       const findUser = await User.findOne({ email });
       if (findUser) {
-         
-         return res.status(400).json({message:"User with this email already exists"});
+
+         return res.status(400).json({ message: "User with this email already exists" });
          // return res.render("signup", { message: "User with this email already exists", error_msg: "" });
+      }
+      if (referralCode) {
+
+         const validateReferralCode = await User.findOne({ referralCode: referralCode });
+         if (!validateReferralCode) {
+            return res.status(400).json({ message: "Invalid referral code. Please check the code" });
+         }
+
       }
 
       const otp = generateOtp();
@@ -86,14 +94,17 @@ const signup = async (req, res) => {
       console.log(email);
       const emailSent = await sendVerificationEmail(email, otp);
       if (!emailSent) {
-         return res.status(400).json({message:"error occured while sending email"});
+         return res.status(400).json({ message: "error occured while sending email" });
       }
 
       req.session.userOtp = otp;
       req.session.userData = { email, password };
+      if (referralCode) {
+         req.session.referralCode = referralCode;
+      }
 
       console.log("OTP sent to user:", otp);
-      return res.status(200).json({message:"OTP Sent to your mail",redirectUrl:'/verify-otp'});
+      return res.status(200).json({ message: "OTP Sent to your mail", redirectUrl: '/verify-otp' });
 
    } catch (error) {
       console.error("sigup error occured", error);
@@ -130,9 +141,19 @@ const getverifyOtp = async (req, res) => {
 //otp verification and signup
 const verifyOtp = async (req, res) => {
    try {
+      const REFERRAL_REWARD = process.env.REFERRAL_REWARD;
+      const MAX_REFERRAL_EARNINGS = process.env.MAX_REFERRAL_EARNINGS;
+
+      if (!REFERRAL_REWARD || !MAX_REFERRAL_EARNINGS) {
+         return res.status(500).json({ success: false, message: "Referral reward settings not configured correctly." });
+      }
+
+
       const { otp } = req.body;
       // console.log("req.body otp=",otp);
       // console.log(req.body);
+
+      const referralCode = req.session.referralCode || null;
 
 
       if (otp === req.session.userOtp) {
@@ -141,11 +162,44 @@ const verifyOtp = async (req, res) => {
 
          const saveUserData = new User({
             email: user.email,
-            password: passwordHash
+            password: passwordHash,
+            referredBy: referralCode
          });
 
          await saveUserData.save();
          req.session.user = saveUserData._id;
+
+         // If user entered a referral code, reward the referrer
+         if (referralCode) {
+            const referringUser = await User.findOne({ referralCode: referralCode });
+
+            if (referringUser) {
+               if (referringUser.referralEarnings < MAX_REFERRAL_EARNINGS) {
+
+                  let reward = REFERRAL_REWARD;
+
+                  if (referringUser.referralEarnings + REFERRAL_REWARD > MAX_REFERRAL_EARNINGS) {
+                     reward = MAX_REFERRAL_EARNINGS - referringUser.referralEarnings;
+                  }
+
+                  referringUser.wallet += reward;
+                  referringUser.referralEarnings += reward;
+
+                  referringUser.walletHistory.push({
+                     amount: reward,
+                     type: 'referral-reward',
+                     date: new Date(),
+                     note: `Reward for referring user ${saveUserData._id.toString().slice(0, 6)}`
+                  });
+
+                  await referringUser.save();
+               }
+            }
+         }
+
+         req.session.userOtp = null;
+         req.session.referralCode = null;
+
          res.json({ success: true, redirectUrl: "/" });
 
       } else {
@@ -320,12 +374,12 @@ const loadShopingPage = async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
-      
-     
-      const sortOption = req.query.sort || 'new-arrivals'; 
 
-      
-      
+
+      const sortOption = req.query.sort || 'new-arrivals';
+
+
+
       const productBrands = await Product.find({
          isBlocked: false,
          category: { $in: categoryIds },
@@ -339,27 +393,27 @@ const loadShopingPage = async (req, res) => {
       let sortQuery = {};
       switch (sortOption) {
          case 'price-low-to-high':
-            sortQuery = { basePrice: 1 }; 
+            sortQuery = { basePrice: 1 };
             break;
          case 'price-high-to-low':
-            sortQuery = { basePrice: -1 }; 
+            sortQuery = { basePrice: -1 };
             break;
          case 'a-z':
-            sortQuery = { productName: 1 }; 
+            sortQuery = { productName: 1 };
             break;
          case 'z-a':
-            sortQuery = { productName: -1 }; 
+            sortQuery = { productName: -1 };
             break;
          case 'new-arrivals':
             sortQuery = { createdAt: -1 };
             break;
          default:
-            sortQuery = { createdAt: -1 }; 
+            sortQuery = { createdAt: -1 };
       }
-    
-      
 
-      
+
+
+
       const products = await Product.find({
          isBlocked: false,
          category: { $in: categoryIds },
@@ -387,8 +441,8 @@ const loadShopingPage = async (req, res) => {
          totalProducts: totalProducts,
          currentPage: page,
          totalPages: totalPages,
-         sort: sortOption, 
-         productsFound:true,
+         sort: sortOption,
+         productsFound: true,
 
       });
    } catch (error) {
@@ -463,8 +517,8 @@ const filterProduct = async (req, res) => {
          currentPage,
          selectedCategory: category || null,
          selectedBrand: brand || null,
-         sort: sortOption ||'new-arrivals' ,
-         productsFound:true,
+         sort: sortOption || 'new-arrivals',
+         productsFound: true,
 
 
       })
@@ -551,13 +605,13 @@ const searchProducts = async (req, res) => {
       const user = req.session.user;
       const userData = await User.findOne({ _id: user });
       const productBrands = await Product.find({}).lean();
-      
+
       const sortOption = req.query.sort || 'new-arrivals';
 
       const categories = await Category.find({ isListed: true }).lean();
 
       let search = req.body.query;
-      
+
       const categoryIds = categories.map(category => category._id.toString());
 
       const brands = [...new Set(productBrands.map(product => product.brand))];
@@ -599,7 +653,7 @@ const searchProducts = async (req, res) => {
          totalPages,
          currentPage,
          count: searchResult.length,
-         sort: sortOption ||'new-arrivals',
+         sort: sortOption || 'new-arrivals',
          productsFound: productsFound // Pass the flag to the template
       })
 

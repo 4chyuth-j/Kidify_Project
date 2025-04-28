@@ -32,6 +32,9 @@
                     <div id="error2" class="error-message"></div>
                     <input type="password" name="confirm_password" id="confirm_password" class="form-control"
                         placeholder="Confirm Password">
+                    <input type="text" name="referralCode" id="referralCode" class="form-control"
+                        placeholder="Referral code (optional)">
+                    <div id="error4" class="error-message"></div>
                     <% if(locals.message && message.length>0) { %>
                         <!-- Check if the 'message' variable exists and has a length greater than 0 -->
                         <div class="alert alert-danger text-center">
@@ -43,14 +46,14 @@
                             <button type="submit" class="signup-btn">Sign Up</button>
                 </form>
                 <p>Already have an account? <a href="/login">Login now..!</a></p>
-                
-              
-                <% if (error_msg && error_msg.length > 0) { %>
+
+
+                <% if (error_msg && error_msg.length> 0) { %>
                     <div class="alert alert-danger text-center">
                         <%= error_msg %>
                     </div>
-                <% } %>
-                
+                    <% } %>
+
 
             </div>
         </div>
@@ -67,10 +70,12 @@
         const emailid = document.getElementById("email");
         const passwordid = document.getElementById("password");
         const c_passwordid = document.getElementById("confirm_password");
+        const referralId = document.getElementById("referralCode");
 
         const error1 = document.getElementById("error1");
         const error2 = document.getElementById("error2");
         const error3 = document.getElementById("error3");
+        const error4 = document.getElementById("error4");
 
         const signform = document.getElementById("signform");
 
@@ -88,6 +93,17 @@
             } else {
                 error1.style.display = "none";
                 error1.innerHTML = "";
+            }
+        }
+
+        function referralValidateChecking(e) {
+            const referralValue = referralId.value;
+            if (referralValue.length !== 6) {
+                error4.style.display = "block";
+                error4.innerHTML = "Referral Code should contain 6 characters."
+            } else {
+                error4.style.display = "none";
+                error4.innerHTML = "";
             }
         }
 
@@ -132,28 +148,40 @@
                 emailValidateChecking();
                 passwordValidateChecking();
 
+                const referralVal = referralId.value;
+                if (referralVal.length > 0) {
+                    referralValidateChecking();
+                }
+
+
 
                 if (error1.innerHTML || error2.innerHTML || error3.innerHTML) {
-                  return;
+                    return;
                 }
 
                 const email = emailid.value.trim();
                 const password = passwordid.value.trim();
                 const confirm_password = c_passwordid.value.trim();
+                const referralCode = referralId.value.trim();
+
+                const formData = { email, password, confirm_password };
+                if (referralCode && referralCode.length == 6) {
+                    formData.referralCode = referralCode;
+                }
 
 
-                fetch("/signup",{
-                    method:'POST',
-                    headers:{
-                        'Content-type':'application/json'
+                fetch("/signup", {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
                     },
-                    body:JSON.stringify({email,password,confirm_password}),
+                    body: JSON.stringify(formData),
                 })
-                .then(response => {
-                    console.log("backend response:",response);
+                    .then(response => {
+                        console.log("backend response:", response);
                         if (!response.ok) {
                             return response.json().then(err => {
-                                throw new Error(err.error || 'Failed to register the email');
+                                throw new Error(err.error || err.message || 'Failed to register the email');
                             });
                         }
 

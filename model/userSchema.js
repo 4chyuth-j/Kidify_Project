@@ -3,6 +3,11 @@ const { Schema } = mongoose; // Extract Schema from mongoose
 const { v4: uuidv4 } = require('uuid'); 
 
 
+const generateReferralCode = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -61,6 +66,22 @@ const userSchema = new Schema({
         ref: "Cart",
     }],
 
+    referralCode: {
+        type: String,
+        unique: true
+    },
+
+    referralEarnings: { 
+        type: Number,
+        default: 0
+    },
+
+
+    referredBy: {
+        type: String,
+        default: null
+    },
+
     wallet: {
         type: Number,
         default: 0, 
@@ -70,7 +91,7 @@ const userSchema = new Schema({
         amount: Number,              // +ve for credit, -ve for debit
         type: {
             type: String,         
-            enum: ['refund', 'top-up', 'purchase'], 
+            enum: ['refund', 'top-up', 'purchase','referral-reward'], 
         },
         orderId: {
             type: String,
@@ -120,6 +141,28 @@ const userSchema = new Schema({
         }
     }]
 },{timestamps:true});
+
+
+// Pre-save hook to generate a unique referral code
+userSchema.pre('save', async function (next) {
+    if (!this.referralCode) { // Only generate if referralCode is not already set
+        let code;
+        let isUnique = false;
+
+        // Generate a unique referral code
+        while (!isUnique) {
+            code = generateReferralCode();
+            const existingUser = await mongoose.models.User.findOne({ referralCode: code });
+            if (!existingUser) {
+                isUnique = true;
+            }
+        }
+
+        this.referralCode = code;
+    }
+    next();
+});
+
 
 // Create a model for User collection
 const User = mongoose.model("User", userSchema);

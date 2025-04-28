@@ -208,6 +208,95 @@
             color: #888;
             font-style: italic;
         }
+
+        /* Search Bar Styling */
+        .transaction-search-container {
+            margin-bottom: 20px;
+        }
+
+        .transaction-search-form {
+            display: flex;
+            max-width: 500px;
+        }
+
+        .transaction-search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ffd0dd;
+            border-radius: 8px 0 0 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .transaction-search-input:focus {
+            border-color: #ff6f9c;
+            box-shadow: 0 0 0 2px rgba(255, 111, 156, 0.1);
+        }
+
+        .transaction-search-button {
+            background-color: #ff6f9c;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .transaction-search-button:hover {
+            background-color: #ff5a8f;
+        }
+
+        /* Pagination Styling */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            display: block;
+            padding: 8px 12px;
+            background: #ffd0dd;
+            color: #d25f8c;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .pagination a:hover {
+            background: #ffbcce;
+        }
+
+        .pagination .active a {
+            background: #ff6f9c;
+            color: white;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .transactions-header h1 {
+            margin-bottom: 0;
+        }
     </style>
 
 <main>
@@ -257,7 +346,25 @@
         
         <!-- Transaction History -->
         <div class="content-card">
-            <h1>All Transaction Details</h1>
+            <div class="transactions-header">
+                <h1>All Transaction Details</h1>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="transaction-search-container">
+                <form action="/wallet" method="GET" class="transaction-search-form">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        class="transaction-search-input" 
+                        placeholder="Search transactions by type, ID or description..." 
+                        value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                    >
+                    <button type="submit" class="transaction-search-button">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
             
             <% if (walletHistory && walletHistory.length > 0) { %>
                 <table class="transaction-table">
@@ -272,7 +379,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% walletHistory.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(transaction => { %>
+                        <% walletHistory.forEach(transaction => { %>
                             <tr>
                                 <td>
                                     <%= new Date(transaction.date).toLocaleDateString('en-IN', { 
@@ -304,9 +411,26 @@
                         <% }); %>
                     </tbody>
                 </table>
+                
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <div class="pagination-container">
+                        <nav>
+                            <ul class="pagination">
+                                <% for(let i=1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                                        <a class="page-link" href="/wallet?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
+                <% } %>
             <% } else { %>
                 <div class="no-transactions">
-                    <p>No transaction history available. Add money to your wallet to get started!</p>
+                    <p>No transaction history available<%= searchQuery ? ' matching your search criteria' : '. Add money to your wallet to get started!' %></p>
                 </div>
             <% } %>
         </div>
@@ -340,7 +464,6 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Here you would send the amount to your server to initiate payment
-                // For now, we'll just show a success message
                 window.location.href = `/add-money-to-wallet?amount=${result.value.amount}`;
             }
         });

@@ -289,7 +289,7 @@
                                     </span>
                                 </td>
                                 <td class="<%= transaction.amount >= 0 ? 'amount-credit' : 'amount-debit' %>">
-                                    <%= transaction.amount >= 0 ? '+' : '' %>₹<%= Math.abs(transaction.amount).toFixed(2) %>
+                                    <%= transaction.amount >= 0 ? '+' : '' %>₹<%= Math.abs(transaction.amount).toFixed(1) %>
                                 </td>
                                 <td>
                                     <%= transaction.orderId || 'N/A' %>

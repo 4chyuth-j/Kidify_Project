@@ -38,7 +38,7 @@ const loadOrders = async (req, res) => {
 
         if (search) {
             const lowerSearch = search.toLowerCase();
-            
+
             userOrders = userOrders.filter((order) => {
                 return (order.orderId.toLowerCase().includes(lowerSearch) ||
                     order.orderStatus.toLowerCase().includes(lowerSearch) ||
@@ -151,6 +151,7 @@ const downloadInvoice = async (req, res) => {
 
 const cancelItem = async (req, res) => {
     try {
+        const userId = req.session.user;
         const { orderId, productId, reason } = req.body;
 
         const orderDetails = await Order.findOne({ orderId }).populate("orderedItems.product");
@@ -159,7 +160,6 @@ const cancelItem = async (req, res) => {
             return res.status(404).send("Order not found");
         }
 
-        
         const item = orderDetails.orderedItems.find(i => i.product._id.toString() === productId);
 
         if (!item) {
@@ -167,39 +167,71 @@ const cancelItem = async (req, res) => {
         }
 
         const reStock = item.quantity;
+        const itemTotal = item.quantity * item.price;
 
+        const totalOrderPrice = orderDetails.totalPrice;
+        const totalDiscount = orderDetails.discount;
+
+        const itemDiscountShare = totalOrderPrice === 0 ? 0 : (itemTotal / totalOrderPrice) * totalDiscount;
+        const refundAmount = Math.round(itemTotal - itemDiscountShare);
+
+        console.log("Refund amount for order cancel:", refundAmount);
+
+        // ---- Refund wallet update for ONLINE Paid OR COD Orders ---- //
+        if (
+            (orderDetails.paymentMethod === 'ONLINE' && orderDetails.paymentStatus === 'Paid') 
+        ) {
+            await User.findOneAndUpdate(
+                { _id: userId },
+                {
+                    $inc: { wallet: refundAmount },
+                    $push: {
+                        walletHistory: {
+                            amount: refundAmount,
+                            type: 'refund',
+                            orderId,
+                            date: new Date(),
+                            note: `Refund for cancelling item in order #${orderId}`
+                        }
+                    }
+                },
+                { new: true }
+            );
+        }
+
+        // ---- Update product stock ---- //
         await Product.findOneAndUpdate(
-            {_id:productId},
-            {$inc:{stock:reStock}}
+            { _id: productId },
+            { $inc: { stock: reStock } }
         );
 
-        
+        // ---- Cancel item details ---- //
         item.quantity = 0;
         item.price = 0;
         item.cancelled = true;
         item.cancelReason = reason;
         item.cancelledAt = new Date();
 
-        // Recalculate  total price
-        let newTotal = 0;
+        // ---- Recalculate order totals ---- //
+        let newTotalPrice = 0;
         for (const i of orderDetails.orderedItems) {
-            newTotal += i.quantity * i.price;
+            newTotalPrice += i.quantity * i.price;
         }
 
-        orderDetails.totalPrice = newTotal;
-        orderDetails.finalAmount = newTotal;//discount not applied yet when the discount is applied change this 
+        orderDetails.totalPrice = newTotalPrice;
+        orderDetails.discount = orderDetails.discount - itemDiscountShare;
+        orderDetails.finalAmount = Math.round(newTotalPrice - orderDetails.discount);
 
         await orderDetails.save();
 
-        const allCancelled = orderDetails.orderedItems.every(i=>i.cancelled);
-        
-        if(allCancelled){
-          orderDetails.orderStatus = 'Cancelled';
-          await orderDetails.save();
+        // ---- If all items cancelled, cancel the whole order ---- //
+        const allCancelled = orderDetails.orderedItems.every(i => i.cancelled);
+        if (allCancelled) {
+            orderDetails.orderStatus = 'Cancelled';
+            await orderDetails.save();
         }
 
         return res.status(200).json({ message: "Item cancelled successfully" });
-
 
     } catch (error) {
         console.error("Cancel item error:", error);
@@ -209,61 +241,62 @@ const cancelItem = async (req, res) => {
 
 
 
-const returnOrder = async (req,res)=>{
+
+const returnOrder = async (req, res) => {
     try {
-        const {orderId,productId,returnReason}=req.body;
+        const { orderId, productId, returnReason } = req.body;
 
-        const orderDetails = await Order.findOne({orderId}).populate("orderedItems.product");
-        if(!orderDetails){
-            console.log("order details for return is not found, orderId:",orderId);
-            return res.status(404).json({message:"Something Went wrong with cart"});
+        const orderDetails = await Order.findOne({ orderId }).populate("orderedItems.product");
+        if (!orderDetails) {
+            console.log("order details for return is not found, orderId:", orderId);
+            return res.status(404).json({ message: "Something Went wrong with cart" });
         }
 
-        const productTobeReturned = orderDetails.orderedItems.find(item=>
-            item.product._id.toString()===productId.toString()
+        const productTobeReturned = orderDetails.orderedItems.find(item =>
+            item.product._id.toString() === productId.toString()
         );
-        if(!productTobeReturned){
-            console.log("failed to find product inside the order, ProductId:",productId);
-            return res.status(404).json({message:"Failed to fetch the product Details"});
+        if (!productTobeReturned) {
+            console.log("failed to find product inside the order, ProductId:", productId);
+            return res.status(404).json({ message: "Failed to fetch the product Details" });
         }
 
 
-        productTobeReturned.returnReason=returnReason;
-        productTobeReturned.returnStatus='Pending';
+        productTobeReturned.returnReason = returnReason;
+        productTobeReturned.returnStatus = 'Pending';
 
         await orderDetails.save();
-        return res.status(200).json({message:"Return requested"});
+        return res.status(200).json({ message: "Return requested" });
     } catch (error) {
-        console.error("failed to send return request",error);
+        console.error("failed to send return request", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
 
-const cancelReturnRequest = async (req,res)=>{
+const cancelReturnRequest = async (req, res) => {
     try {
-        const {orderId, productId}=req.body;
-        
-        const orderDetails = await Order.findOne({orderId}).populate("orderedItems.product");
-        if(!orderDetails){
-            console.log("order details for return is not found, orderId:",orderId);
-            return res.status(404).json({message:"Something Went wrong with cart"});
+        const { orderId, productId } = req.body;
+
+        const orderDetails = await Order.findOne({ orderId }).populate("orderedItems.product");
+        if (!orderDetails) {
+            console.log("order details for return is not found, orderId:", orderId);
+            return res.status(404).json({ message: "Something Went wrong with cart" });
         }
 
-        const productTobeReturned = orderDetails.orderedItems.find(item=>
-            item.product._id.toString()===productId.toString()
+        const productTobeReturned = orderDetails.orderedItems.find(item =>
+            item.product._id.toString() === productId.toString()
         );
-        if(!productTobeReturned){
-            console.log("failed to find product inside the order, ProductId:",productId);
-            return res.status(404).json({message:"Failed to fetch the product Details"});
+        if (!productTobeReturned) {
+            console.log("failed to find product inside the order, ProductId:", productId);
+            return res.status(404).json({ message: "Failed to fetch the product Details" });
         }
 
-        productTobeReturned.returnStatus='None';
+        productTobeReturned.returnStatus = 'None';
 
         await orderDetails.save();
-        return res.status(200).json({message:"Return request cancelled Successfully"});
+        return res.status(200).json({ message: "Return request cancelled Successfully" });
 
     } catch (error) {
-        console.error("failed to cancel return request",error);
+        console.error("failed to cancel return request", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }

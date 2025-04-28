@@ -216,7 +216,8 @@ const verifyAndPlaceOrder = async (req,res)=>{
                         date: new Date(),
                         note: `Payment for order #${newOrder.orderId}`
                     }
-                }
+                },
+               
             }
         );
 
@@ -246,11 +247,11 @@ const verifyAndPlaceOrder = async (req,res)=>{
 
 
 
-
+//for COD
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { addressId, paymentMethod, couponId } = req.body;
+        const { addressId, paymentMethod, couponId } = req.body;      
 
         if (!addressId || !paymentMethod) {
             return res.status(400).json({ success: false, message: 'Address or payment method missing' });

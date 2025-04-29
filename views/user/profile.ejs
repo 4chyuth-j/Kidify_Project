@@ -78,6 +78,9 @@
         .main-content {
             flex: 1;
             padding: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
         }
         
         .content-card {
@@ -85,7 +88,7 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            max-width: 800px;
+            min-width: 600px;
         }
         
         h1 {
@@ -146,6 +149,123 @@
         
         .action-button i {
             margin-right: 8px;
+        }
+        
+        /* Referral Card Styles */
+        .referral-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+        }
+        
+        .referral-card h2 {
+            font-size: 24px;
+            color: #d25f8c;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f8c1d2;
+        }
+        
+        .referral-info {
+            margin-bottom: 20px;
+        }
+        
+        .referral-code-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffd0dd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .referral-code {
+            flex: 1;
+            font-size: 18px;
+            font-weight: bold;
+            color: #d25f8c;
+            letter-spacing: 1px;
+        }
+        
+        .copy-btn {
+            background-color: #ff6f9c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #ff5a8f;
+        }
+        
+        .referral-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d25f8c;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .share-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .share-title {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        
+        .share-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .share-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffd0dd;
+            color: #d25f8c;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .share-icon:hover {
+            background-color: #ff6f9c;
+            color: white;
+            transform: translateY(-2px);
         }
     </style>
 
@@ -215,6 +335,51 @@
                 </button>
             </div>
         </div>
+        
+        <!-- Refer and Earn Card -->
+        <div class="referral-card">
+            <h2><i class="bi bi-gift"></i> Refer & Earn</h2>
+            
+            <div class="referral-info">
+                <p style="color: #777; margin-bottom: 15px;">Invite your friends using your referral code and get ₹50 wallet cash for each of your first 10 successful referrals!</p>
+                
+                <div class="referral-code-container">
+                    <span class="referral-code"><%= user.referralCode || 'FRIEND25' %></span>
+                    <button class="copy-btn" onclick="copyReferralCode()">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="referral-stats">
+                <div class="stat-box">
+                    <div class="stat-value"><%= Math.floor(user.referralEarnings/50) || '0' %></div>
+                    <div class="stat-label">Referrals</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">₹<%= user.referralEarnings || '0' %></div>
+                    <div class="stat-label">Earnings</div>
+                </div>
+            </div>
+            
+            <div class="share-section">
+                <div class="share-title">Share via</div>
+                <div class="share-icons">
+                    <div class="share-icon" onclick="shareVia('whatsapp')">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <div class="share-icon" onclick="shareVia('facebook')">
+                        <i class="bi bi-facebook"></i>
+                    </div>
+                    <div class="share-icon" onclick="shareVia('twitter')">
+                        <i class="bi bi-twitter"></i>
+                    </div>
+                    <div class="share-icon" onclick="shareVia('email')">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -232,6 +397,42 @@
     }).then(()=>{
         window.location.href='/edit-profile';
     });
+    }
+
+    function copyReferralCode() {
+        const referralCode = document.querySelector('.referral-code').innerText;
+        navigator.clipboard.writeText(referralCode).then(function() {
+            Swal.fire({
+                title: 'Copied!',
+                text: 'Referral code copied to clipboard',
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        });
+    }
+    
+    function shareVia(platform) {
+        const referralCode = document.querySelector('.referral-code').innerText;
+        const websiteURL = window.location.origin;
+        const message = `Shop with my referral code *${referralCode}* at ${websiteURL} and get a special discount on your first purchase!`;
+        
+        switch(platform) {
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteURL)}&quote=${encodeURIComponent(message)}`, '_blank');
+                break;
+            case 'twitter':
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(websiteURL)}`, '_blank');
+                break;
+            case 'email':
+                window.location.href = `mailto:?subject=Special Discount for You!&body=${encodeURIComponent(message + "\n\nClick here to shop now: " + websiteURL)}`;
+                break;
+        }
     }
 </script>
 <%- include("../../views/partials/user/footer") %>

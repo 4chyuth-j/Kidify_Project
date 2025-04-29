@@ -11,19 +11,18 @@ const addToCart = async (req, res) => {
         const { productId, quantity } = req.body;
 
         const userWishlist = await Wishlist.findOne({ userId: userId }).populate('products.productId');
-        // console.log("userWishlist",userWishlist);
-        // console.log("\n \n userWishlist.products:",userWishlist.products);
+        
 
         console.log("productId:" + productId + " quantity:", quantity);
 
-        const productData = await Product.findOne({ _id: productId });
+        const productData = await Product.findOne({ _id: productId }).populate("category").lean();
 
         if (!productData) {
             return res.status(400).json({ message: "Product doesn't exist" });
         }
 
         const basePrice = productData.basePrice;
-        const discountPercentage = productData.discountPercentage;
+        const discountPercentage =Math.max(productData.discountPercentage|| 0, productData.category.categoryOffer || 0);
         const stock = productData.stock;
 
         if (quantity > stock || stock === 0) {
@@ -38,7 +37,7 @@ const addToCart = async (req, res) => {
         const productExistInWishlist = userWishlist?.products.find(product => {
             return product.productId._id.toString() === productId.toString();
         });
-        // console.log("productExistinwishlist: ",productExistInWishlist);
+        
 
 
         const userCart = await Cart.findOne({ userId });

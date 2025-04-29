@@ -419,6 +419,7 @@ const loadShopingPage = async (req, res) => {
          category: { $in: categoryIds },
          stock: { $gt: 0 },
       })
+         .populate("category")
          .sort(sortQuery) // Apply the sorting
          .skip(skip)
          .limit(limit);
@@ -476,7 +477,7 @@ const filterProduct = async (req, res) => {
          query.brand = findBrand.brand;
       }
 
-      let findProducts = await Product.find(query).lean();
+      let findProducts = await Product.find(query).populate("category").lean();
 
       findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 

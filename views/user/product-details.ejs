@@ -467,31 +467,33 @@
                                         <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
                                             <i class="bi bi-heart-fill"></i>
                                         </span>
-
                                     </div>
-
-
+                                
                                     <div class="product-content-wrap">
                                         <h6 title="<%= products[i].productName %>">
                                             <%= products[i].productName.length> 20 ?
                                                 products[i].productName.substring(0, 45) +
                                                 "..." : products[i].productName %>
                                         </h6>
-                                        <!-- <h5>₹<%=products[i].basePrice%>
-                                    </h5> -->
-
-
-                                        <h5>
-                                            <% const discount=(products[i].basePrice * products[i].discountPercentage) /
-                                                100; const discountedPrice=products[i].basePrice - discount; %>
-
+                                
+                                        <% const discountPercentage = Math.max(products[i].discountPercentage, products[i].category.categoryOffer)
+                                           const discount=(products[i].basePrice * discountPercentage) / 100; 
+                                           const discountedPrice=products[i].basePrice - discount; %>
+                                
+                                        <% if (discountPercentage && discountPercentage !==0) { %>
+                                            <h5>
                                                 ₹<%= discountedPrice.toFixed(0) %>
-
-                                        </h5>
-
-
-
-                                        <!-- <a href="/addToCart?id=<%=products[i]._id%>">Add to cart</a> -->
+                                                <p class="text-muted">
+                                                    <strike>₹<%= products[i].basePrice %></strike>
+                                                </p>
+                                                <p style="color: red;">(<%= discountPercentage %>% off)</p>
+                                            </h5>
+                                        <% } else { %>
+                                            <h5>
+                                                ₹<%= products[i].basePrice %>
+                                            </h5>
+                                        <% } %>
+                                
                                         <span onclick="addToCart('<%= products[i]._id %>',1)">Add to cart</span>
                                     </div>
                                 </div>

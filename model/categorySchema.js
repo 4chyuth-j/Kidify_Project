@@ -20,7 +20,7 @@ const categorySchema = new Schema({
         default: true, 
     },
 
-    categoryOffer: {
+    categoryOffer: {   //percentage
         type: Number, 
         default: 0, 
     },

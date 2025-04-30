@@ -83,7 +83,7 @@ const orderSchema = new Schema({
     
     paymentMethod: {
         type: String,
-        enum: ['COD', 'ONLINE', 'Wallet'],
+        enum: ['COD', 'ONLINE', 'WALLET'],
         required: true,
     },
     

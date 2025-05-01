@@ -255,7 +255,8 @@
                 <option value="custom" <%= filter && filter.dateFilter === 'custom' ? 'selected' : '' %>>Custom Date</option>
             </select>
             
-            <div class="date-filter" id="customDateContainer" style="<%= filter && filter.dateFilter === 'custom' ? '' : 'display: none;' %>">
+            <div class="date-filter" id="customDateContainer" <%= filter && filter.dateFilter !== 'custom' ? 'style="display: none;"' : '' %>>
+
                 <input type="date" class="date-input" id="startDate" name="startDate" value="<%= filter ? filter.startDate : '' %>">
                 <span>to</span>
                 <input type="date" class="date-input" id="endDate" name="endDate" value="<%= filter ? filter.endDate : '' %>">

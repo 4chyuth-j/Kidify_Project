@@ -171,8 +171,7 @@
                     <% if (cart && cart.items && cart.items.length> 0) { %>
                         <% cart.items.forEach(item=> { %>
                             <% const product=item.productId; %>
-                                <% const discount=(product.basePrice * product.discountPercentage) / 100; %>
-                                    <% const discountedPrice=product.basePrice - discount; %>
+                                
                                         <tr data-product-id="<%= item._id %>">
                                             <td>
                                                 <img src="/uploads/re-image/<%= product.productImage[0] %>"
@@ -180,7 +179,7 @@
                                                 <%= product.productName.length> 45 ? product.productName.substring(0,
                                                     50) + "..." : product.productName %>
                                             </td>
-                                            <td>₹<%= discountedPrice.toFixed(0) %>
+                                            <td>₹<%= item.totalPrice.toFixed(0) %>
                                             </td>
                                             <td>
                                                 <div class="quantity-controls">

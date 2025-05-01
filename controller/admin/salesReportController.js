@@ -5,7 +5,7 @@ const Order = require("../../model/orderSchema");
 const loadReportPage = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 5;
         const skip = (page - 1) * limit;
         
         // Initialize filter object
@@ -84,18 +84,18 @@ const loadReportPage = async (req, res) => {
                     break;
             }
         } else {
-            // Default: if no date filter specified, show all
+            
         }
         
-        // Add filter for completed orders only (not cancelled or returned)
-        filter.orderStatus = { $nin: ['Cancelled','Returned'] };
+        // filter for completed orders only (not cancelled ) returned orders not included because the company still has the money in the user wallet
+        filter.orderStatus = { $nin: ['Cancelled'] };
         filter.paymentStatus = {$in:['Paid']};
         
-        // Get total documents count for pagination
+      
         const totalOrders = await Order.countDocuments(filter);
         const totalPages = Math.ceil(totalOrders / limit);
         
-        // Fetch orders with pagination and populate necessary fields
+        
         const orders = await Order.find(filter)
             .populate({
                 path: 'orderedItems.product',
@@ -105,7 +105,7 @@ const loadReportPage = async (req, res) => {
             .skip(skip)
             .limit(limit);
             
-        // Calculate sales statistics based on filter
+        // Calculating sales statistics based on filter
         const allFilteredOrders = await Order.find(filter);
         
         const stats = {
@@ -115,7 +115,7 @@ const loadReportPage = async (req, res) => {
             netSales: 0
         };
         
-        // Calculate statistics from all filtered orders
+        // Calculating statistics from all filtered orders
         allFilteredOrders.forEach(order => {
             stats.totalAmount += order.totalPrice;
             stats.totalDiscounts += (order.totalPrice - order.finalAmount);

@@ -105,6 +105,8 @@ router.delete('/deleteCoupon',adminAuth,couponController.deleteCoupon);
 //sales report 
 router.get('/salesReport',adminAuth,salesReportController.loadReportPage);
 
+router.get('/downloadSalesReport',adminAuth,salesReportController.downloadSalesReport)
+
 
 
 module.exports = router;

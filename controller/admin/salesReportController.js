@@ -88,8 +88,8 @@ const loadReportPage = async (req, res) => {
         }
         
         // filter for completed orders only (not cancelled ) returned orders not included because the company still has the money in the user wallet
-        filter.orderStatus = { $nin: ['Cancelled'] };
-        filter.paymentStatus = {$in:['Paid']};
+        filter.orderStatus = { $nin: ['Cancelled','Returned'] };
+        // filter.paymentStatus = {$in:['Paid']};
         
       
         const totalOrders = await Order.countDocuments(filter);

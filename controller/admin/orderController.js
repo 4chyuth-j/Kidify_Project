@@ -184,6 +184,14 @@ const processReturnRequest = async (req, res) => {
       // orderDetails.finalAmount = newTotalPrice; //change when adding coupon or discount
       orderDetails.finalAmount = Math.round(newTotalPrice - orderDetails.discount); //change when adding coupon or discount
 
+      orderDetails.paymentStatus ='Refunded';
+
+      const allReturned = orderDetails.orderedItems.every(i => i.returnStatus==='Approved');
+      if (allReturned) {
+          orderDetails.orderStatus = 'Returned';
+          orderDetails.paymentStatus ='Refunded';
+      }
+
       await orderDetails.save();
 
       await Product.findOneAndUpdate(

@@ -246,7 +246,10 @@ const resendOtp = async (req, res) => {
 const loadLogin = async (req, res) => {
    try {
       if (!req.session.user) {
-         return res.render('login');
+         return res.render('login',{
+            message: "", // Empty unless you want to pass something
+            successMessage: ""
+        });
 
       } else {
          res.redirect("/")

@@ -112,6 +112,14 @@ const updateOrderStatus = async (req, res) => {
       updateFields.deliveredAt = new Date();
     }
 
+    if(orderDetails.paymentMethod ==='ONLINE' && orderStatus === 'Delivered'){
+      updateFields.deliveredAt = new Date();
+    }
+
+    if(orderDetails.paymentMethod ==='WALLET' && orderStatus === 'Delivered'){
+      updateFields.deliveredAt = new Date();
+    }
+
     await Order.findOneAndUpdate({ orderId }, updateFields);
 
     return res.status(200).json({ success: true, message: 'Order status updated successfully!' });

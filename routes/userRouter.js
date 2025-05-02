@@ -170,21 +170,45 @@ router.get('/wallet',userAuth,walletController.loadWalletPage);
 // Route to start Google authentication process
 router.get("/auth/google", passport.authenticate('google', { scope: ['profile', 'email'] })); // Redirects to Google with scope access
 
-// Google callback route - Handles authentication response from Google
-router.get("/google/callback", passport.authenticate('google', { failureRedirect: '/signup'}), (req, res) => {
+// // Google callback route - Handles authentication response from Google
+router.get("/google/callback", passport.authenticate('google' ,{ failureRedirect: '/login'}), (req, res) => {
     
-    if (!req.user) { // If user is not found or blocked
-        req.flash("error", "Your account has been blocked by the admin.");
-        console.log("Flash set:", req.flash("error")); // Debugging
-        return res.redirect("/signup"); // Redirect to signup page with flash message
+    if (!req.user) {
+        return res.render("login", {
+            message: "Your account has been blocked by the admin.",
+            successMessage: ""
+        });
     }
 
-
-
-    req.session.user = req.user; // Store user in session
-    res.redirect('/'); // If authentication is successful, redirect to homepage
-    // If authentication fails, the user is redirected to /signup (handled by failureRedirect)
+    req.session.user = req.user;
+    res.redirect('/');
 });
+
+// router.get("/google/callback", (req, res, next) => {
+//     passport.authenticate('google', async (err, user, info) => {
+//         if (err) {
+//             return next(err);
+//         }
+
+//         if (!user) {
+//             // user is null when blocked (from your passport.js)
+//             return res.render("login", {
+//                 message: info?.message || "Login failed",
+//                 successMessage: ""
+//             });
+//         }
+
+//         // Login user manually
+//         req.logIn(user, (err) => {
+//             if (err) return next(err);
+
+//             req.session.user = user;
+//             return res.redirect('/');
+//         });
+
+//     })(req, res, next);
+// });
+
 
 
 

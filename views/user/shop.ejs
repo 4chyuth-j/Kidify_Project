@@ -431,16 +431,17 @@
                     <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 40) + "..." :
                       products[i].productName %>
                   </h5>
-                  <% const discount=(products[i].basePrice * products[i].discountPercentage) / 100; const
-                    discountedPrice=products[i].basePrice - discount; %>
+                  <% const discountPercentage = Math.max(products[i].discountPercentage,products[i].category.categoryOffer)
+                    const discount=(products[i].basePrice * discountPercentage) / 100; 
+                    const discountedPrice=products[i].basePrice - discount; %>
 
-                    <% if (products[i].discountPercentage && products[i].discountPercentage !==0) { %>
+                    <% if (discountPercentage && discountPercentage !==0) { %>
                       <p>
                         Price: ₹<%= discountedPrice.toFixed(0) %>
                           <span class="text-muted">
                             <strike>₹<%= products[i].basePrice %></strike>
                           </span>
-                          <span style="color: red;">(<%= products[i].discountPercentage %>% off)</span>
+                          <span style="color: red;">(<%= discountPercentage %>% off)</span>
                       </p>
                       <% } else { %>
                         <p>Price: ₹<%= products[i].basePrice %>

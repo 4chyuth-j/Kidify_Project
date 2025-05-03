@@ -61,6 +61,8 @@ router.get("/filterPrice",userAuth,userController.filterByPrice);
 
 router.post("/search",userAuth,userController.searchProducts);
 
+router.get("/search",userAuth,userController.searchProducts);
+
 // product details page
 router.get("/productDetails",userAuth,productController.productDetails)
 

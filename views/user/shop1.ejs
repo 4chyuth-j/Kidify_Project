@@ -1,5 +1,7 @@
+
 <%- include("../../views/partials/user/header.ejs") %>
   <style>
+    /* All your existing styles remain unchanged */
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -55,6 +57,7 @@
     }
 
     .clear-button {
+      margin-top: -1px;
       padding: 8px 15px;
       background-color: #ff99cc;
       border: 1px solid #ddd;
@@ -335,7 +338,7 @@
       <div class="shop-topbar">
         <div class="search-bar">
           <form action="/search" method="POST" class="search-form">
-            <input type="text" name="query" placeholder="Search items..." class="search-input" />
+            <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= typeof query !== 'undefined' ? query : '' %>" />
             <button type="submit" class="search-button">Search</button>
           </form>
           <button class="clear-button" onclick="window.location.href='/shop'">Clear</button>
@@ -459,23 +462,53 @@
         </main>
       </div>
 
+      <!-- UPDATED PAGINATION SECTION -->
       <div class="pagination">
-        <% if (currentPage> 1) { %>
-          <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+        <% if (currentPage > 1) { %>
+          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
+            <a class="btn" href="/filter?category=<%= selectedCategory %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
+            <a class="btn" href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
+            <a class="btn" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+          <% } else if (typeof query !== 'undefined' && query) { %>
+            <a class="btn" href="/search?query=<%= query %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+          <% } else { %>
+            <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
           <% } %>
-
-            <% for (let i=1; i <=totalPages; i++) { %>
-              <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>&sort=<%= sort %>">
-                <%= i %>
-              </a>
-              <% } %>
-
-                <% if (currentPage < totalPages) { %>
-                  <a class="btn" href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-                  <% } %>
+        <% } %>
+      
+        <% for (let i=1; i <= totalPages; i++) { %>
+          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filter?category=<%= selectedCategory %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
+          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filter?brand=<%= selectedBrand %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
+          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
+          <% } else if (typeof query !== 'undefined' && query) { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/search?query=<%= query %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
+          <% } else { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>&sort=<%= sort %>"><%= i %></a>
+          <% } %>
+        <% } %>
+      
+        <% if (currentPage < totalPages) { %>
+          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
+            <a class="btn" href="/filter?category=<%= selectedCategory %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
+            <a class="btn" href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
+            <a class="btn" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+          <% } else if (typeof query !== 'undefined' && query) { %>
+            <a class="btn" href="/search?query=<%= query %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+          <% } else { %>
+            <a class="btn" href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+          <% } %>
+        <% } %>
       </div>
     </section>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   <script>
@@ -486,6 +519,51 @@
       const sortDisplay = document.querySelector('.sort-display');
       const sortForm = document.getElementById('sort-form');
       const sortSelect = document.getElementById('sort');
+
+      // Get current URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentPath = window.location.pathname;
+
+      // Update the sort form action based on the current path
+      if (currentPath === '/filter') {
+        sortForm.action = '/filter';
+        // Preserve existing parameters
+        if (urlParams.has('category')) {
+          const categoryInput = document.createElement('input');
+          categoryInput.type = 'hidden';
+          categoryInput.name = 'category';
+          categoryInput.value = urlParams.get('category');
+          sortForm.appendChild(categoryInput);
+        }
+        if (urlParams.has('brand')) {
+          const brandInput = document.createElement('input');
+          brandInput.type = 'hidden';
+          brandInput.name = 'brand';
+          brandInput.value = urlParams.get('brand');
+          sortForm.appendChild(brandInput);
+        }
+      } else if (currentPath === '/filterPrice') {
+        sortForm.action = '/filterPrice';
+        // Preserve existing parameters
+        if (urlParams.has('gt')) {
+          const gtInput = document.createElement('input');
+          gtInput.type = 'hidden';
+          gtInput.name = 'gt';
+          gtInput.value = urlParams.get('gt');
+          sortForm.appendChild(gtInput);
+        }
+        if (urlParams.has('lt')) {
+          const ltInput = document.createElement('input');
+          ltInput.type = 'hidden';
+          ltInput.name = 'lt';
+          ltInput.value = urlParams.get('lt');
+          sortForm.appendChild(ltInput);
+        }
+      } else if (currentPath === '/search') {
+        sortForm.action = '/search';
+        // For search, would need to handle this differently as it's a POST
+        // May need to store search query in a hidden field
+      }
 
       sortButton.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -544,7 +622,6 @@
     }
 
     function addToCart(productId, quantity) {
-
       fetch('/add-to-cart', {
         method: 'POST',
         headers: {
@@ -579,11 +656,7 @@
             showConfirmButton: false,
           });
         });
-
     }
-
-
-
   </script>
 
   <%- include("../../views/partials/user/footer.ejs") %>

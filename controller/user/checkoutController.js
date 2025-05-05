@@ -274,14 +274,22 @@ const placeOrder = async (req, res) => {
             const coupon = await Coupon.findById(couponId);
             if (!coupon) throw new Error("Coupon not found");
             discount = coupon.offerPrice || 0;
-
+        }
+        
+        const finalAmount = totalPrice - discount;
+        
+        if (couponId && finalAmount < 1000) {
+            const coupon = await Coupon.findById(couponId); // fetch again or reuse above if scoped
             if (!coupon.userId.includes(userId)) {
                 coupon.userId.push(userId);
-                await coupon.save(); //  save the change made in coupon
+                await coupon.save(); // save the change made in coupon
             }
         }
-
-        const finalAmount = totalPrice - discount;
+        
+        if (finalAmount > 1000) {
+            return res.status(400).json({ success: false, message: 'COD not possible for total amount greater than 1000. Please switch to Online method' });
+        }
+        
 
         const newOrder = new Order({
             userId,

@@ -141,8 +141,10 @@ const getverifyOtp = async (req, res) => {
 //otp verification and signup
 const verifyOtp = async (req, res) => {
    try {
-      const REFERRAL_REWARD = process.env.REFERRAL_REWARD;
-      const MAX_REFERRAL_EARNINGS = process.env.MAX_REFERRAL_EARNINGS;
+      
+      const REFERRAL_REWARD = Number(process.env.REFERRAL_REWARD);
+      const MAX_REFERRAL_EARNINGS = Number(process.env.MAX_REFERRAL_EARNINGS);
+
 
       if (!REFERRAL_REWARD || !MAX_REFERRAL_EARNINGS) {
          return res.status(500).json({ success: false, message: "Referral reward settings not configured correctly." });
@@ -246,10 +248,10 @@ const resendOtp = async (req, res) => {
 const loadLogin = async (req, res) => {
    try {
       if (!req.session.user) {
-         return res.render('login',{
+         return res.render('login', {
             message: "", // Empty unless you want to pass something
             successMessage: ""
-        });
+         });
 
       } else {
          res.redirect("/")
@@ -523,7 +525,7 @@ const filterProduct = async (req, res) => {
                category: findCategory ? findCategory._id : null,
                brand: findBrand ? findBrand.brand : null
             };
-            
+
             // Store search history if needed
             // This was incomplete in the original code
          }
@@ -630,7 +632,7 @@ const searchProducts = async (req, res) => {
    try {
       const user = req.session.user;
       // Store the search query from either POST body or GET query parameters
-      const searchQuery = req.body.query || req.query.query; 
+      const searchQuery = req.body.query || req.query.query;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -639,7 +641,7 @@ const searchProducts = async (req, res) => {
       if (!searchQuery) {
          return res.redirect('/shop');
       }
-      
+
       // If it's a POST request, redirect to GET to enable pagination
       if (req.method === 'POST') {
          return res.redirect(`/search?query=${encodeURIComponent(searchQuery)}&page=1&sort=${sortOption}`);

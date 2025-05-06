@@ -1,95 +1,5 @@
 <%- include("../../views/partials/admin/header") %>
 
-    <!-- <style>
-        /* Ensure the card has a clean, professional look */
-        .card {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 550px;
-            /* Slightly smaller for a tighter, professional look */
-            margin: 0 auto;
-            /* Center the card */
-            padding: 0;
-            /* Remove extra padding, let card-body handle it */
-        }
-
-        /* Style the card body for consistent padding and alignment */
-        .card-body {
-            padding: 20px !important;
-            /* Consistent padding for a clean look */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Style the card title for a professional look */
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        /* Control the canvas size to prevent stretching */
-        canvas {
-            width: 100% !important;
-            max-width: 500px !important;
-            /* Fixed width to match professional proportions */
-            height: 300px !important;
-            /* Consistent height as per the original code */
-            display: block;
-            /* Prevent inline-block spacing issues */
-        }
-
-        /* Ensure the container row has proper spacing */
-        .row.mb-4 {
-            margin-bottom: 2rem !important;
-            /* Consistent spacing between rows */
-        }
-
-        /* For the Best Selling Products chart (full-width row) */
-        #productsChart {
-            max-width: 100% !important;
-            /* Allow it to take full width of the container */
-            height: 300px !important;
-        }
-
-        /* Ensure the container has proper padding */
-        .container {
-            padding-left: 300px;
-            padding-top: 150px;
-            max-width: 95%;
-        }
-
-        /* Style the filter buttons for a professional look */
-        .filter-buttons .btn {
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-buttons .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-            color: #fff;
-        }
-
-        .filter-buttons .btn-outline-dark {
-            border-color: #666;
-            color: #666;
-        }
-
-        .filter-buttons .btn:hover {
-            opacity: 0.9;
-        }
-    </style> -->
-
-
     <div class="container mt-4" style="max-width: 95%; padding-left:300px; padding-top: 150px;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold">Dashboard</h2>
@@ -106,7 +16,9 @@
                 <div class="card shadow" style="border-radius: 15px;">
                     <div class="card-body">
                         <h5 class="card-title">Revenue</h5>
-                        <canvas id="revenueChart" height="300"></canvas>
+                        <div style="height: 300px;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,7 +26,9 @@
                 <div class="card shadow" style="border-radius: 15px;">
                     <div class="card-body">
                         <h5 class="card-title">Top Selling Brands</h5>
-                        <canvas id="brandChart" height="300"></canvas>
+                        <div style="height: 300px;">
+                            <canvas id="brandChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,7 +40,9 @@
                 <div class="card shadow" style="border-radius: 15px;">
                     <div class="card-body">
                         <h5 class="card-title">Transactions Data</h5>
-                        <canvas id="transactionsChart" height="300"></canvas>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="transactionsChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,7 +50,9 @@
                 <div class="card shadow" style="border-radius: 15px;">
                     <div class="card-body">
                         <h5 class="card-title">Best Selling Categories</h5>
-                        <canvas id="categoriesChart" height="300"></canvas>
+                        <div style="height: 300px;">
+                            <canvas id="categoriesChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -146,7 +64,9 @@
                 <div class="card shadow" style="border-radius: 15px;">
                     <div class="card-body">
                         <h5 class="card-title">Best Selling Products</h5>
-                        <canvas id="productsChart" height="300"></canvas>
+                        <div style="height: 400px;">
+                            <canvas id="productsChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,6 +166,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -292,6 +213,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     indexAxis: 'y',
                     scales: {
                         x: {
@@ -344,9 +266,17 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
                         },
                         tooltip: {
                             callbacks: {
@@ -394,6 +324,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -422,13 +353,24 @@
                 productsChart.destroy();
             }
 
+            // Limit the number of products displayed if there are too many
+            const maxProductsToShow = 15;
+            let labels = data.labels;
+            let values = data.values;
+            
+            if (labels.length > maxProductsToShow) {
+                labels = labels.slice(0, maxProductsToShow);
+                values = values.slice(0, maxProductsToShow);
+                console.log(`Limited products chart to show top ${maxProductsToShow} items`);
+            }
+
             productsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.labels,
+                    labels: labels,
                     datasets: [{
                         label: 'Sales Count',
-                        data: data.values,
+                        data: values,
                         backgroundColor: '#26a69a',
                         borderWidth: 0,
                         borderRadius: 5
@@ -436,6 +378,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -444,10 +387,13 @@
                             ticks: {
                                 maxRotation: 45, // Rotate labels to fit better
                                 minRotation: 45,
+                                font: {
+                                    size: 10 // Smaller font size
+                                },
                                 callback: function (value, index, values) {
                                     // Truncate long labels for display on the axis
-                                    const maxLength = 20; // Adjust as needed
-                                    const label = data.labels[index];
+                                    const maxLength = 15; // More aggressive truncation
+                                    const label = labels[index];
                                     return label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
                                 }
                             }
@@ -459,14 +405,13 @@
                                 title: function (context) {
                                     // Show the full product name in the tooltip
                                     const index = context[0].dataIndex;
-                                    return data.labels[index]; // Full label without truncation
+                                    return labels[index]; // Full label without truncation
                                 },
                                 label: function (context) {
                                     const value = context.parsed.y || 0;
                                     return `Sales: ${value}`;
                                 }
                             },
-                            // Optional: Customize tooltip appearance
                             titleFont: {
                                 size: 14
                             },
@@ -481,7 +426,7 @@
             });
         }
 
-        // Utility function to format numbers with commas
+       
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }

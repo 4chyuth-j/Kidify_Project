@@ -111,7 +111,14 @@ const generateInvoice = async (order, outputPath) => {
         });
         
         // Right-align amount with ₹ symbol
-        doc.text(`₹${item.price * item.quantity}`, 450, tablePosition + (rowHeight/2) - 7, { 
+        let amountText = `₹${item.price * item.quantity}`;
+        if (item.cancelled) {
+          amountText = 'Cancelled';
+        } else if (item.returnStatus === 'Approved') {
+          amountText = 'Returned';
+        }
+        
+        doc.text(amountText, 450, tablePosition + (rowHeight/2) - 7, { 
           width: 100, 
           align: 'right' 
         });

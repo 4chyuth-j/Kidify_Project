@@ -127,7 +127,7 @@
 
         .price-details {
             width: 38%;
-            height: 490px;
+            height: 550px;
             background-color: #f8c8dc;
             padding: 15px;
             border-radius: 8px;
@@ -487,6 +487,10 @@
                     <div class="payment-option">
                         <input type="radio" name="paymentMethod" id="online" value="ONLINE">
                         <label for="online">Pay Online</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" name="paymentMethod" id="wallet" value="WALLET">
+                        <label for="wallet">Pay with Wallet (Available: ₹<%= user.wallet.toFixed(2) %>)</label>
                     </div>
                 </div>
 
@@ -919,9 +923,9 @@
 
 
 
-                } else if(paymentMethod == 'COD'){
+                } else if(paymentMethod == 'COD' || paymentMethod == 'WALLET'){
 
-                    // Send order to server for COD 
+                    // Send order to server for COD or WALLET
                     fetch('/place-order', {
                         method: 'POST',
                         headers: {
@@ -956,7 +960,7 @@
                                 confirmButtonColor: '#d14792'
                             });
                         });
-                }
+                } 
             });
 
         });

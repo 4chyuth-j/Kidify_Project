@@ -137,7 +137,7 @@ const placeOrderOnlinePayment = async (req, res) => {
 
 
 
-const verifyAndPlaceOrder = async (req,res)=>{
+const verifyAndPlaceOrder = async (req, res) => {
     try {
         const {
             razorpay_order_id,
@@ -198,7 +198,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
             paymentStatus: 'Paid',
             orderStatus: 'Placed',
             couponApplied: couponId ? true : false,
-           
+
         });
 
         await newOrder.save();
@@ -209,7 +209,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
             {
                 $push: {
                     "walletHistory": {
-                        amount: -finalAmount, 
+                        amount: -finalAmount,
                         type: 'purchase',
                         orderId: newOrder.orderId,
                         transactionId: razorpay_payment_id,
@@ -217,7 +217,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
                         note: `Payment for order #${newOrder.orderId}`
                     }
                 },
-               
+
             }
         );
 
@@ -240,7 +240,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
         });
 
     } catch (error) {
-        console.log("Error in varifyandPlaceOrder section:",error);
+        console.log("Error in varifyandPlaceOrder section:", error);
         return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 }
@@ -251,7 +251,7 @@ const verifyAndPlaceOrder = async (req,res)=>{
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { addressId, paymentMethod, couponId } = req.body;      
+        const { addressId, paymentMethod, couponId } = req.body;
 
         if (!addressId || !paymentMethod) {
             return res.status(400).json({ success: false, message: 'Address or payment method missing' });
@@ -275,21 +275,27 @@ const placeOrder = async (req, res) => {
             if (!coupon) throw new Error("Coupon not found");
             discount = coupon.offerPrice || 0;
         }
-        
+
         const finalAmount = totalPrice - discount;
-        
-        if (couponId && finalAmount < 1000) {
+
+        if (paymentMethod == 'WALLET' && finalAmount > userData.wallet) {
+
+            return res.status(400).json({ success: false, message: 'You do not have enough money in your wallet to complete this purchase.' });
+
+        }
+
+        if (couponId && finalAmount <= 1000) {
             const coupon = await Coupon.findById(couponId); // fetch again or reuse above if scoped
             if (!coupon.userId.includes(userId)) {
                 coupon.userId.push(userId);
                 await coupon.save(); // save the change made in coupon
             }
         }
-        
-        if (finalAmount > 1000) {
+
+        if (paymentMethod === 'COD' && finalAmount > 1000) {
             return res.status(400).json({ success: false, message: 'COD not possible for total amount greater than 1000. Please switch to Online method' });
         }
-        
+
 
         const newOrder = new Order({
             userId,
@@ -326,6 +332,27 @@ const placeOrder = async (req, res) => {
         );
         console.log("Cart cleared");
 
+        if (paymentMethod == 'WALLET') {
+            await User.findByIdAndUpdate(
+                userId,
+                {
+                    $push: {
+                        "walletHistory": {
+                            amount: -finalAmount,
+                            type: 'purchase',
+                            orderId: newOrder.orderId,
+                            date: new Date(),
+                            note: `Wallet purchase for order #${newOrder.orderId}`
+                        }
+                    },
+
+                    $inc:{
+                        wallet:-finalAmount
+                    },
+                }
+            )
+        }
+
         await User.findByIdAndUpdate(
             userId,
             { $push: { orderHistory: newOrder._id } }
@@ -348,10 +375,10 @@ const placeOrder = async (req, res) => {
 };
 
 
-const loadPaymentFailed = async (req,res)=>{
+const loadPaymentFailed = async (req, res) => {
     try {
         const userId = req.session.user;
-        
+
         const userData = await User.findById(userId);
 
         if (!userData) {

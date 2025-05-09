@@ -441,6 +441,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         document.getElementById('addMoneyBtn').addEventListener('click', function () {
             Swal.fire({
@@ -466,8 +467,115 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Here you would send the amount to your server to initiate payment
-                    window.location.href = `/add-money-to-wallet?amount=${result.value.amount}`;
+
+                    let amount = result.value.amount;
+
+                    fetch('/initiate-wallet-topup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            amount: amount
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || 'Something went wrong');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(res => {
+                            if (res.success) {
+                                var options = {
+                                    "key": "" + res.key_id + "",
+                                    "amount": "" + res.amount + "",
+                                    "currency": "INR",
+                                    "name": "" + res.product_name + "",
+                                    "description": "" + res.description + "",
+                                    "image": "/images/bgremovedlogo.png",
+                                    "order_id": "" + res.order_id + "",
+                                    "handler": function (response) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Payment Successful!',
+                                            text: 'Adding money to your wallet...',
+                                            timer: 2000,
+                                            confirmButtonColor: '#d14792',
+                                            willClose: () => {
+                                                fetch('/verify-wallet-payment', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({
+                                                        razorpay_order_id: response.razorpay_order_id,
+                                                        razorpay_payment_id: response.razorpay_payment_id,
+                                                        razorpay_signature: response.razorpay_signature,
+                                                        amount: res.amount
+                                                    })
+                                                })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            Swal.fire({
+                                                                icon: 'success',
+                                                                title: 'Wallet Updated!',
+                                                                text: `₹ ${amount} has been added to your wallet. New balance: ₹${data.newBalance.toFixed(2)}`,
+                                                                confirmButtonColor: '#d14792'
+                                                            }).then(() => {
+                                                                window.location.href = '/wallet';
+                                                            });
+                                                        } else {
+                                                            Swal.fire('Error', data.message, 'error');
+                                                        }
+                                                    });
+                                            }
+                                        });
+                                    },
+                                    "prefill": {
+                                        "contact": "" + res.contact + "",
+                                        "name": "" + res.name + "",
+                                        "email": "" + res.email + ""
+                                    },
+                                    "notes": {
+                                        "description": "" + res.description + ""
+                                    },
+                                    "theme": {
+                                        "color": "#f5a623"
+                                    }
+                                };
+
+                                var razorpayObject = new Razorpay(options);
+                                razorpayObject.on('payment.failed', function (response) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Payment Failed',
+                                        text: 'Failed to complete the payment. Please try again.',
+                                        confirmButtonColor: '#d14792'
+                                    });
+                                });
+                                razorpayObject.open();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Something went wrong',
+                                    text: res.msg,
+                                    confirmButtonColor: '#d14792'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                                text: error.message || 'Failed to process payment. Please try again.',
+                                confirmButtonColor: '#d14792'
+                            });
+                        });
                 }
             });
         });

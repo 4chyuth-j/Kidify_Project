@@ -155,6 +155,13 @@ router.post('/cancel-return',userAuth,orderController.cancelReturnRequest);
 //wallet management
 router.get('/wallet',userAuth,walletController.loadWalletPage);
 
+router.post('/initiate-wallet-topup',userAuth,walletController.initiateWalletTopUp);
+
+router.post('/verify-wallet-payment',userAuth,walletController.verifyAndAddMoneyToWallet);
+
+
+
+
 
 
 

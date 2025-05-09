@@ -4,7 +4,7 @@ const adminController = require("../controller/admin/adminController.js");
 const customerController = require('../controller/admin/customerController.js');
 const categoryController = require('../controller/admin/categoryController.js');
 const productController = require('../controller/admin/productController.js');
-const bannerController = require('../controller/admin/bannerController.js');
+
 const orderController = require('../controller/admin/orderController.js');
 const couponController = require('../controller/admin/couponController.js');
 const salesReportController = require('../controller/admin/salesReportController.js');
@@ -72,12 +72,6 @@ router.get("/editproduct",adminAuth,productController.loadEditProduct);
 
 router.put('/editproduct/:id', uploads.array('variantImages',4), productController.editProduct);
 
-// banner managment
-router.get("/banner",adminAuth,bannerController.loadBannerPage);
-
-router.get("/addBanner",adminAuth,bannerController.getAddBannerPage);
-
-router.post("/addBanner",adminAuth,uploads.single("images"),bannerController.addBanner);
 
 
 //order management

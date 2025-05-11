@@ -8,6 +8,7 @@ const productController = require('../controller/admin/productController.js');
 const orderController = require('../controller/admin/orderController.js');
 const couponController = require('../controller/admin/couponController.js');
 const salesReportController = require('../controller/admin/salesReportController.js');
+const transactionController = require('../controller/admin/transactionController.js');
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const uploads = multer({storage:storage});
@@ -99,7 +100,12 @@ router.delete('/deleteCoupon',adminAuth,couponController.deleteCoupon);
 //sales report 
 router.get('/salesReport',adminAuth,salesReportController.loadReportPage);
 
-router.get('/downloadSalesReport',adminAuth,salesReportController.downloadSalesReport)
+router.get('/downloadSalesReport',adminAuth,salesReportController.downloadSalesReport);
+
+//transaction page 
+router.get('/transactions',adminAuth,transactionController.loadTransactions);
+
+router.get('/transaction-details', adminAuth, transactionController.getTransactionDetails);
 
 
 

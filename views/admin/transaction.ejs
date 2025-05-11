@@ -1,0 +1,302 @@
+<%- include("../../views/partials/admin/header") %>
+
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9fb;
+            color: #333;
+        }
+
+        /* Content Styling */
+        .content-container {
+            margin-left: 280px;
+            padding: 20px;
+            width: calc(100% - 280px);
+        }
+
+        /* Content Title Styling */
+        .content-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #563d7c;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        /* Search Bar and Filter Dropdown */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container .input-group {
+            width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .search-container .form-control {
+            border: none;
+            padding: 10px;
+            border-radius: 50px 0 0 50px;
+        }
+
+        .search-container .btn {
+            background-color: #6c43c1;
+            color: white;
+            border-radius: 0 50px 50px 0;
+        }
+
+        .filter-dropdown {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-weight: 500;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .table thead {
+            background: #6c43c1;
+            color: white;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Transaction Type Badges */
+        .transaction-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .type-purchase {
+            background: #e0f9eb;
+            color: #219653;
+            border: 1px solid #219653;
+        }
+
+        .type-refund {
+            background: #e3f5ff;
+            color: #2f80ed;
+            border: 1px solid #2f80ed;
+        }
+
+        .type-topup {
+            background: #f2f2f2;
+            color: #4f4f4f;
+            border: 1px solid #4f4f4f;
+        }
+
+        .type-referral {
+            background: #fff3dc;
+            color: #f2994a;
+            border: 1px solid #f2994a;
+        }
+
+        /* Amount Styling */
+        .amount-positive {
+            color: #219653;
+            font-weight: 600;
+        }
+
+        .amount-negative {
+            color: #eb5757;
+            font-weight: 600;
+        }
+
+        /* View Button Styling */
+        .view-btn {
+            background-color: #6c43c1;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+        }
+
+        .view-btn:hover {
+            background-color: #008f72;
+        }
+
+        /* Pagination Styling */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            display: block;
+            padding: 8px 12px;
+            background: #6c43c1;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .pagination a:hover {
+            background: #ac93dd;
+        }
+
+        .pagination .active a {
+            background: #ac93dd;
+            font-weight: bold;
+            pointer-events: none;
+        }
+    </style>
+
+    <div class="content-container">
+        <div class="content-header row d-flex justify-content-between align-items-center">
+            <h2 class="content-title">
+                <i class="bi bi-credit-card"></i> Transactions
+            </h2>
+        </div>
+
+        <!-- Search Bar and Filter Dropdown -->
+        <div class="top-bar">
+            <div class="search-container">
+                <form action="/admin/transactions" method="get" class="d-flex">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search by user or transaction ID..."
+                            name="search">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            <select class="filter-dropdown" id="typeFilter" onchange="filterTransactions()">
+                <option value="all">All Transactions</option>
+                <option value="purchase">Product Purchase</option>
+                <option value="refund">Refund</option>
+                <option value="top-up">Wallet Top-up</option>
+                <option value="referral-reward">Referral Reward</option>
+            </select>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th><b>#</b></th>
+                            <th><b>Transaction ID</b></th>
+                            <th><b>Date</b></th>
+                            <th><b>User</b></th>
+                            <th><b>Type</b></th>
+                            <th><b>Amount</b></th>
+                            <th><b>Payment</b></th>
+                            <th><b>Actions</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i=0; i < transactions.length; i++) { %>
+                            <tr class="transaction-row" data-type="<%= transactions[i].type %>">
+                                <td>
+                                    <%= (currentPage-1) * limit + i + 1 %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].transactionId || '-' %>
+                                </td>
+                                <td>
+                                    <%= new Date(transactions[i].date).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].userName %>
+                                </td>
+                                <td>
+                                    <% if (transactions[i].type==='purchase' ) { %>
+                                        <span class="transaction-badge type-purchase">Purchase</span>
+                                        <% } else if (transactions[i].type==='refund' ) { %>
+                                            <span class="transaction-badge type-refund">Refund</span>
+                                            <% } else if (transactions[i].type==='top-up' ) { %>
+                                                <span class="transaction-badge type-topup">Top-up</span>
+                                                <% } else if (transactions[i].type==='referral-reward' ) { %>
+                                                    <span class="transaction-badge type-referral">Referral</span>
+                                                    <% } %>
+                                </td>
+                                <td class="<%= transactions[i].amount >= 0 ? 'amount-positive' : 'amount-negative' %>">
+                                    <%= transactions[i].amount>= 0 ? '+' : '' %>₹<%= transactions[i].amount %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].paymentMethod || '-' %>
+                                </td>
+                                <td>
+                                    <button class="view-btn">view</button>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <nav>
+                <ul class="pagination">
+                    <% for(let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%=(i === currentPage) ? 'active' : ''%>">
+                            <a class="page-link" href="?page=<%= i %><%= filter ? '&type=' + filter : '' %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                        <% } %>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <script>
+        // Run when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedType = urlParams.get('type') || 'all'; // default to 'all' if not set
+            document.getElementById('typeFilter').value = selectedType;
+        });
+
+        function filterTransactions() {
+            const filterValue = document.getElementById('typeFilter').value;
+            window.location.href = `/admin/transactions?type=${filterValue}`;
+        }
+    </script>
+
+    <%- include("../../views/partials/admin/footer") %>

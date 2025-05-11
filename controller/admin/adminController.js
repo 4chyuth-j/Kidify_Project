@@ -77,13 +77,13 @@ const getDateRange = (period) => {
             break;
         default:
             startDate = new Date(now);
-            startDate.setMonth(now.getMonth() - 1); // Default to monthly
+            startDate.setDate(now.getDate() - 7); // Default to weekly
     }
     
     return { startDate, endDate: now };
 };
 
-// Load Dashboard with analytics data
+
 // Load Dashboard with analytics data
 const loadDashboard = async (req, res) => {
     try {
@@ -207,10 +207,14 @@ async function getSummaryData(startDate, endDate, period) {
 async function getRevenueData(startDate, endDate, period) {
     let format;
     let labels = [];
+    let dateFormat;
     
     // Define format and generate labels based on period
     if (period === 'weekly') {
         format = '%Y-%m-%d';
+        dateFormat = { day: 'numeric', month: 'short' }; // e.g., '15 Jan'
+        
+        // Generate last 7 days
         for (let i = 0; i < 7; i++) {
             const date = new Date(startDate);
             date.setDate(startDate.getDate() + i);
@@ -218,17 +222,27 @@ async function getRevenueData(startDate, endDate, period) {
         }
     } else if (period === 'monthly') {
         format = '%Y-%m-%d';
-        for (let i = 0; i < 5; i++) {
+        
+        // Generate last 4 weeks
+        for (let i = 0; i < 4; i++) {
             const weekStart = new Date(startDate);
             weekStart.setDate(startDate.getDate() + i * 7);
-            labels.push(`Week ${i+1}`);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            const weekStartFormatted = weekStart.getDate() + ' ' + weekStart.toLocaleString('default', { month: 'short' });
+            const weekEndFormatted = weekEnd.getDate() + ' ' + weekEnd.toLocaleString('default', { month: 'short' });
+            labels.push(weekStartFormatted + ' - ' + weekEndFormatted);
         }
-    } else {
+    } else { // yearly
         format = '%Y-%m';
-        for (let i = 0; i < 12; i++) {
+        
+        // Generate last 12 months including the current month
+        for (let i = 0; i <= 11; i++) {
             const month = new Date(startDate);
             month.setMonth(startDate.getMonth() + i);
-            labels.push(month.toISOString().slice(0, 7)); // Format as YYYY-MM
+            // Store the month name and year as label (e.g., "Jan 2025")
+            labels.push(month.toLocaleString('default', { month: 'short', year: 'numeric' }));
         }
     }
     
@@ -246,13 +260,38 @@ async function getRevenueData(startDate, endDate, period) {
     ]);
     
     // Map the aggregated data to the labels
-    const values = Array(labels.length).fill(0);
-    revenueData.forEach(item => {
-        const index = labels.indexOf(item._id);
-        if (index !== -1) {
-            values[index] = item.total;
-        }
-    });
+    let values = Array(labels.length).fill(0);
+    
+    if (period === 'weekly') {
+        // For weekly, match by exact date
+        revenueData.forEach(item => {
+            const index = labels.indexOf(item._id);
+            if (index !== -1) {
+                values[index] = item.total;
+            }
+        });
+    } else if (period === 'monthly') {
+        // For monthly, group by week
+        revenueData.forEach(item => {
+            const date = new Date(item._id);
+            const weekIndex = Math.floor((date - startDate) / (7 * 24 * 60 * 60 * 1000));
+            if (weekIndex >= 0 && weekIndex < values.length) {
+                values[weekIndex] += item.total;
+            }
+        });
+    } else { // yearly
+        // For yearly, group by month
+        revenueData.forEach(item => {
+            const [year, month] = item._id.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            // Calculate months since startDate
+            const monthIndex = (date.getFullYear() - startDate.getFullYear()) * 12 + 
+                             (date.getMonth() - startDate.getMonth());
+            if (monthIndex >= 0 && monthIndex < values.length) {
+                values[monthIndex] += item.total;
+            }
+        });
+    }
 
     return { labels, values };
 }
@@ -460,14 +499,10 @@ const logout = async (req,res)=>{
 }
 
 
-
-
-
 module.exports = {
     loadLogin,
     login,
     loadDashboard,
     pageError,
     logout
-
 }

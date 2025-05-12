@@ -141,7 +141,7 @@ const getverifyOtp = async (req, res) => {
 //otp verification and signup
 const verifyOtp = async (req, res) => {
    try {
-      
+
       const REFERRAL_REWARD = Number(process.env.REFERRAL_REWARD);
       const MAX_REFERRAL_EARNINGS = Number(process.env.MAX_REFERRAL_EARNINGS);
 
@@ -552,14 +552,16 @@ const filterProduct = async (req, res) => {
 const filterByPrice = async (req, res) => {
    try {
       const user = req.session.user;
-      const gt = parseInt(req.query.gt);
-      const lt = parseInt(req.query.lt);
+      // Parse and validate price values
+      const gt = req.query.gt && !isNaN(parseFloat(req.query.gt)) ? parseFloat(req.query.gt) : 0;
+      const lt = req.query.lt && !isNaN(parseFloat(req.query.lt)) ? parseFloat(req.query.lt) : 100000;
+      
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
       const sortOption = req.query.sort || 'new-arrivals';
 
-      // Create price filter query
+      // Create price filter query with validated values
       const query = {
          isBlocked: false,
          stock: { $gt: 0 },
@@ -633,6 +635,17 @@ const searchProducts = async (req, res) => {
       const user = req.session.user;
       // Store the search query from either POST body or GET query parameters
       const searchQuery = req.body.query || req.query.query;
+      
+      // Get filter parameters from either POST body or GET query
+      const category = req.body.category || req.query.category;
+      const brand = req.body.brand || req.query.brand;
+      const gt = req.body.gt || req.query.gt;
+      const lt = req.body.lt || req.query.lt;
+
+      // Only parse values if they exist and can be converted to valid numbers
+      const gtValue = gt && !isNaN(parseFloat(gt)) ? parseFloat(gt) : undefined;
+      const ltValue = lt && !isNaN(parseFloat(lt)) ? parseFloat(lt) : undefined;
+
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -642,9 +655,42 @@ const searchProducts = async (req, res) => {
          return res.redirect('/shop');
       }
 
-      // If it's a POST request, redirect to GET to enable pagination
+      // If it's a POST request, redirect to GET to enable pagination, preserving filter parameters
       if (req.method === 'POST') {
-         return res.redirect(`/search?query=${encodeURIComponent(searchQuery)}&page=1&sort=${sortOption}`);
+         let redirectUrl = `/search?query=${encodeURIComponent(searchQuery)}&page=1&sort=${sortOption}`;
+         if (category) redirectUrl += `&category=${encodeURIComponent(category)}`;
+         if (brand) redirectUrl += `&brand=${encodeURIComponent(brand)}`;
+         if (gtValue !== undefined && ltValue !== undefined) {
+            redirectUrl += `&gt=${gtValue}&lt=${ltValue}`;
+         }
+         return res.redirect(redirectUrl);
+      }
+
+      // Create MongoDB search query
+      const mongoQuery = {
+         isBlocked: false,
+         stock: { $gt: 0 },
+         $or: [
+            { productName: { $regex: searchQuery, $options: 'i' } },
+            { description: { $regex: searchQuery, $options: 'i' } },
+            { brand: { $regex: searchQuery, $options: 'i' } }
+         ]
+      };
+
+      // Apply filters if present
+      if (category) {
+         const findCategory = await Category.findOne({ _id: category });
+         if (findCategory) {
+            mongoQuery.category = findCategory._id;
+         }
+      }
+      if (brand) {
+         mongoQuery.brand = brand;
+      }
+
+      // Only add price filter if both values are valid numbers
+      if (gtValue !== undefined && ltValue !== undefined) {
+         mongoQuery.basePrice = { $gt: gtValue, $lt: ltValue };
       }
 
       // Apply sorting logic
@@ -669,17 +715,6 @@ const searchProducts = async (req, res) => {
             sortQuery = { createdAt: -1 };
       }
 
-      // Create MongoDB search query
-      const mongoQuery = {
-         isBlocked: false,
-         stock: { $gt: 0 },
-         $or: [
-            { productName: { $regex: searchQuery, $options: 'i' } },
-            { description: { $regex: searchQuery, $options: 'i' } },
-            { brand: { $regex: searchQuery, $options: 'i' } }
-         ]
-      };
-
       // Count total products for pagination
       const totalProducts = await Product.countDocuments(mongoQuery);
       const totalPages = Math.ceil(totalProducts / limit);
@@ -702,6 +737,7 @@ const searchProducts = async (req, res) => {
          userData = await User.findOne({ _id: user });
       }
 
+      // Ensure we're rendering with the search query param for pagination links
       res.render('shop1', {
          user: userData,
          products: products,
@@ -709,9 +745,13 @@ const searchProducts = async (req, res) => {
          brand: brands,
          currentPage: page,
          totalPages: totalPages,
-         query: searchQuery, // Pass the search query for use in pagination links
+         query: searchQuery, // This is essential for proper pagination after search
          sort: sortOption,
-         productsFound: products.length > 0
+         productsFound: products.length > 0,
+         selectedCategory: category || null,
+         selectedBrand: brand || null,
+         gt: gtValue !== undefined ? gtValue : null,
+         lt: ltValue !== undefined ? ltValue : null
       });
    } catch (error) {
       console.error(error);

@@ -1,4 +1,3 @@
-
 <%- include("../../views/partials/user/header.ejs") %>
   <style>
     /* All your existing styles remain unchanged */
@@ -337,9 +336,24 @@
       </div>
       <div class="shop-topbar">
         <div class="search-bar">
-          <form action="/search" method="POST" class="search-form">
-            <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= typeof query !== 'undefined' ? query : '' %>" />
-            <button type="submit" class="search-button">Search</button>
+          <form action="/search" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="Search items..." class="search-input"
+              value="<%= typeof query !== 'undefined' ? query : '' %>" />
+            <!-- Add hidden inputs for current filters -->
+            <% if (typeof selectedCategory !=='undefined' && selectedCategory) { %>
+              <input type="hidden" name="category" value="<%= selectedCategory %>" />
+              <% } %>
+                <% if (typeof selectedBrand !=='undefined' && selectedBrand) { %>
+                  <input type="hidden" name="brand" value="<%= selectedBrand %>" />
+                  <% } %>
+                    <% if (typeof gt !=='undefined' && gt !==null && typeof lt !=='undefined' && lt !==null) { %>
+                      <input type="hidden" name="gt" value="<%= gt %>" />
+                      <input type="hidden" name="lt" value="<%= lt %>" />
+                      <% } %>
+                        <% if (typeof sort !=='undefined' && sort) { %>
+                          <input type="hidden" name="sort" value="<%= sort %>" />
+                          <% } %>
+                            <button type="submit" class="search-button">Search</button>
           </form>
           <button class="clear-button" onclick="window.location.href='/shop'">Clear</button>
         </div>
@@ -423,7 +437,7 @@
 
         <main class="product-grid">
           <% if (productsFound) { %>
-            
+
             <% for(let i=0; i<products.length; i++) { %>
               <div class="product-card">
                 <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')"><i
@@ -434,9 +448,10 @@
                     <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 40) + "..." :
                       products[i].productName %>
                   </h5>
-                  <% const discountPercentage = Math.max(products[i].discountPercentage,products[i].category.categoryOffer)
-                    const discount=(products[i].basePrice * discountPercentage) / 100; 
-                    const discountedPrice=products[i].basePrice - discount; %>
+                  <% const
+                    discountPercentage=Math.max(products[i].discountPercentage,products[i].category.categoryOffer) 
+                    const discount=(products[i].basePrice * discountPercentage) / 100;
+                     const discountedPrice=products[i].basePrice - discount; %>
 
                     <% if (discountPercentage && discountPercentage !==0) { %>
                       <p>
@@ -464,47 +479,72 @@
 
       <!-- UPDATED PAGINATION SECTION -->
       <div class="pagination">
-        <% if (currentPage > 1) { %>
-          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
-            <a class="btn" href="/filter?category=<%= selectedCategory %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
-            <a class="btn" href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
-            <a class="btn" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-          <% } else if (typeof query !== 'undefined' && query) { %>
+        <% if (currentPage> 1) { %>
+          <% if (typeof query !=='undefined' && query) { %>
             <a class="btn" href="/search?query=<%= query %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-          <% } else { %>
-            <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
-          <% } %>
-        <% } %>
-      
-        <% for (let i=1; i <= totalPages; i++) { %>
-          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filter?category=<%= selectedCategory %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filter?brand=<%= selectedBrand %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-          <% } else if (typeof query !== 'undefined' && query) { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/search?query=<%= query %>&page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-          <% } else { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>&sort=<%= sort %>"><%= i %></a>
-          <% } %>
-        <% } %>
-      
-        <% if (currentPage < totalPages) { %>
-          <% if (typeof selectedCategory !== 'undefined' && selectedCategory) { %>
-            <a class="btn" href="/filter?category=<%= selectedCategory %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-          <% } else if (typeof selectedBrand !== 'undefined' && selectedBrand) { %>
-            <a class="btn" href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-          <% } else if (typeof gt !== 'undefined' && typeof lt !== 'undefined') { %>
-            <a class="btn" href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-          <% } else if (typeof query !== 'undefined' && query) { %>
-            <a class="btn" href="/search?query=<%= query %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-          <% } else { %>
-            <a class="btn" href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
-          <% } %>
-        <% } %>
+            <% } else if (typeof selectedCategory !=='undefined' && selectedCategory) { %>
+              <a class="btn"
+                href="/filter?category=<%= selectedCategory %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+              <% } else if (typeof selectedBrand !=='undefined' && selectedBrand) { %>
+                <a class="btn"
+                  href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+                <% } else if (typeof gt !=='undefined' && typeof lt !=='undefined' ) { %>
+                  <a class="btn"
+                    href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+                  <% } else { %>
+                    <a class="btn" href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>">Prev</a>
+                    <% } %>
+                      <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                          <% if (typeof query !=='undefined' && query) { %>
+                            <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                              href="/search?query=<%= query %>&page=<%= i %>&sort=<%= sort %>">
+                              <%= i %>
+                            </a>
+                            <% } else if (typeof selectedCategory !=='undefined' && selectedCategory) { %>
+                              <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                                href="/filter?category=<%= selectedCategory %>&page=<%= i %>&sort=<%= sort %>">
+                                <%= i %>
+                              </a>
+                              <% } else if (typeof selectedBrand !=='undefined' && selectedBrand) { %>
+                                <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                                  href="/filter?brand=<%= selectedBrand %>&page=<%= i %>&sort=<%= sort %>">
+                                  <%= i %>
+                                </a>
+                                <% } else if (typeof gt !=='undefined' && typeof lt !=='undefined' ) { %>
+                                  <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                                    href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= i %>&sort=<%= sort %>">
+                                    <%= i %>
+                                  </a>
+                                  <% } else { %>
+                                    <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                                      href="/shop?page=<%= i %>&sort=<%= sort %>">
+                                      <%= i %>
+                                    </a>
+                                    <% } %>
+                                      <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                          <% if (typeof query !=='undefined' && query) { %>
+                                            <a class="btn"
+                                              href="/search?query=<%= query %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                                            <% } else if (typeof selectedCategory !=='undefined' && selectedCategory) {
+                                              %>
+                                              <a class="btn"
+                                                href="/filter?category=<%= selectedCategory %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                                              <% } else if (typeof selectedBrand !=='undefined' && selectedBrand) { %>
+                                                <a class="btn"
+                                                  href="/filter?brand=<%= selectedBrand %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                                                <% } else if (typeof gt !=='undefined' && typeof lt !=='undefined' ) {
+                                                  %>
+                                                  <a class="btn"
+                                                    href="/filterPrice?gt=<%= gt %>&lt=<%= lt %>&page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                                                  <% } else { %>
+                                                    <a class="btn"
+                                                      href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>">Next</a>
+                                                    <% } %>
+                                                      <% } %>
       </div>
     </section>
   </div>

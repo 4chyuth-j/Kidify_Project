@@ -1,5 +1,4 @@
-const User = require("../../model/userSchema");
-const Product = require("../../model/productSchema");
+
 const Order = require("../../model/orderSchema");
 const { generateSalesReportPDF } = require("../../helpers/salesPdfHelper");
 const { generateSalesReportExcel } = require("../../helpers/excelHelper");
@@ -86,7 +85,7 @@ const loadReportPage = async (req, res) => {
                     break;
             }
         } else {
-            
+            console.log("something went wrong in salesreport page");
         }
         
         // filter for completed orders only (not cancelled ) returned orders not included because the company still has the money in the user wallet

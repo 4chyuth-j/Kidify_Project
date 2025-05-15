@@ -285,7 +285,7 @@ const placeOrder = async (req, res) => {
         }
 
         if (couponId && finalAmount <= 1000) {
-            const coupon = await Coupon.findById(couponId); // fetch again or reuse above if scoped
+            const coupon = await Coupon.findById(couponId); 
             if (!coupon.userId.includes(userId)) {
                 coupon.userId.push(userId);
                 await coupon.save(); // save the change made in coupon
@@ -373,6 +373,31 @@ const placeOrder = async (req, res) => {
         });
     }
 };
+
+
+// const placeOrder = async (req,res)=>{
+//     try {
+//         const userId = req.session.user;
+        
+//         const userCart = await findOne({userId});
+//         if(!userCart){
+//              return res.status(400).json({message:"Cart not found"});
+//         }
+
+//         const totalPrice = 0;
+//         for(let item of userCart.item){
+//            totalPrice+=item.totalPrice;
+//         }
+
+//         if(totalPrice>1000){
+//             return res.status(400).json({success:false,message:"COD not possible for amount greater than 1000"});
+//         }
+
+//     } catch (error) {
+//         console.error("Something went wrong:",error)
+//         return res.status(500).json({success:false, message:"internal server error"});
+//     }
+// }
 
 
 const loadPaymentFailed = async (req, res) => {

@@ -13,7 +13,7 @@ const multer = require("multer");
 const storage = require("../helpers/multer");
 const uploads = multer({storage:storage});
 
-const {userAuth,adminAuth} = require("../middlewares/auth.js");
+const {adminAuth} = require("../middlewares/auth.js");
 
 
 router.get("/login",adminController.loadLogin);

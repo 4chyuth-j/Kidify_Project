@@ -84,7 +84,7 @@ const addCategory = async (req, res) => {
 
 
     } catch (error) {
-        console.log("error in saving category details in dB")
+        console.log("error in saving category details in dB:",error)
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
@@ -99,7 +99,7 @@ const categoryBlocked = async (req, res) => {
         res.redirect("/admin/category");
 
     } catch (error) {
-        console.log("Error occured while blocking the Category");
+        console.log("Error occured while blocking the Category",error);
         res.status(500).send("Internal server error");
         res.redirect("/pageError");
     }
@@ -114,7 +114,7 @@ const categoryUnBlocked = async (req, res) => {
         res.redirect("/admin/category");
 
     } catch (error) {
-        console.log("Error occured while Unblocking the Category");
+        console.log("Error occured while Unblocking the Category:",error);
         res.status(500).send("Internal server error");
         res.redirect("/pageError");
     }
@@ -175,7 +175,7 @@ const editCategory = async (req, res) => {
 
 
     } catch (error) {
-
+        console.log("something went wrong :",error)
         res.status(500).json({ error: "Internal Server error" });
 
     }

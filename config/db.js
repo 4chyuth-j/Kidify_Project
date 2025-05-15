@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const env = require("dotenv").config();
 const address = process.env.MONGODB_URI;
 
 // Async function to connect MongoDB and it is invoked in app.js file

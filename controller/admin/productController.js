@@ -1,9 +1,6 @@
 const Product = require("../../model/productSchema");
 const Category = require("../../model/categorySchema");
-const User = require("../../model/userSchema");
-const fs = require("node:fs");
-const path = require("node:path");
-const { error } = require("node:console");
+
 
 
 
@@ -120,6 +117,7 @@ const viewProducts = async (req, res) => {
     }
 
   } catch (error) {
+    console.log("something went wrong:",error)
     res.redirect("/pageError");
   }
 };
@@ -309,7 +307,7 @@ const loadEditProduct = async (req, res) => {
     }
     res.render("editProduct", { pageTitle: "Edit Product", product: product, cat: category });
   } catch (error) {
-    console.log("something went wrong while loading edit product");
+    console.log("something went wrong while loading edit product:",error);
     res.redirect("/pageError");
   }
 }

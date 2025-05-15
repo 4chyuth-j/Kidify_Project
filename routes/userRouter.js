@@ -10,7 +10,7 @@ const checkoutController = require('../controller/user/checkoutController.js');
 const orderController = require('../controller/user/orderController.js');
 const walletController = require('../controller/user/walletController.js');
 const passport = require("passport");
-const {userAuth,adminAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
+const {userAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
 
 

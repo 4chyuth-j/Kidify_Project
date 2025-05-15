@@ -1,5 +1,4 @@
 const Product = require("../../model/productSchema");
-const Category = require("../../model/categorySchema");
 const User = require("../../model/userSchema");
 
 
@@ -34,7 +33,7 @@ const productDetails = async (req, res) => {
             products: products
         });
     } catch (error) {
-        console.log("something went wrong while displaying product details page");
+        console.log("something went wrong while displaying product details page:",error);
         res.redirect("/pageNotFound");
     }
 }

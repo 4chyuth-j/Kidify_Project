@@ -3,7 +3,7 @@ const Category = require("../../model/categorySchema");
 const Product = require("../../model/productSchema");
 
 const nodemailer = require("nodemailer");
-const env = require("dotenv").config();
+
 const bcrypt = require("bcrypt");
 
 
@@ -162,7 +162,12 @@ const verifyOtp = async (req, res) => {
          const user = req.session.userData;
          const passwordHash = await securePassword(user.password);
 
+         const emailName = user.email.split('@')[0];                     // e.g., "achyuthj2002"
+         const filteredName = emailName.replace(/[^a-zA-Z]/g, '');       // remove numbers and symbols
+         const capitalizedName = filteredName.charAt(0).toUpperCase() + filteredName.slice(1); // "Achyuthj"
+
          const saveUserData = new User({
+            name:capitalizedName,
             email: user.email,
             password: passwordHash,
             referredBy: referralCode
@@ -307,6 +312,7 @@ const pageNotFound = async (req, res) => {
       res.render('page-404')
 
    } catch (error) {
+      console.log("failed to load the error page:", error);
       res.redirect("/pageNotFound");
    }
 };
@@ -555,7 +561,7 @@ const filterByPrice = async (req, res) => {
       // Parse and validate price values
       const gt = req.query.gt && !isNaN(parseFloat(req.query.gt)) ? parseFloat(req.query.gt) : 0;
       const lt = req.query.lt && !isNaN(parseFloat(req.query.lt)) ? parseFloat(req.query.lt) : 100000;
-      
+
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -635,7 +641,7 @@ const searchProducts = async (req, res) => {
       const user = req.session.user;
       // Store the search query from either POST body or GET query parameters
       const searchQuery = req.body.query || req.query.query;
-      
+
       // Get filter parameters from either POST body or GET query
       const category = req.body.category || req.query.category;
       const brand = req.body.brand || req.query.brand;

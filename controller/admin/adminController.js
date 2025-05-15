@@ -1,8 +1,6 @@
 const User = require("../../model/userSchema");
-const mongoose = require("mongoose");
 const Order = require('../../model/orderSchema');
-const Product = require('../../model/productSchema');
-const Category = require('../../model/categorySchema');
+
 const bcrypt = require("bcrypt");
 
 

@@ -1,8 +1,7 @@
 const User = require("../../model/userSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const env = require("dotenv").config();
-const session = require("express-session");
+
 
 
 async function sendVerificationEmail(email, otp) {
@@ -34,7 +33,7 @@ async function sendVerificationEmail(email, otp) {
 
 
     } catch (error) {
-        console.error("failed to send mail via nodemailer");
+        console.error("failed to send mail via nodemailer:",error);
         return false;
     }
 }
@@ -69,7 +68,7 @@ const getForgotPassPage = async (req, res) => {
         res.render("forgotPassword");
 
     } catch (error) {
-
+        console.log("something went wrong:",error);
         res.redirect('/pageNotFound');
 
     }
@@ -105,7 +104,7 @@ const validateEmail = async (req, res) => {
         }
 
     } catch (error) {
-        console.log("Something went wrong while checking the mail ");
+        console.log("Something went wrong while checking the mail:",error);
         return res.status(500).json({ error: "Internal server Error" });
     }
 }
@@ -115,6 +114,7 @@ const loadOtpPage = async (req, res) => {
     try {
         res.render("passwordChgOTP");
     } catch (error) {
+        console.log("something wrong while loading the otp page:",error);
         res.redirect('/pageNotFound');
     }
 }
@@ -161,6 +161,7 @@ const loadResetPassword = async (req, res) => {
     try {
         res.render("changePassword");
     } catch (error) {
+        console.log("something went wrong while loading the loading the change password page:",error);
         res.redirect('/pageNotFound');
     }
 }
@@ -204,7 +205,7 @@ const resetPassword = async (req, res) => {
 
 
     } catch (error) {
-        console.log("Something went wrong while changing the password to the database");
+        console.log("Something went wrong while changing the password to the database:",error);
         return res.status(500).json({ message: "Internal server error" });
 
     }
@@ -219,7 +220,7 @@ const clearSessionOtp = async (req, res) => {
         console.log("Session otp is cleared");
         res.status(200).json({ message: "Cleared OTP from session, Please resend otp to continue" });
     } catch (error) {
-        console.log("Error in occured while clearing the otp from session");
+        console.log("Error in occured while clearing the otp from session:",error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -251,7 +252,7 @@ const resendOTP = async (req, res) => {
 
     } catch (error) {
 
-        console.log("Something went wrong while resending the otp ");
+        console.log("Something went wrong while resending the otp: ",error);
         return res.status(500).json({ error: "Internal server Error" });
 
     }

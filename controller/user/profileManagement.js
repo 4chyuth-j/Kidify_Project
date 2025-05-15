@@ -1,6 +1,5 @@
 const User = require("../../model/userSchema");
 const Address = require("../../model/addressSchema");
-const Wishlist = require("../../model/wishlistSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 
@@ -447,7 +446,11 @@ const editAddress = async (req,res)=>{
     try {
         const userId = req.session.user;
         const userData = await User.findById(userId);
-        
+        if(!userData){
+            console.log("failed to get the userData");
+            return res.status(400).json({message:"User data don't exist"});
+            
+        }
         const {addressId,addressType,name,phone,altPhone,landMark,city,state, pincode} = req.body;
         const userAddress = await Address.findOne({userId:userId});
         if(!userAddress){

@@ -1,7 +1,7 @@
 const passport = require("passport"); // Importing passport for authentication
 const GoogleStrategy = require("passport-google-oauth20").Strategy; // Importing Google OAuth strategy
 const User = require("../model/userSchema"); // Importing User model to interact with the database
-const env = require("dotenv").config(); // Loading environment variables from .env file
+
 
 // Configuring Passport to use Google OAuth strategy for authentication
 passport.use(new GoogleStrategy({

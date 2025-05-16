@@ -9,9 +9,11 @@ const orderController = require('../controller/admin/orderController.js');
 const couponController = require('../controller/admin/couponController.js');
 const salesReportController = require('../controller/admin/salesReportController.js');
 const transactionController = require('../controller/admin/transactionController.js');
+const loadError = require('../controller/admin/loadError.js');
 const multer = require("multer");
 const storage = require("../helpers/multer");
-const uploads = multer({storage:storage});
+// const uploads = multer({storage:storage});
+const {uploads} = require('../helpers/multer.js')
 
 const {adminAuth} = require("../middlewares/auth.js");
 
@@ -106,6 +108,8 @@ router.get('/downloadSalesReport',adminAuth,salesReportController.downloadSalesR
 router.get('/transactions',adminAuth,transactionController.loadTransactions);
 
 router.get('/transaction-details', adminAuth, transactionController.getTransactionDetails);
+
+router.get('*',adminAuth,loadError.load404);
 
 
 

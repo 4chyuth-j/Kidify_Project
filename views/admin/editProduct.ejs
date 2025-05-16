@@ -290,7 +290,7 @@
                                                     <div class="image-preview"
                                                         style="<%= product.productImage[i] ? 'display: block;' : '' %>">
                                                         <% if(product.productImage[i]) { %>
-                                                            <img src="/uploads/re-image/<%= product.productImage[i] %>"
+                                                            <img src="<%= product.productImage[i] %>"
                                                                 alt="Product image">
                                                             <button class="close-btn" type="button"> × </button>
                                                             <input type="hidden" name="existingImages[]"

@@ -174,7 +174,7 @@
                                 
                                         <tr data-product-id="<%= item._id %>">
                                             <td>
-                                                <img src="/uploads/re-image/<%= product.productImage[0] %>"
+                                                <img src="<%= product.productImage[0] %>"
                                                     alt="<%= product.productName %>">
                                                 <%= product.productName.length> 45 ? product.productName.substring(0,
                                                     50) + "..." : product.productName %>

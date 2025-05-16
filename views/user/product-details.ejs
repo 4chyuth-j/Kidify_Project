@@ -371,14 +371,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="product-gallery">
-                        <img id="mainImage" class="main-image" src="/uploads/re-image/<%=product.productImage[0]%>"
+                        <img id="mainImage" class="main-image" src="<%=product.productImage[0]%>"
                             alt="Product Image">
                         <div id="zoomLens" class="zoom-lens"></div>
                         <div id="zoomContainer" class="zoom-container"
-                            style="background-image: url('/uploads/re-image/<%=product.productImage[0]%>');"></div>
+                            style="background-image: url('<%=product.productImage[0]%>');"></div>
                         <div class="thumbnail-container">
                             <% for(let i=0; i<product.productImage.length; i++) { %>
-                                <img class="thumbnail" src="/uploads/re-image/<%=product.productImage[i]%>"
+                                <img class="thumbnail" src="<%=product.productImage[i]%>"
                                     alt="Thumbnail" onclick="changeImage('<%=product.productImage[i]%>')">
                                 <% } %>
                         </div>
@@ -460,7 +460,7 @@
                                         <div class="product-img product-img-zoom">
                                             <a href="/productDetails?id=<%=products[i]._id%>">
                                                 <img class="default-img"
-                                                    src="/uploads/re-image/<%=products[i].productImage[0]%>"
+                                                    src="<%=products[i].productImage[0]%>"
                                                     alt="<%=products[i].productName%>">
                                             </a>
                                         </div>
@@ -511,8 +511,8 @@
         function changeImage(imageSrc) {
             const mainImage = document.getElementById('mainImage');
             const zoomContainer = document.getElementById('zoomContainer');
-            mainImage.src = '/uploads/re-image/' + imageSrc;
-            zoomContainer.style.backgroundImage = "url('/uploads/re-image/" + imageSrc + "')";
+            mainImage.src = imageSrc;
+            zoomContainer.style.backgroundImage = `url('${imageSrc}')`;
         }
 
         // Image zoom functionality

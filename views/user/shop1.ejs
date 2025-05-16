@@ -443,7 +443,7 @@
                 <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')"><i
                     class="bi bi-heart-fill"></i></span>
                 <a href="/productDetails?id=<%=products[i]._id%>">
-                  <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
+                  <img src="<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
                   <h5 title="<%= products[i].productName %>">
                     <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 40) + "..." :
                       products[i].productName %>

@@ -407,7 +407,7 @@
                             <% cart.items.forEach(item=> { %>
                                 <tr>
                                     <td>
-                                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
+                                        <img src="<%=item.productId.productImage[0]%>"
                                             alt="<%= item.productId.name %>">
                                         <%= item.productId.productName.length> 40 ?
                                             item.productId.productName.substring(0, 51) + "..." :

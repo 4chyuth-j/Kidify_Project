@@ -1,5 +1,6 @@
 const Product = require("../../model/productSchema");
 const Category = require("../../model/categorySchema");
+const { cloudinary } = require('../../helpers/multer');
 
 
 
@@ -16,22 +17,79 @@ const loadAddProduct = async (req, res) => {
 }
 
 //adding product in db
+// const addProducts = async (req, res) => {
+//   try {
+
+//     const products = req.body;
+//     console.log(req.body);
+//     const productExists = await Product.findOne({
+//       productName: products.productName,
+//     });
+
+//     if (!productExists) {
+
+//       const images = [];
+
+//       if (req.files && req.files.length > 0) {
+//         for (let i = 0; i < req.files.length; i++) {
+//           images.push(req.files[i].filename);
+//         }
+//       }
+
+//       const categoryId = await Category.findOne({ _id: products.category });
+
+//       if (!categoryId) {
+//         console.log(categoryId);
+//         return res.status(400).json({ error: "Invalid category" });
+//       }
+
+
+//       const basePrice = parseFloat(products.basePrice); // Ensure it's a number
+
+//       const newProduct = new Product({
+//         productName: products.productName,
+//         description: products.description,
+//         brand: products.brand,
+//         category: categoryId._id,
+//         basePrice: basePrice,
+//         discountPercentage: products.discountPercentage,
+//         stock: products.stock,
+//         productImage: images,
+//         status: "Available",
+
+//       });
+
+//       await newProduct.save();
+//       console.log("product saved in db successfully");
+//       return res.status(200).json({ message: "Product Added Successfully!!" });
+
+
+//     } else {
+//       return res.status(400).json({ error: "Product already exist, please try with another Name" });
+//     }
+
+//   } catch (error) {
+//     console.error("Error saving product", error);
+//     return res.render("admin-error", { pageTitle: "Page Not found!" });
+//   }
+// }
 const addProducts = async (req, res) => {
   try {
-
     const products = req.body;
     console.log(req.body);
+    
     const productExists = await Product.findOne({
       productName: products.productName,
     });
 
     if (!productExists) {
-
       const images = [];
 
+      // Handle Cloudinary uploaded files
       if (req.files && req.files.length > 0) {
         for (let i = 0; i < req.files.length; i++) {
-          images.push(req.files[i].filename);
+          // Store the Cloudinary URL instead of the filename
+          images.push(req.files[i].path);
         }
       }
 
@@ -41,7 +99,6 @@ const addProducts = async (req, res) => {
         console.log(categoryId);
         return res.status(400).json({ error: "Invalid category" });
       }
-
 
       const basePrice = parseFloat(products.basePrice); // Ensure it's a number
 
@@ -55,13 +112,11 @@ const addProducts = async (req, res) => {
         stock: products.stock,
         productImage: images,
         status: "Available",
-
       });
 
       await newProduct.save();
       console.log("product saved in db successfully");
       return res.status(200).json({ message: "Product Added Successfully!!" });
-
 
     } else {
       return res.status(400).json({ error: "Product already exist, please try with another Name" });
@@ -71,7 +126,7 @@ const addProducts = async (req, res) => {
     console.error("Error saving product", error);
     return res.render("admin-error", { pageTitle: "Page Not found!" });
   }
-}
+};
 
 
 //product listing
@@ -315,16 +370,115 @@ const loadEditProduct = async (req, res) => {
 
 
 //editProduct
+// const editProduct = async (req, res) => {
+//   try {
+//     const productId = req.params.id;
+
+    
+//     const existingProduct = await Product.findById(productId);
+//     if (!existingProduct) {
+//       return res.status(404).json({ error: "Product not found" });
+//     }
+
+    
+//     const {
+//       productName,
+//       description,
+//       category,
+//       basePrice,
+//       discountPercentage,
+//       stock,
+//       brand,
+//       existingImages,
+//       deletedImages
+//     } = req.body;
+
+    
+//     const categoryId = await Category.findOne({ _id: category });
+//     if (!categoryId) {
+//       return res.status(400).json({ error: "Invalid category" });
+//     }
+
+    
+//     const productWithSameName = await Product.findOne({
+//       productName: productName,
+//       _id: { $ne: productId } // Exclude current product from check
+//     });
+
+//     if (productWithSameName) {
+//       return res.status(400).json({
+//         error: "Product name already exists, please choose another name"
+//       });
+//     }
+
+//     // Process images
+//     let updatedImages = [];
+
+//     // Keep existing images that weren't deleted
+//     if (existingImages) {
+//       // Handle case when existingImages is a single value or an array
+//       const existingImagesArray = Array.isArray(existingImages)
+//         ? existingImages
+//         : [existingImages];
+
+//       // Handle case when deletedImages is a single value, an array, or undefined
+//       const deletedImagesArray = deletedImages
+//         ? (Array.isArray(deletedImages) ? deletedImages : [deletedImages])
+//         : [];
+
+//       // Filter out deleted images
+//       updatedImages = existingImagesArray.filter(
+//         img => !deletedImagesArray.includes(img)
+//       );
+//     }
+
+//     // Add new uploaded images
+//     if (req.files && req.files.length > 0) {
+//       const newImages = req.files.map(file => file.filename);
+//       updatedImages = [...updatedImages, ...newImages];
+//     }
+
+//     // Ensure there's at least one image
+//     if (updatedImages.length === 0) {
+//       return res.status(400).json({ error: "At least one product image is required" });
+//     }
+
+//     // Update product
+//     existingProduct.productName = productName;
+//     existingProduct.description = description;
+//     existingProduct.brand = brand;
+//     existingProduct.category = categoryId._id;
+//     existingProduct.basePrice = parseFloat(basePrice);
+//     existingProduct.discountPercentage = discountPercentage !== ""
+//       ? parseFloat(discountPercentage)
+//       : 0;
+//     existingProduct.stock = parseInt(stock);
+//     existingProduct.productImage = updatedImages;
+
+//     await existingProduct.save();
+
+//     // Return success response
+//     return res.status(200).json({
+//       message: "Product updated successfully",
+//       product: existingProduct
+//     });
+
+//   } catch (error) {
+//     console.error("Error updating product:", error);
+//     return res.status(500).json({
+//       error: "An error occurred while updating the product"
+//     });
+//   }
+// };
+
 const editProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-
     
     const existingProduct = await Product.findById(productId);
     if (!existingProduct) {
       return res.status(404).json({ error: "Product not found" });
     }
-
     
     const {
       productName,
@@ -337,13 +491,11 @@ const editProduct = async (req, res) => {
       existingImages,
       deletedImages
     } = req.body;
-
     
     const categoryId = await Category.findOne({ _id: category });
     if (!categoryId) {
       return res.status(400).json({ error: "Invalid category" });
     }
-
     
     const productWithSameName = await Product.findOne({
       productName: productName,
@@ -375,11 +527,24 @@ const editProduct = async (req, res) => {
       updatedImages = existingImagesArray.filter(
         img => !deletedImagesArray.includes(img)
       );
+      
+      // Delete removed images from Cloudinary
+      if (deletedImagesArray.length > 0) {
+        for (const imageUrl of deletedImagesArray) {
+          // Extract the public_id from the URL
+          // Cloudinary URLs are typically like: https://res.cloudinary.com/cloud_name/image/upload/v123456/re-image/filename
+          const publicIdMatch = imageUrl.match(/\/re-image\/(.+)$/);
+          if (publicIdMatch && publicIdMatch[1]) {
+            const publicId = `re-image/${publicIdMatch[1].split('.')[0]}`;
+            await cloudinary.uploader.destroy(publicId);
+          }
+        }
+      }
     }
 
     // Add new uploaded images
     if (req.files && req.files.length > 0) {
-      const newImages = req.files.map(file => file.filename);
+      const newImages = req.files.map(file => file.path);
       updatedImages = [...updatedImages, ...newImages];
     }
 

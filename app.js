@@ -6,11 +6,12 @@ const connectDB = require("./config/db.js");
 const userRouter = require("./routes/userRouter.js");
 const adminRouter = require("./routes/adminRouter.js");
 const passport = require("./config/passport.js");
+const morgan = require('morgan');
 
 
 const app = express();
 
-
+// app.use(morgan('tiny'));
 
 app.use(express.urlencoded({ extended: true })); //Parses form data from <form>. Without this middleware, req.body will be undefined when handling form data
 app.use(express.json());  //Parses JSON data from API requests. Without this, req.body will be undefined when receiving JSON data.
@@ -56,6 +57,10 @@ const PORT = process.env.PORT || 4000;
 
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
+
+app.use((req, res, next) => {
+  res.status(404).render("page-404");
+});
 
 connectDB();
 

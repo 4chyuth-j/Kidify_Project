@@ -1,5 +1,5 @@
-const express = require("express");
 const dotenv = require("dotenv").config();//used to load environment variables from a .env file into process.env in a Node.js application.
+const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const connectDB = require("./config/db.js");

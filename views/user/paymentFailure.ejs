@@ -3,7 +3,6 @@
 <style>
     .order-status-container {
         padding: 20px 10px;
-        margin-left: 200px;
     }
 
     .text-red {
@@ -41,33 +40,61 @@
     }
 
     .payment-failed-image {
-        height: 400px;
-        margin-left: -200px;
+        height: auto;
+        max-height: 400px;
+        width: 100%;
     }
 
     .failed-message {
         margin-top: 20px;
     }
+
+    @media (min-width: 768px) {
+        .order-status-container {
+            margin-left: 200px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .order-status-container {
+            margin-left: 0;
+            text-align: center;
+        }
+
+        .action-buttons a {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+    }
 </style>
 
 <div class="container mt-5">
-    <div class="row g-0"> 
-        <div class="col-md-6 p-0"> 
+    <div class="row g-0 align-items-center justify-content-center"> 
+        <!-- LEFT CONTENT -->
+        <div class="col-md-6 p-3"> 
             <div class="order-status-container px-3">
-                
                 <div class="failed-message">
                     <h2 class="text-red">Payment Failed!</h2>
+
+                    <!-- Show image just below the title only on small screens -->
+                    <div class="d-block d-md-none my-4">
+                        <img src="/images/payment-failed-animate.gif" alt="Payment Failed Illustration" class="img-fluid payment-failed-image">
+                    </div>
+
                     <p class="mt-3">Your payment couldn't be processed at this time.</p>
                     <p>Please check your payment details and try again.</p>
                     
-                    <div class="action-buttons mt-4">
-                        <a href="/checkout" class="btn btn-primary continue-btn">Try Again</a>
-                        <a href="/shop" class="btn btn-outline-primary try-again-btn">Continue Shopping</a>
+                    <div class="action-buttons mt-4 d-flex flex-wrap justify-content-center justify-content-md-start">
+                        <a href="/checkout" class="btn btn-primary continue-btn me-2 mb-2">Try Again</a>
+                        <a href="/shop" class="btn btn-outline-primary try-again-btn mb-2">Continue Shopping</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 p-0 d-flex justify-content-center align-items-center"> 
+
+        <!-- Image for large screens -->
+        <div class="col-md-6 p-3 d-none d-md-flex justify-content-center align-items-center"> 
             <img src="/images/payment-failed-animate.gif" alt="Payment Failed Illustration" class="img-fluid payment-failed-image">
         </div>
     </div>

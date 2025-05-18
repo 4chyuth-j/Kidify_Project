@@ -11,6 +11,7 @@
             gap: 10px;
             border-radius: 8px;
             margin: 0 20px 20px 20px;
+            flex-wrap: wrap;
         }
 
         .breadcrumb a {
@@ -24,11 +25,13 @@
 
         .checkout-container {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
             background-color: #fff;
+            flex-wrap: wrap;
         }
 
         .left-section {
@@ -58,6 +61,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .address-option input {
@@ -126,11 +130,12 @@
         }
 
         .price-details {
-            width: 38%;
-            height: 550px;
+            width: 30%;
             background-color: #f8c8dc;
             padding: 15px;
             border-radius: 8px;
+            height: auto;
+            /* Changed from fixed height */
         }
 
         .price-details h3 {
@@ -182,6 +187,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .payment-option input {
@@ -218,7 +224,7 @@
             margin: 10% auto;
             padding: 20px;
             border-radius: 8px;
-            width: 50%;
+            width: 90%;
             max-width: 600px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
@@ -356,6 +362,105 @@
         #couponSelect::-webkit-scrollbar {
             width: 5px;
         }
+
+        /* Responsive styles */
+        @media screen and (max-width: 1024px) {
+            .left-section {
+                width: 60%;
+            }
+
+            .price-details {
+                width: 35%;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .checkout-container {
+                flex-direction: column;
+            }
+
+            .left-section {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .price-details {
+                width: 100%;
+                margin-top: 20px;
+            }
+
+            .products-table {
+                font-size: 14px;
+            }
+
+            .products-table td img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .breadcrumb {
+                margin: 0 10px 15px 10px;
+                padding: 10px;
+            }
+
+            .checkout-container {
+                padding: 10px;
+            }
+
+            .address-section,
+            .products-section {
+                padding: 10px;
+            }
+
+            .products-table th,
+            .products-table td {
+                padding: 8px 5px;
+                font-size: 13px;
+            }
+
+            .address-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+                margin: 5% auto;
+            }
+
+            .payment-option label {
+                font-size: 14px;
+            }
+        }
+
+        /* For very small mobile screens */
+        @media screen and (max-width: 375px) {
+            .products-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .breadcrumb {
+                font-size: 12px;
+            }
+
+            .coupon-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .coupon-container select {
+                max-width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 
     <div class="breadcrumb-wrap">
@@ -407,8 +512,7 @@
                             <% cart.items.forEach(item=> { %>
                                 <tr>
                                     <td>
-                                        <img src="<%=item.productId.productImage[0]%>"
-                                            alt="<%= item.productId.name %>">
+                                        <img src="<%=item.productId.productImage[0]%>" alt="<%= item.productId.name %>">
                                         <%= item.productId.productName.length> 40 ?
                                             item.productId.productName.substring(0, 51) + "..." :
                                             item.productId.productName %>
@@ -888,17 +992,17 @@
                                 };
                                 var razorpayObject = new Razorpay(options);
                                 razorpayObject.on('payment.failed', function (response) {
-                                   
-                                     // Payment failed function
+
+                                    // Payment failed function
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Payment Failed',
-                                        text:  'Failed to complete the payment. Please try again.',
+                                        text: 'Failed to complete the payment. Please try again.',
                                         confirmButtonColor: '#d14792'
-                                    }).then(()=>{
+                                    }).then(() => {
                                         window.location.href = "/paymentFailed"
                                     });
-                                    
+
                                 });
                                 razorpayObject.open();
                             } else {
@@ -923,7 +1027,7 @@
 
 
 
-                } else if(paymentMethod == 'COD' || paymentMethod == 'WALLET'){
+                } else if (paymentMethod == 'COD' || paymentMethod == 'WALLET') {
 
                     // Send order to server for COD or WALLET
                     fetch('/place-order', {
@@ -960,7 +1064,7 @@
                                 confirmButtonColor: '#d14792'
                             });
                         });
-                } 
+                }
             });
 
         });

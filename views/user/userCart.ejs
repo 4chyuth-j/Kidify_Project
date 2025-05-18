@@ -5,6 +5,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
         }
 
         .cart-table {
@@ -58,7 +59,6 @@
             align-items: center;
         }
 
-
         .quantity-input {
             width: 40px;
             text-align: center;
@@ -75,18 +75,26 @@
         }
 
         .remove-btn {
-            color: #d33;
+            background-color: #d33;
+            text-decoration: none;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        .remove-btn:hover {
+            background-color: #b52929;
         }
 
         .summary-box {
-            float: right;
-            width: 300px;
             padding: 20px;
             border: 1px solid #ddd;
             background-color: #ffebf0;
             border-radius: 8px;
+            width: 300px;
         }
 
         .summary-box p {
@@ -117,6 +125,7 @@
             gap: 10px;
             border-radius: 8px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .breadcrumb a {
@@ -128,19 +137,189 @@
             color: #888;
         }
 
-        .remove-btn {
-            background-color: #d33;
-            text-decoration: none;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .remove-btn:hover {
-            background-color: #b52929;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #d14792;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
+            height: 40px;
+            line-height: 20px;
+            text-align: center;
+            min-width: 150px;
+            max-width: 200px;
+        }
+
+        .btn:hover {
+            background-color: #b5367a;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .summary-box {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cart-actions {
+                flex-direction: column;
+            }
+
+            .summary-box {
+                width: 100%;
+                order: -1;
+                margin-bottom: 20px;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            /* Hide less important table columns on smaller screens */
+            .cart-table th:nth-child(3),
+            .cart-table td:nth-child(3) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 10px;
+            }
+
+            .cart-table th:nth-child(2),
+            .cart-table td:nth-child(2) {
+                display: none;
+            }
+
+            .cart-table th {
+                padding: 8px 5px;
+                font-size: 14px;
+            }
+
+            .cart-table td {
+                padding: 8px 5px;
+                font-size: 14px;
+            }
+
+            .cart-table img {
+                max-width: 40px;
+                margin-right: 5px;
+            }
+
+            .remove-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .breadcrumb {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* For very small screens, make the cart cards instead of a table */
+        @media (max-width: 480px) {
+
+            .cart-table,
+            .cart-table thead,
+            .cart-table tbody,
+            .cart-table th,
+            .cart-table td,
+            .cart-table tr {
+                display: block;
+            }
+
+            .cart-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .cart-table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .cart-table td {
+                border: none;
+                position: relative;
+                padding-left: 120px;
+                min-height: 30px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .cart-table td:before {
+                position: absolute;
+                left: 10px;
+                width: 110px;
+                padding-right: 10px;
+                font-weight: bold;
+                color: #d14792;
+            }
+
+            /* Add labels for each cell */
+            .cart-table td:nth-of-type(1):before {
+                content: "Product";
+            }
+
+            .cart-table td:nth-of-type(2):before {
+                content: "Unit Price";
+            }
+
+            .cart-table td:nth-of-type(3):before {
+                content: "Quantity";
+            }
+
+            .cart-table td:nth-of-type(4):before {
+                content: "Subtotal";
+            }
+
+            .cart-table td:nth-of-type(5):before {
+                content: "";
+            }
+
+            /* Show all cells again */
+            .cart-table th:nth-child(2),
+            .cart-table td:nth-child(2),
+            .cart-table th:nth-child(3),
+            .cart-table td:nth-child(3) {
+                display: block;
+            }
+
+            .remove-btn {
+                margin-left: -110px;
+            }
         }
     </style>
 
@@ -171,58 +350,52 @@
                     <% if (cart && cart.items && cart.items.length> 0) { %>
                         <% cart.items.forEach(item=> { %>
                             <% const product=item.productId; %>
-                                
-                                        <tr data-product-id="<%= item._id %>">
-                                            <td>
-                                                <img src="<%= product.productImage[0] %>"
-                                                    alt="<%= product.productName %>">
-                                                <%= product.productName.length> 45 ? product.productName.substring(0,
-                                                    50) + "..." : product.productName %>
+
+                                <tr data-product-id="<%= item._id %>">
+                                    <td>
+                                        <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                        <%= product.productName.length> 45 ? product.productName.substring(0,
+                                            50) + "..." : product.productName %>
+                                    </td>
+                                    <td>₹<%= item.totalPrice.toFixed(0) %>
+                                    </td>
+                                    <td>
+                                        <div class="quantity-controls">
+                                            <button class="quantity-btn decrease-btn"
+                                                data-product-id="<%= item._id %>">-</button>
+                                            <input type="number" class="quantity-input" value="<%= item.quantity %>"
+                                                min="1" readonly>
+                                            <button class="quantity-btn increase-btn"
+                                                data-product-id="<%= item._id %>">+</button>
+                                        </div>
+                                    </td>
+                                    <td>₹<%= item.totalPrice.toFixed(0) %>
+                                    </td>
+                                    <td><button class="remove-btn"
+                                            onclick="removeFromCart('<%= item._id %>')">Remove</button></td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6"
+                                                style="text-align: center; padding: 20px; background-color: #ffe4e1; color: #d14792;">
+                                                Your cart is empty! <br>Continue shopping <a href="/shop">Shop
+                                                    Now</a>
                                             </td>
-                                            <td>₹<%= item.totalPrice.toFixed(0) %>
-                                            </td>
-                                            <td>
-                                                <div class="quantity-controls">
-                                                    <button class="quantity-btn decrease-btn"
-                                                        data-product-id="<%= item._id %>">-</button>
-                                                    <input type="number" class="quantity-input"
-                                                        value="<%= item.quantity %>" min="1" readonly>
-                                                    <button class="quantity-btn increase-btn"
-                                                        data-product-id="<%= item._id %>">+</button>
-                                                </div>
-                                            </td>
-                                            <td>₹<%= item.totalPrice.toFixed(0) %>
-                                            </td>
-                                            <td><button class="remove-btn"
-                                                    onclick="removeFromCart('<%= item._id %>')">Remove</button></td>
                                         </tr>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="6"
-                                                        style="text-align: center; padding: 20px; background-color: #ffe4e1; color: #d14792;">
-                                                        Your cart is empty! <br>Continue shopping <a href="/shop">Shop
-                                                            Now</a>
-                                                    </td>
-                                                </tr>
-                                                <% } %>
+                                        <% } %>
                 </tbody>
             </table>
 
-            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                <div>
-                    <a href="/shop" class="btn"
-                        style="background-color: #d14792; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Continue
-                        Shopping</a>
-                    <button
-                        style="background-color: #d14792; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-left: 10px;"
-                        onclick="clearCart()">Clear Cart</button>
+            <div class="cart-actions">
+                <div class="action-buttons">
+                    <a href="/shop" class="btn">Continue Shopping</a>
+                    <button class="btn" onclick="clearCart()">Clear Cart</button>
                 </div>
                 <div class="summary-box">
                     <p>Subtotal: ₹<span id="subtotal">
                             <%= cart ? cart.items.reduce((sum, item)=> sum + item.totalPrice, 0).toFixed(0) : '0.00' %>
                         </span></p>
-
                     <p>Shipping: Free</p>
                     <p>Coupon Code: <span style="color: #888;">Not Applied</span></p>
                     <p>Total: ₹<span id="total">
@@ -405,7 +578,7 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => {
+                        .then(response => {
                             if (!response.ok) {
                                 return response.json().then(err => {
                                     throw new Error(err.error || err.message);

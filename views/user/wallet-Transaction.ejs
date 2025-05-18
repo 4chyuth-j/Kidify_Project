@@ -303,6 +303,176 @@
         .transactions-header h1 {
             margin-bottom: 0;
         }
+
+        /* media query */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+
+            .account-side-nav {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .account-side-nav h2 {
+                font-size: 20px;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            .account-nav-item {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .account-logout-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .content-card {
+                padding: 20px;
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            .wallet-balance-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .balance-info h2 {
+                font-size: 28px;
+            }
+
+            .balance-info p {
+                font-size: 14px;
+            }
+
+            .add-money-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .transaction-search-form {
+                max-width: 100%;
+            }
+
+            .transaction-search-input {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+
+            .transaction-search-button {
+                padding: 10px 15px;
+            }
+
+            .transaction-table th,
+            .transaction-table td {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .transaction-type {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            .pagination a {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .account-nav-item i,
+            .account-logout-button i,
+            .add-money-btn i {
+                margin-right: 6px;
+                font-size: 16px;
+            }
+
+            .account-nav-item,
+            .account-logout-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .content-card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .balance-info h2 {
+                font-size: 24px;
+            }
+
+            .balance-info p {
+                font-size: 13px;
+            }
+
+            .add-money-btn {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .transaction-search-input,
+            .transaction-search-button {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .transaction-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .transaction-table th,
+            .transaction-table td {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .transaction-type {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .amount-credit,
+            .amount-debit {
+                font-size: 12px;
+            }
+
+            .no-transactions p {
+                font-size: 13px;
+            }
+
+            .pagination a {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+        }
     </style>
 
     <main>

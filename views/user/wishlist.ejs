@@ -4,6 +4,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
         }
 
         .sidebar {
@@ -26,6 +27,7 @@
         .product-list-container {
             display: flex;
             gap: 20px;
+            flex-direction: row;
         }
 
         .product-grid {
@@ -97,6 +99,7 @@
             gap: 10px;
             border-radius: 8px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .breadcrumb a {
@@ -119,6 +122,66 @@
             font-size: 16px;
             font-weight: bold;
         }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 1200px) {
+            .product-card {
+                width: calc(50% - 20px);
+            }
+        }
+
+        @media screen and (max-width: 992px) {
+            .product-list-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .product-grid {
+                width: 100%;
+            }
+            
+            .sidebar img {
+                max-width: 280px;
+                height: auto;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .product-card {
+                width: 100%;
+                height: auto;
+                min-height: 400px;
+            }
+            
+            .main-container {
+                padding: 10px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .breadcrumb {
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .product-card {
+                padding: 10px;
+                min-height: 350px;
+            }
+            
+            .add-to-cart-btn {
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            .filter-title {
+                font-size: 14px;
+            }
+        }
     </style>
 
     <div class="main-container">
@@ -137,7 +200,7 @@
                     <p>Items you love!</p>
                     <% if (products && products.length> 0) { %>
                         <img src="\images\online-wishes-list-animate.svg" alt="Cart Icon"
-                            style="width: 280px; height: 280px;" />
+                            style="max-width: 100%; height: auto; max-height: 280px;" />
                         <% } %>
                 </aside>
 

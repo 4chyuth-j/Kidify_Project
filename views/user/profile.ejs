@@ -6,19 +6,19 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-        
+
         main {
             display: flex;
             min-height: 100vh;
             background-color: #f5f5f5;
         }
-        
+
         .account-side-nav {
             width: 250px;
             background-color: #ffe6ea;
             padding: 20px;
         }
-        
+
         .account-side-nav h2 {
             color: #d25f8c;
             font-size: 24px;
@@ -26,7 +26,7 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #f8c1d2;
         }
-        
+
         .account-nav-item {
             display: flex;
             align-items: center;
@@ -38,18 +38,18 @@
             border-radius: 10px;
             background-color: #ffd0dd;
         }
-        
+
         .account-nav-item:hover {
             background-color: #ffbcce;
         }
-        
+
         .account-nav-item i {
             margin-right: 15px;
             font-size: 18px;
             width: 20px;
             text-align: center;
         }
-        
+
         .account-logout-button {
             display: flex;
             justify-content: center;
@@ -66,15 +66,15 @@
             transition: all 0.3s;
             text-decoration: none;
         }
-        
+
         .account-logout-button:hover {
             background-color: #ff5a8f;
         }
-        
+
         .account-logout-button i {
             margin-right: 8px;
         }
-        
+
         .main-content {
             flex: 1;
             padding: 30px;
@@ -82,7 +82,7 @@
             flex-wrap: wrap;
             gap: 30px;
         }
-        
+
         .content-card {
             background-color: white;
             border-radius: 10px;
@@ -90,28 +90,28 @@
             padding: 30px;
             min-width: 600px;
         }
-        
+
         h1 {
             font-size: 28px;
             color: #333;
             margin-bottom: 30px;
         }
-        
+
         .info-section {
             margin-bottom: 40px;
         }
-        
+
         .info-row {
             margin-bottom: 20px;
         }
-        
+
         .info-label {
             display: block;
             font-size: 14px;
             color: #777;
             margin-bottom: 5px;
         }
-        
+
         .info-value {
             display: block;
             font-size: 16px;
@@ -121,13 +121,13 @@
             border-radius: 5px;
             border: 1px solid #eee;
         }
-        
+
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
         }
-        
+
         .action-button {
             padding: 12px 20px;
             background-color: #ff6f9c;
@@ -140,17 +140,17 @@
             display: flex;
             align-items: center;
         }
-        
+
         .action-button:hover {
             background-color: #ff5a8f;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .action-button i {
             margin-right: 8px;
         }
-        
+
         /* Referral Card Styles */
         .referral-card {
             background-color: white;
@@ -159,7 +159,7 @@
             padding: 30px;
             width: 350px;
         }
-        
+
         .referral-card h2 {
             font-size: 24px;
             color: #d25f8c;
@@ -167,11 +167,11 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #f8c1d2;
         }
-        
+
         .referral-info {
             margin-bottom: 20px;
         }
-        
+
         .referral-code-container {
             display: flex;
             align-items: center;
@@ -180,7 +180,7 @@
             padding: 15px;
             border-radius: 8px;
         }
-        
+
         .referral-code {
             flex: 1;
             font-size: 18px;
@@ -188,7 +188,7 @@
             color: #d25f8c;
             letter-spacing: 1px;
         }
-        
+
         .copy-btn {
             background-color: #ff6f9c;
             color: white;
@@ -199,17 +199,17 @@
             transition: all 0.3s;
             margin-left: 10px;
         }
-        
+
         .copy-btn:hover {
             background-color: #ff5a8f;
         }
-        
+
         .referral-stats {
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
         }
-        
+
         .stat-box {
             text-align: center;
             background-color: #f9f9f9;
@@ -218,36 +218,36 @@
             flex: 1;
             margin: 0 5px;
         }
-        
+
         .stat-value {
             font-size: 24px;
             font-weight: bold;
             color: #d25f8c;
             margin-bottom: 5px;
         }
-        
+
         .stat-label {
             font-size: 12px;
             color: #777;
         }
-        
+
         .share-section {
             margin-top: 20px;
             text-align: center;
         }
-        
+
         .share-title {
             font-size: 14px;
             color: #777;
             margin-bottom: 10px;
         }
-        
+
         .share-icons {
             display: flex;
             justify-content: center;
             gap: 15px;
         }
-        
+
         .share-icon {
             width: 40px;
             height: 40px;
@@ -261,178 +261,248 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .share-icon:hover {
             background-color: #ff6f9c;
             color: white;
             transform: translateY(-2px);
         }
+
+        /*   MEDIA QUERY  */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .account-side-nav {
+                width: 100%;
+                padding: 15px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .account-side-nav h2 {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .account-nav-item,
+            .account-logout-button {
+                width: calc(50% - 10px);
+                justify-content: center;
+                font-size: 14px;
+            }
+
+            .main-content {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .content-card,
+            .referral-card {
+                min-width: unset;
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-button {
+                justify-content: center;
+            }
+
+            .referral-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .stat-box {
+                margin: 0;
+            }
+        }
     </style>
 
-<main>
-    <!-- Side Navigation -->
-    <nav class="account-side-nav">
-        <h2>My Account</h2>
-        
-        <a href="/userProfile" class="account-nav-item">
-            <i class="bi bi-person"></i> Personal Information
-        </a>
-        
-        <a href="/address" class="account-nav-item">
-            <i class="bi bi-geo-alt"></i> Address
-        </a>
-        
-        <a href="/orders" class="account-nav-item">
-            <i class="bi bi-cart"></i> My Orders
-        </a>
-        
-        <a href="/wallet" class="account-nav-item">
-            <i class="bi bi-wallet2"></i> Wallet
-        </a>
-        
-        <a href="/change-password" class="account-nav-item">
-            <i class="bi bi-key"></i> Change Password
-        </a>
-        
-        <a href="/logout" class="account-logout-button">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="content-card">
-            <h1>My Account</h1>
-            
-            <div class="info-section">
-                <div class="info-row">
-                    <span class="info-label">Username</span>
-                    <span class="info-value"><%= user.name || 'Not added yet' %></span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Email</span>
-                    <span class="info-value"><%= user.email %></span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Phone Number</span>
-                    <span class="info-value"><%= user.phone || 'Not added yet' %></span>
-                </div>
-            </div>
-            
-            <div class="action-buttons">
-                <%if(!user.googleId){%>
-                <button class="action-button" onclick="window.location.href='/change-email';">
-                    <i class="bi bi-envelope"></i> Change Email
-                </button>
-                <button class="action-button" onclick="window.location.href='/change-password';">
-                    <i class="bi bi-key"></i> Change Password
-                </button>
-                <%}%>
-                <button class="action-button" onclick="editProfile()">
-                  <i class="bi bi-person-fill-gear"></i> Edit Profile
-                </button>
-            </div>
-        </div>
-        
-        <!-- Refer and Earn Card -->
-        <div class="referral-card">
-            <h2><i class="bi bi-gift"></i> Refer & Earn</h2>
-            
-            <div class="referral-info">
-                <p style="color: #777; margin-bottom: 15px;">Invite your friends using your referral code and get ₹50 wallet cash for each of your first 10 successful referrals!</p>
-                
-                <div class="referral-code-container">
-                    <span class="referral-code"><%= user.referralCode || 'FRIEND25' %></span>
-                    <button class="copy-btn" onclick="copyReferralCode()">
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="referral-stats">
-                <div class="stat-box">
-                    <div class="stat-value"><%= Math.floor(user.referralEarnings/50) || '0' %></div>
-                    <div class="stat-label">Referrals</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value">₹<%= user.referralEarnings || '0' %></div>
-                    <div class="stat-label">Earnings</div>
-                </div>
-            </div>
-            
-            <div class="share-section">
-                <div class="share-title">Share via</div>
-                <div class="share-icons">
-                    <div class="share-icon" onclick="shareVia('whatsapp')">
-                        <i class="bi bi-whatsapp"></i>
-                    </div>
-                    <div class="share-icon" onclick="shareVia('facebook')">
-                        <i class="bi bi-facebook"></i>
-                    </div>
-                    <div class="share-icon" onclick="shareVia('twitter')">
-                        <i class="bi bi-twitter-x"></i>
-                    </div>
-                    <div class="share-icon" onclick="shareVia('email')">
-                        <i class="bi bi-envelope"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function editProfile(){
-        Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you want to edit this profile?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6'
-    }).then(()=>{
-        window.location.href='/edit-profile';
-    });
-    }
+    <main>
+        <!-- Side Navigation -->
+        <nav class="account-side-nav">
+            <h2>My Account</h2>
 
-    function copyReferralCode() {
-        const referralCode = document.querySelector('.referral-code').innerText;
-        navigator.clipboard.writeText(referralCode).then(function() {
+            <a href="/userProfile" class="account-nav-item">
+                <i class="bi bi-person"></i> Personal Information
+            </a>
+
+            <a href="/address" class="account-nav-item">
+                <i class="bi bi-geo-alt"></i> Address
+            </a>
+
+            <a href="/orders" class="account-nav-item">
+                <i class="bi bi-cart"></i> My Orders
+            </a>
+
+            <a href="/wallet" class="account-nav-item">
+                <i class="bi bi-wallet2"></i> Wallet
+            </a>
+
+            <a href="/change-password" class="account-nav-item">
+                <i class="bi bi-key"></i> Change Password
+            </a>
+
+            <a href="/logout" class="account-logout-button">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-card">
+                <h1>My Account</h1>
+
+                <div class="info-section">
+                    <div class="info-row">
+                        <span class="info-label">Username</span>
+                        <span class="info-value">
+                            <%= user.name || 'Not added yet' %>
+                        </span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">
+                            <%= user.email %>
+                        </span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Phone Number</span>
+                        <span class="info-value">
+                            <%= user.phone || 'Not added yet' %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <%if(!user.googleId){%>
+                        <button class="action-button" onclick="window.location.href='/change-email';">
+                            <i class="bi bi-envelope"></i> Change Email
+                        </button>
+                        <button class="action-button" onclick="window.location.href='/change-password';">
+                            <i class="bi bi-key"></i> Change Password
+                        </button>
+                        <%}%>
+                            <button class="action-button" onclick="editProfile()">
+                                <i class="bi bi-person-fill-gear"></i> Edit Profile
+                            </button>
+                </div>
+            </div>
+
+            <!-- Refer and Earn Card -->
+            <div class="referral-card">
+                <h2><i class="bi bi-gift"></i> Refer & Earn</h2>
+
+                <div class="referral-info">
+                    <p style="color: #777; margin-bottom: 15px;">Invite your friends using your referral code and get
+                        ₹50 wallet cash for each of your first 10 successful referrals!</p>
+
+                    <div class="referral-code-container">
+                        <span class="referral-code">
+                            <%= user.referralCode || 'FRIEND25' %>
+                        </span>
+                        <button class="copy-btn" onclick="copyReferralCode()">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="referral-stats">
+                    <div class="stat-box">
+                        <div class="stat-value">
+                            <%= Math.floor(user.referralEarnings/50) || '0' %>
+                        </div>
+                        <div class="stat-label">Referrals</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">₹<%= user.referralEarnings || '0' %>
+                        </div>
+                        <div class="stat-label">Earnings</div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <div class="share-title">Share via</div>
+                    <div class="share-icons">
+                        <div class="share-icon" onclick="shareVia('whatsapp')">
+                            <i class="bi bi-whatsapp"></i>
+                        </div>
+                        <div class="share-icon" onclick="shareVia('facebook')">
+                            <i class="bi bi-facebook"></i>
+                        </div>
+                        <div class="share-icon" onclick="shareVia('twitter')">
+                            <i class="bi bi-twitter-x"></i>
+                        </div>
+                        <div class="share-icon" onclick="shareVia('email')">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function editProfile() {
             Swal.fire({
-                title: 'Copied!',
-                text: 'Referral code copied to clipboard',
-                icon: 'success',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+                title: 'Are you sure?',
+                text: 'Do you want to edit this profile?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6'
+            }).then(() => {
+                window.location.href = '/edit-profile';
             });
-        });
-    }
-    
-    function shareVia(platform) {
-        const referralCode = document.querySelector('.referral-code').innerText;
-        const websiteURL = window.location.origin;
-        const message = `Shop with my referral code *${referralCode}* at ${websiteURL} and get a special discount on your first purchase!`;
-        
-        switch(platform) {
-            case 'whatsapp':
-                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-                break;
-            case 'facebook':
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteURL)}&quote=${encodeURIComponent(message)}`, '_blank');
-                break;
-            case 'twitter':
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(websiteURL)}`, '_blank');
-                break;
-            case 'email':
-                window.location.href = `mailto:?subject=Special Discount for You!&body=${encodeURIComponent(message + "\n\nClick here to shop now: " + websiteURL)}`;
-                break;
         }
-    }
-</script>
-<%- include("../../views/partials/user/footer") %>
+
+        function copyReferralCode() {
+            const referralCode = document.querySelector('.referral-code').innerText;
+            navigator.clipboard.writeText(referralCode).then(function () {
+                Swal.fire({
+                    title: 'Copied!',
+                    text: 'Referral code copied to clipboard',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        }
+
+        function shareVia(platform) {
+            const referralCode = document.querySelector('.referral-code').innerText;
+            const websiteURL = window.location.origin;
+            const message = `Shop with my referral code *${referralCode}* at ${websiteURL} and get a special discount on your first purchase!`;
+
+            switch (platform) {
+                case 'whatsapp':
+                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteURL)}&quote=${encodeURIComponent(message)}`, '_blank');
+                    break;
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(websiteURL)}`, '_blank');
+                    break;
+                case 'email':
+                    window.location.href = `mailto:?subject=Special Discount for You!&body=${encodeURIComponent(message + "\n\nClick here to shop now: " + websiteURL)}`;
+                    break;
+            }
+        }
+    </script>
+    <%- include("../../views/partials/user/footer") %>

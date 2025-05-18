@@ -6,19 +6,19 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-        
+
         main {
             display: flex;
             min-height: 100vh;
             background-color: #f5f5f5;
         }
-        
+
         .account-side-nav {
             width: 250px;
             background-color: #ffe6ea;
             padding: 20px;
         }
-        
+
         .account-side-nav h2 {
             color: #d25f8c;
             font-size: 24px;
@@ -26,7 +26,7 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #f8c1d2;
         }
-        
+
         .account-nav-item {
             display: flex;
             align-items: center;
@@ -38,18 +38,18 @@
             border-radius: 10px;
             background-color: #ffd0dd;
         }
-        
+
         .account-nav-item:hover {
             background-color: #ffbcce;
         }
-        
+
         .account-nav-item i {
             margin-right: 15px;
             font-size: 18px;
             width: 20px;
             text-align: center;
         }
-        
+
         .account-logout-button {
             display: flex;
             justify-content: center;
@@ -66,20 +66,20 @@
             transition: all 0.3s;
             text-decoration: none;
         }
-        
+
         .account-logout-button:hover {
             background-color: #ff5a8f;
         }
-        
+
         .account-logout-button i {
             margin-right: 8px;
         }
-        
+
         .main-content {
             flex: 1;
             padding: 30px;
         }
-        
+
         .content-card {
             background-color: white;
             border-radius: 10px;
@@ -88,13 +88,13 @@
             max-width: 950px;
             margin-bottom: 20px;
         }
-        
+
         h1 {
             font-size: 28px;
             color: #333;
             margin-bottom: 30px;
         }
-        
+
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -103,54 +103,54 @@
             border-bottom: 1px solid #eee;
             margin-bottom: 20px;
         }
-        
+
         .order-id-date {
             display: flex;
             flex-direction: column;
         }
-        
+
         .order-id {
             font-size: 16px;
             font-weight: bold;
             color: #555;
             margin-bottom: 5px;
         }
-        
+
         .order-date {
             font-size: 14px;
             color: #777;
         }
-        
+
         /* .paymentiteral: 0px 0px 0px;
         }
          */
         .payment-details {
             text-align: right;
         }
-        
+
         .payment-method {
             font-size: 14px;
             color: #777;
             margin-bottom: 5px;
         }
-        
+
         .order-total {
             font-size: 22px;
             font-weight: bold;
             color: #333;
         }
-        
+
         .order-items {
             margin-bottom: 20px;
         }
-        
+
         .order-item {
             display: flex;
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid #eee;
         }
-        
+
         .item-image {
             width: 100px;
             height: 100px;
@@ -159,42 +159,42 @@
             margin-right: 20px;
             border: 1px solid #eee;
         }
-        
+
         .item-image img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
-        
+
         .item-details {
             flex: 1;
         }
-        
+
         .item-name {
             font-size: 16px;
             color: #333;
             margin-bottom: 5px;
             font-weight: bold;
         }
-        
+
         .item-qty {
             font-size: 14px;
             color: #777;
             margin-bottom: 5px;
         }
-        
+
         .item-subtotal {
             font-size: 16px;
             color: #333;
             text-align: right;
             flex: 0 0 150px;
         }
-        
+
         .item-status {
             flex: 0 0 150px;
             text-align: right;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 5px 12px;
@@ -203,37 +203,37 @@
             color: white;
             background-color: #8dd08a;
         }
-        
+
         .status-Placed {
             background-color: #ffc107;
         }
-        
+
         .status-Processing {
             background-color: #17a2b8;
         }
-        
+
         .status-Shipped {
             background-color: #6610f2;
         }
-        
+
         .status-Delivered {
             background-color: #28a745;
         }
-        
+
         .status-Cancelled {
             background-color: #dc3545;
         }
-        
+
         .status-Returned {
             background-color: #6c757d;
         }
-        
+
         .action-buttons {
             display: flex;
             justify-content: flex-end;
             margin-top: 20px;
         }
-        
+
         .view-details-btn {
             padding: 10px 20px;
             background-color: #343a40;
@@ -245,11 +245,11 @@
             transition: all 0.3s;
             text-decoration: none;
         }
-        
+
         .view-details-btn:hover {
             background-color: #23272b;
         }
-        
+
         .no-orders {
             padding: 40px 0;
             text-align: center;
@@ -296,125 +296,262 @@
         .search-form button:hover {
             background-color: #ff5a8f;
         }
+
+        /* media query */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+
+            .account-side-nav {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .account-side-nav h2 {
+                font-size: 20px;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            .account-nav-item {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .account-logout-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .content-card {
+                padding: 20px;
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .payment-details {
+                text-align: left;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 80px;
+                margin-right: 0;
+            }
+
+            .item-subtotal,
+            .item-status {
+                text-align: left;
+                flex: none;
+            }
+
+            .action-buttons {
+                justify-content: flex-start;
+            }
+
+            .search-form {
+                max-width: 100%;
+            }
+
+            .search-form input[type="text"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .account-nav-item i,
+            .account-logout-button i {
+                margin-right: 6px;
+                font-size: 16px;
+            }
+
+            .account-nav-item,
+            .account-logout-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .content-card {
+                padding: 15px;
+            }
+
+            .order-id,
+            .item-name {
+                font-size: 14px;
+            }
+
+            .order-date,
+            .payment-method,
+            .item-qty {
+                font-size: 12px;
+            }
+
+            .order-total {
+                font-size: 18px;
+            }
+
+            .item-subtotal {
+                font-size: 14px;
+            }
+
+            .status-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .view-details-btn {
+                font-size: 12px;
+                padding: 8px 15px;
+            }
+
+            .search-form input[type="text"],
+            .search-form button {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+        }
     </style>
 
-<main>
-    <!-- Side Navigation -->
-    <nav class="account-side-nav">
-        <h2>My Account</h2>
-        
-        <a href="/userProfile" class="account-nav-item">
-            <i class="bi bi-person"></i> Personal Information
-        </a>
-        
-        <a href="/address" class="account-nav-item">
-            <i class="bi bi-geo-alt"></i> Address
-        </a>
-        
-        <a href="/orders" class="account-nav-item">
-            <i class="bi bi-cart"></i> My Orders
-        </a>
-        
-        <a href="/wallet" class="account-nav-item">
-            <i class="bi bi-wallet2"></i> Wallet
-        </a>
-        
-        <a href="/change-password" class="account-nav-item">
-            <i class="bi bi-key"></i> Change Password
-        </a>
-        
-        <a href="/logout" class="account-logout-button">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-    </nav>
-    
-    <!-- main Content -->
-    <div class="main-content">
-        <h1>My Orders</h1>
-        
-        <!-- search Bar -->
-        <form method="GET" action="/orders" class="search-form">
-            <input type="text" name="search" placeholder="Search orders..." />
-            <button type="submit">Search</button>
-        </form>
-        
-        <% if (orders && orders.length > 0) { %>
-            <% orders.forEach(order => { %>
-                <div class="content-card">
-                    <div class="order-header">
-                        <div class="order-id-date">
-                            <span class="order-id">Order ID: #<%= order.orderId %></span>
-                            <span class="order-date">Order Date: <%= new Date(order.createdAt).toLocaleString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true
-                            }) %></span>
-                            <%if(order.deliveredAt && order.orderStatus=="Delivered"){%>
-                                <span class="order-date">Delivered Date: <%= new Date(order.deliveredAt).toLocaleString('en-US', { 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true
-                                }) %></span>
-                                
-                            <%}%>
-                        </div>
-                        
-                        <div class="payment-details">
-                            <span class="payment-method">Payment: <%= order.paymentMethod === 'COD' ? 'Cash On Delivery' : order.paymentMethod %></span>
-                            <div class="order-total">₹<%= order.finalAmount.toLocaleString('en-IN') %></div>
-                        </div>
-                    </div>
-                    
-                    <div class="order-items">
-                        <% order.orderedItems.forEach(item => { %>
-                            <div class="order-item">
-                                <div class="item-image">
-                                    <img src="<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
-                                </div>
-                                
-                                <div class="item-details">
-                                    <div class="item-name"><%= item.product.productName %></div>
-                                    <div class="item-qty">Qty: <%= item.quantity %></div>
-                                </div>
-                                
-                                <div class="item-subtotal">
-                                    Subtotal: ₹<%= ((item.price) * (item.quantity)).toLocaleString('en-IN') %>
-                                </div>
-                                
-                                <div class="item-status">
-                                    <% if (item.cancelled) { %>
-                                        <span class="status-badge status-Cancelled">Status: Cancelled</span>
-                                    <% } else if (item.returnStatus==='Approved') { %>
-                                        <span class="status-badge status-Returned">Status: Returned</span>
-                                    <% } else { %>
-                                        <span class="status-badge status-<%= order.orderStatus %>">Status: <%= order.orderStatus %></span>
-                                    <% } %>
-                                </div>
-                                
-                            </div>
-                        <% }); %>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <a href="/order-details?id=<%= order._id %>" class="view-details-btn">View Details</a>
-                    </div>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <div class="content-card">
-                <div class="no-orders">
-                    <h3>No orders found</h3>
-                    <p>You haven't placed any orders yet.</p>
-                </div>
-            </div>
-        <% } %>
-    </div>
-</main>
+    <main>
+        <!-- Side Navigation -->
+        <nav class="account-side-nav">
+            <h2>My Account</h2>
 
-<%- include("../../views/partials/user/footer") %>
+            <a href="/userProfile" class="account-nav-item">
+                <i class="bi bi-person"></i> Personal Information
+            </a>
+
+            <a href="/address" class="account-nav-item">
+                <i class="bi bi-geo-alt"></i> Address
+            </a>
+
+            <a href="/orders" class="account-nav-item">
+                <i class="bi bi-cart"></i> My Orders
+            </a>
+
+            <a href="/wallet" class="account-nav-item">
+                <i class="bi bi-wallet2"></i> Wallet
+            </a>
+
+            <a href="/change-password" class="account-nav-item">
+                <i class="bi bi-key"></i> Change Password
+            </a>
+
+            <a href="/logout" class="account-logout-button">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </nav>
+
+        <!-- main Content -->
+        <div class="main-content">
+            <h1>My Orders</h1>
+
+            <!-- search Bar -->
+            <form method="GET" action="/orders" class="search-form">
+                <input type="text" name="search" placeholder="Search orders..." />
+                <button type="submit">Search</button>
+            </form>
+
+            <% if (orders && orders.length> 0) { %>
+                <% orders.forEach(order=> { %>
+                    <div class="content-card">
+                        <div class="order-header">
+                            <div class="order-id-date">
+                                <span class="order-id">Order ID: #<%= order.orderId %></span>
+                                <span class="order-date">Order Date: <%= new
+                                        Date(order.createdAt).toLocaleString('en-US', { year: 'numeric' , month: 'long'
+                                        , day: 'numeric' , hour: '2-digit' , minute: '2-digit' , hour12: true }) %>
+                                        </span>
+                                <%if(order.deliveredAt && order.orderStatus=="Delivered" ){%>
+                                    <span class="order-date">Delivered Date: <%= new
+                                            Date(order.deliveredAt).toLocaleString('en-US', { year: 'numeric' ,
+                                            month: 'long' , day: 'numeric' , hour: '2-digit' , minute: '2-digit' ,
+                                            hour12: true }) %></span>
+
+                                    <%}%>
+                            </div>
+
+                            <div class="payment-details">
+                                <span class="payment-method">Payment: <%= order.paymentMethod==='COD'
+                                        ? 'Cash On Delivery' : order.paymentMethod %></span>
+                                <div class="order-total">₹<%= order.finalAmount.toLocaleString('en-IN') %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-items">
+                            <% order.orderedItems.forEach(item=> { %>
+                                <div class="order-item">
+                                    <div class="item-image">
+                                        <img src="<%= item.product.productImage[0] %>"
+                                            alt="<%= item.product.productName %>">
+                                    </div>
+
+                                    <div class="item-details">
+                                        <div class="item-name">
+                                            <%= item.product.productName %>
+                                        </div>
+                                        <div class="item-qty">Qty: <%= item.quantity %>
+                                        </div>
+                                    </div>
+
+                                    <div class="item-subtotal">
+                                        Subtotal: ₹<%= ((item.price) * (item.quantity)).toLocaleString('en-IN') %>
+                                    </div>
+
+                                    <div class="item-status">
+                                        <% if (item.cancelled) { %>
+                                            <span class="status-badge status-Cancelled">Status: Cancelled</span>
+                                            <% } else if (item.returnStatus==='Approved' ) { %>
+                                                <span class="status-badge status-Returned">Status: Returned</span>
+                                                <% } else { %>
+                                                    <span class="status-badge status-<%= order.orderStatus %>">Status:
+                                                        <%= order.orderStatus %></span>
+                                                    <% } %>
+                                    </div>
+
+                                </div>
+                                <% }); %>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/order-details?id=<%= order._id %>" class="view-details-btn">View Details</a>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="content-card">
+                                <div class="no-orders">
+                                    <h3>No orders found</h3>
+                                    <p>You haven't placed any orders yet.</p>
+                                </div>
+                            </div>
+                            <% } %>
+        </div>
+    </main>
+
+    <%- include("../../views/partials/user/footer") %>

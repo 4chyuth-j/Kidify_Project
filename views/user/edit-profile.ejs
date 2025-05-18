@@ -154,6 +154,100 @@
             margin-top: 5px;
             display: block;
         }
+
+        /* experiment */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+
+            .account-side-nav {
+                width: 100%;
+                padding: 15px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                border-bottom: 1px solid #f8c1d2;
+            }
+
+            .account-side-nav h2 {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                border-bottom: none;
+            }
+
+            .account-nav-item {
+                flex: 1 1 45%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .account-logout-button {
+                flex: 1 1 100%;
+                margin-top: 10px;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .content-card {
+                width: 100%;
+                padding: 20px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 22px;
+            }
+
+            .info-label {
+                font-size: 13px;
+            }
+
+            .info-value {
+                font-size: 14px;
+            }
+
+            .action-button {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .account-nav-item i,
+            .account-logout-button i {
+                margin-right: 6px;
+                font-size: 16px;
+            }
+
+            .account-side-nav {
+                padding: 10px;
+            }
+
+            .account-nav-item {
+                flex: 1 1 100%;
+                margin-bottom: 8px;
+            }
+
+            .content-card {
+                padding: 15px;
+            }
+        }
     </style>
 
     <main>

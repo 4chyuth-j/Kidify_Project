@@ -10,11 +10,16 @@ const checkoutController = require('../controller/user/checkoutController.js');
 const orderController = require('../controller/user/orderController.js');
 const walletController = require('../controller/user/walletController.js');
 const passport = require("passport");
+const dummyPageController = require('../controller/user/dummyPageController.js');
 const {userAuth,ensureOtpExists,ensureEmailSession} = require("../middlewares/auth.js");
 
 
 
 router.get('/pageNotFound',userController.pageNotFound);
+
+router.get('/about',dummyPageController.loadAbout);
+
+router.get('/contact',dummyPageController.loadContact);
 
 router.get('/',userController.loadHomepage);
 

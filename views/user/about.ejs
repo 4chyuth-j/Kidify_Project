@@ -1,0 +1,285 @@
+<%- include("../../views/partials/user/header.ejs") %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .about-section {
+        padding: 80px 0;
+    }
+
+    .about-hero {
+        background-color: #f8f9fa;
+        padding: 120px 0;
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .about-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #333;
+        position: relative;
+        z-index: 2;
+    }
+
+    .about-hero p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .about-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .about-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .about-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #ff6b6b;
+    }
+
+    .about-image {
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-image img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+    }
+
+    .about-image:hover img {
+        transform: scale(1.03);
+    }
+
+    .team-member {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 5px solid #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-member h4 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+
+    .team-member p {
+        color: #ff6b6b;
+        margin-bottom: 10px;
+    }
+
+    .social-icons a {
+        display: inline-block;
+        margin: 0 5px;
+        color: #666;
+        transition: color 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        color: #ff6b6b;
+    }
+
+    .values-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .values-list li {
+        padding: 10px 0;
+        border-bottom: 1px dashed #eee;
+        display: flex;
+        align-items: center;
+    }
+
+    .values-list li i {
+        color: #ff6b6b;
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero {
+            padding: 80px 0;
+        }
+        
+        .about-hero h1 {
+            font-size: 2.2rem;
+        }
+        
+        .order-md-1 {
+            order: 2;
+        }
+        
+        .order-md-2 {
+            order: 1;
+            margin-bottom: 30px;
+        }
+    }
+</style>
+
+<!-- About Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <h1>About Kidify</h1>
+        <p>Where Style Meets Comfort for Your Little Ones</p>
+    </div>
+</section>
+
+<!-- Main About Section -->
+<section class="about-section">
+    <div class="container">
+        <!-- Who We Are -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6 order-md-1">
+                <div class="about-card">
+                    <h3>Who We Are</h3>
+                    <p>Kidify is a dedicated online fashion destination for kids under the age of 12. We blend comfort, style, and affordability to bring you the best in children's clothing. Whether it's a casual day at school or a special occasion, we've got something perfect for every little personality.</p>
+                </div>
+            </div>
+            <div class="col-md-6 order-md-2">
+                <div class="about-image">
+                    <!-- Placeholder for a happy children wearing colorful Kidify clothes -->
+                    <img src="\images\Happy children wearing colorful Kidify clothes.jpg" alt="Children in Kidify Clothes">
+                    <p class="text-center text-muted mt-2"><small>Image placeholder: Happy children wearing colorful Kidify clothes</small></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Mission -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+                <div class="about-image">
+                    <!-- Placeholder for team working on children's fashion designs -->
+                    <img src="\images\Team working on children's fashion designs.jpg" alt="Our Mission">
+                    <p class="text-center text-muted mt-2"><small>Image placeholder: Team working on children's fashion designs</small></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="about-card">
+                    <h3>Our Mission</h3>
+                    <p>To make shopping for kids effortless and fun, while delivering quality products that parents trust and kids love. We're passionate about turning everyday outfits into moments of joy and confidence for every child.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Choose Kidify -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="about-card">
+                    <h3>Why Choose Kidify?</h3>
+                    <ul class="values-list">
+                        <li><i class="fas fa-tshirt"></i> Stylish, handpicked collections updated regularly</li>
+                        <li><i class="fas fa-child"></i> Comfortable and kid-friendly fabrics</li>
+                        <li><i class="fas fa-tags"></i> Affordable pricing with seasonal offers</li>
+                        <li><i class="fas fa-exchange-alt"></i> Easy returns and wallet refund options</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Story -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6 order-md-1">
+                <div class="about-card">
+                    <h3>Our Story</h3>
+                    <p>Founded in 2025 by a group of young developers and fashion lovers, Kidify was born out of the need for a modern, reliable, and fun kids' fashion store. We started small — building everything from scratch — and now, we're proudly serving hundreds of happy parents and even happier kids.</p>
+                </div>
+            </div>
+            <div class="col-md-6 order-md-2">
+                <div class="about-image">
+                    <!-- Placeholder for founders/team photo -->
+                    <img src="\images\founding team.jpg" alt="Kidify Team">
+                    <p class="text-center text-muted mt-2"><small>Image placeholder: Kidify founding team</small></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meet Our Team -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="mb-4">Meet Our Team</h2>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Team Member 1 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="team-member">
+                    <!-- Placeholder for team member photo -->
+                    <img src="\images\Jane Doe.webp" alt="Team Member 1">
+                    <h4>Jane Doe</h4>
+                    <p>Founder & CEO</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="team-member">
+                    <!-- Placeholder for team member photo -->
+                    <img src="\images\John Smith.webp" alt="Team Member 2">
+                    <h4>John Smith</h4>
+                    <p>Creative Director</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="team-member">
+                    <!-- Placeholder for team member photo -->
+                    <img src="\images\Sarah Johnson.jpg" alt="Team Member 3">
+                    <h4>Sarah Johnson</h4>
+                    <p>Head of Design</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="team-member">
+                    <!-- Placeholder for team member photo -->
+                    <img src="\images\Mike Wilson.webp" alt="Team Member 4">
+                    <h4>Mike Wilson</h4>
+                    <p>Tech Lead</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include("../../views/partials/user/footer.ejs") %>

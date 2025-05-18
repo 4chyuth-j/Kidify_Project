@@ -7,8 +7,8 @@ const User = require("../model/userSchema"); // Importing User model to interact
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID, // Google Client ID from environment variables
     clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Google Client Secret from environment variables
-    // callbackURL: 'http://localhost:4000/google/callback'  // local machine URL where Google will redirect after authentication
-    callbackURL: 'https://www.achyuth.xyz/google/callback'  // URL where Google will redirect after authentication in the website
+    callbackURL: 'http://localhost:4000/google/callback'  // local machine URL where Google will redirect after authentication
+    // callbackURL: 'https://www.achyuth.xyz/google/callback'  // URL where Google will redirect after authentication in the website
 },
     async (accessToken, refreshToken, profile, done) => {
         try {

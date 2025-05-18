@@ -1,0 +1,291 @@
+<%- include("../../views/partials/user/header.ejs") %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .contact-section {
+        padding: 80px 0;
+    }
+
+    .contact-hero {
+        background-color: #f8f9fa;
+        padding: 100px 0;
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .contact-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #333;
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-hero p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .contact-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .contact-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #ff6b6b;
+    }
+
+    .contact-info {
+        margin-bottom: 20px;
+    }
+
+    .contact-info i {
+        font-size: 24px;
+        color: #ff6b6b;
+        margin-right: 15px;
+        width: 30px;
+        text-align: center;
+    }
+
+    .contact-map {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        height: 400px;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #ff6b6b;
+        box-shadow: none;
+    }
+
+    .btn-send {
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-send:hover {
+        background-color: #ff4c4c;
+        transform: translateY(-2px);
+    }
+
+    .social-icons {
+        margin-top: 20px;
+    }
+
+    .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        margin-right: 10px;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        background-color: #ff6b6b;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .faq-item {
+        margin-bottom: 15px;
+    }
+
+    .faq-item h5 {
+        color: #333;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .faq-item p {
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .contact-hero {
+            padding: 80px 0;
+        }
+        
+        .contact-hero h1 {
+            font-size: 2.2rem;
+        }
+        
+        .contact-info i {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+    }
+</style>
+
+<!-- Contact Hero Section -->
+<section class="contact-hero">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>We're Here to Help! Reach Out to Our Team</p>
+    </div>
+</section>
+
+<!-- Main Contact Section -->
+<section class="contact-section">
+    <div class="container">
+        <div class="row">
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <div class="contact-card">
+                    <h3>Get in Touch</h3>
+                    <p>Have a question? Need help? Just want to say hi? We're always here for you. Whether it's about your order, returns, sizing, or just feedback — don't hesitate to reach out!</p>
+                    
+                    <div class="contact-info d-flex align-items-center">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h5>Customer Support Hours</h5>
+                            <p>Monday – Saturday: 10 AM to 6 PM<br>
+                            Sunday: Closed (we nap too 😴)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info d-flex align-items-center">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h5>Email Us</h5>
+                            <p>support@kidify.in</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info d-flex align-items-center">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h5>Phone Number</h5>
+                            <p>+91 98765 43210</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h5>Office Address</h5>
+                            <p>Kidify HQ, 2nd Floor, Innovation Park,<br>
+                            Kochi, Kerala – 682001<br>
+                            India</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Icons -->
+                    <div class="social-icons">
+                        <h5>Follow Us</h5>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="contact-card">
+                    <h3>Send Us a Message</h3>
+                    <form action="#" >
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Your Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" placeholder="Your Email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="tel" class="form-control" placeholder="Phone Number">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Subject">
+                            </div>
+                        </div>
+                        <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+                        <button type="submit" class="btn-send">Send Message <i class="fas fa-paper-plane ml-2"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Map Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="contact-map">
+                    <!-- Placeholder for Google Map -->
+                    <img src="\images\maplocation.png" alt="Office Location Map">
+                    <p class="text-center text-muted mt-2"><small>Image placeholder: Google Maps showing Kidify HQ location in Kochi</small></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="contact-card">
+                    <h3>Frequently Asked Questions</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="faq-item">
+                                <h5>How long does shipping take?</h5>
+                                <p>Standard shipping takes 3-5 business days within major cities and 5-7 business days for other locations.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h5>What is your return policy?</h5>
+                                <p>We offer a 30-day return policy. Items must be unworn and in their original packaging.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="faq-item">
+                                <h5>Do you offer international shipping?</h5>
+                                <p>Currently, we only ship within India. International shipping will be available soon!</p>
+                            </div>
+                            <div class="faq-item">
+                                <h5>How can I track my order?</h5>
+                                <p>You'll receive a tracking number via email once your order ships. You can also check order status in your account.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include("../../views/partials/user/footer.ejs") %>

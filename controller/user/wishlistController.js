@@ -39,6 +39,15 @@ const addToWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
         const productId = req.query.id;
+        console.log("entered the wishlist controller");
+
+        const userData = await User.findOne({_id:userId});
+        
+        if(!userData){
+            // return res.status(400).json({ message: "User don't exist. Login first" });
+            console.log("userdata not found");
+            res.redirect("/login");
+        }
 
         const userCart = await Cart.findOne({ userId });
 

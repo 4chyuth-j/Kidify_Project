@@ -1,10 +1,12 @@
 <%- include("../../views/partials/user/header.ejs") %>
   <style>
-    /* All your existing styles remain unchanged */
+    /* Base styles remain unchanged */
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .shop-topbar {
@@ -12,11 +14,15 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .search-bar {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .search-form {
@@ -27,6 +33,7 @@
       overflow: hidden;
       max-width: 250px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
     }
 
     .search-input {
@@ -36,6 +43,7 @@
       border: none;
       outline: none;
       background-color: transparent;
+      width: 100%;
     }
 
     .search-button {
@@ -147,6 +155,7 @@
       margin-bottom: 20px;
       width: 250px;
       text-align: center;
+      box-sizing: border-box;
     }
 
     .filter-title {
@@ -159,6 +168,7 @@
     .product-list-container {
       display: flex;
       gap: 20px;
+      flex-wrap: wrap;
     }
 
     .product-grid {
@@ -170,19 +180,24 @@
 
     .product-card {
       width: calc(33.333% - 20px);
-      height: 450px;
+      height: 430px;
+      min-height: 430px;
       border: 1px solid #ddd;
       padding: 15px;
       border-radius: 8px;
       text-align: center;
       position: relative;
       background-color: #ffebf0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     .product-card img {
       max-width: 100%;
       height: auto;
       border-radius: 5px;
+      object-fit: cover;
     }
 
     .wishlist-btn {
@@ -204,7 +219,7 @@
       border-radius: 5px;
       cursor: pointer;
       width: 100%;
-      margin-top: 10px;
+      margin-top: auto;
       transition: background-color 0.3s;
     }
 
@@ -215,6 +230,7 @@
     .pagination {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 10px;
       margin: 20px 0;
     }
@@ -225,6 +241,7 @@
       border: 1px solid #ddd;
       color: #333;
       text-decoration: none;
+      border-radius: 4px;
     }
 
     .pagination .active {
@@ -249,6 +266,8 @@
       transition: background-color 0.3s, transform 0.2s;
       text-align: center;
       font-size: 14px;
+      margin: 5px;
+      width: 90%;
     }
 
     .price-button:hover {
@@ -275,6 +294,7 @@
       gap: 10px;
       border-radius: 8px;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     .breadcrumb a {
@@ -322,6 +342,126 @@
       color: #d14792;
       font-size: 16px;
       font-weight: bold;
+    }
+
+    /* Mobile filter toggle button */
+    .filter-toggle-btn {
+      display: none;
+      width: 100%;
+      padding: 10px;
+      background-color: #f8c8dc;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Media Queries for Responsive Design */
+    @media (max-width: 992px) {
+      .product-grid {
+        width: 100%;
+      }
+
+      .product-card {
+        width: calc(50% - 10px);
+      }
+
+      .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .product-list-container {
+        flex-direction: column;
+      }
+
+      .filter-toggle-btn {
+        display: block;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .sidebar.show {
+        display: block;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .shop-topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-bar {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .search-form {
+        max-width: none;
+        flex: 1;
+      }
+
+      .sort-container {
+        align-self: flex-end;
+      }
+
+      .product-card {
+        width: 100%;
+      }
+
+      .clear-button {
+        margin-left: 0;
+      }
+
+      .price-options {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .pagination {
+        flex-wrap: wrap;
+      }
+
+      .pagination a {
+        margin: 2px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .main-container {
+        padding: 10px;
+      }
+
+      .breadcrumb {
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      .search-input {
+        font-size: 12px;
+      }
+
+      .search-button, .clear-button {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+
+      .sort-button {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+
+      .price-button {
+        font-size: 12px;
+        padding: 8px 15px;
+      }
     }
   </style>
 
@@ -387,8 +527,11 @@
         </div>
       </div>
 
+      <!-- Mobile filter toggle button -->
+      <button class="filter-toggle-btn" id="filter-toggle">Show Filters</button>
+
       <div class="product-list-container">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
           <div class="filter-section">
             <div class="filter-title">Categories</div>
             <div class="category-brand-container">
@@ -465,8 +608,6 @@
                         <p>Price: ₹<%= products[i].basePrice %>
                         </p>
                         <% } %>
-
-
                 </a>
                 <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>',1)">Add to Cart</button>
               </div>
@@ -477,7 +618,7 @@
         </main>
       </div>
 
-      <!-- UPDATED PAGINATION SECTION -->
+      <!-- PAGINATION SECTION -->
       <div class="pagination">
         <% if (currentPage> 1) { %>
           <% if (typeof query !=='undefined' && query) { %>
@@ -559,6 +700,14 @@
       const sortDisplay = document.querySelector('.sort-display');
       const sortForm = document.getElementById('sort-form');
       const sortSelect = document.getElementById('sort');
+      const filterToggle = document.getElementById('filter-toggle');
+      const sidebar = document.getElementById('sidebar');
+
+      // Filter toggle functionality for mobile
+      filterToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('show');
+        this.textContent = sidebar.classList.contains('show') ? 'Hide Filters' : 'Show Filters';
+      });
 
       // Get current URL parameters
       const urlParams = new URLSearchParams(window.location.search);
@@ -661,7 +810,7 @@
         });
     }
 
-    function addToCart(productId, quantity) {
+     function addToCart(productId, quantity) {
       fetch('/add-to-cart', {
         method: 'POST',
         headers: {

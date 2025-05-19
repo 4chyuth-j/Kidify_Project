@@ -1,5 +1,5 @@
-<%-include("../../views/partials/user/header.ejs")%> 
-<!-- which is used to embed another EJS file inside the current template.
+<%-include("../../views/partials/user/header.ejs")%>
+    <!-- which is used to embed another EJS file inside the current template.
 Here it is used to load the header section html code of the page from /views/partials-->
 
 
@@ -41,6 +41,7 @@ Here it is used to load the header section html code of the page from /views/par
             font-size: 18px;
             z-index: 10;
             transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            cursor: pointer;
         }
 
 
@@ -98,6 +99,7 @@ Here it is used to load the header section html code of the page from /views/par
             font-size: 14px;
             border-radius: 4px;
             text-decoration: none;
+            cursor: pointer;
         }
 
 
@@ -193,14 +195,13 @@ Here it is used to load the header section html code of the page from /views/par
                             <div class="product-img-action-wrap">
                                 <div class="product-img product-img-zoom">
                                     <a href="/productDetails?id=<%=products[i]._id%>">
-                                        <img class="default-img"
-                                            src="<%=products[i].productImage[0]%>"
+                                        <img class="default-img" src="<%=products[i].productImage[0]%>"
                                             alt="<%=products[i].productName%>">
                                     </a>
                                 </div>
-                                <a href="/addToWishlist?id=<%=products[i]._id%>" class="wishlist-btn">
+                                <span class="wishlist-btn" onclick="addToWishlist('<%=products[i]._id%>')">
                                     <i class="fas fa-heart"></i>
-                                </a>
+                                </span>
                             </div>
 
 
@@ -211,7 +212,7 @@ Here it is used to load the header section html code of the page from /views/par
                                 </h6>
                                 <h5>₹<%=products[i].basePrice%>
                                 </h5>
-                                <a href="/addToCart?id=<%=products[i]._id%>">Add to cart</a>
+                                <a onclick="addToCart('<%=products[i]._id%>', 1)">Add to cart</a>
                             </div>
                         </div>
                     </div>
@@ -219,6 +220,84 @@ Here it is used to load the header section html code of the page from /views/par
             </div>
         </div>
     </section>
+
+    <!-- Add SweetAlert2 library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function addToWishlist(productId) {
+            fetch(`/add-to-wishlist?id=${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json', 
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || err.message);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Added to wishlist',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: error.message || 'Something went wrong',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    });
+                });
+        }
+
+        function addToCart(productId, quantity) {
+            fetch('/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, quantity }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || err.error || 'Something went wrong');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Added to cart!',
+                        timer: 1200,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: error.message || 'Failed to add product to cart.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                });
+        }
+    </script>
     <%-include("../../views/partials/user/footer.ejs")%>
         <!-- which is used to embed another EJS file inside the current template.
     Here it is used to load the footer section html code of the page from /views/partials-->

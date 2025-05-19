@@ -179,8 +179,25 @@ const cancelItem = async (req, res) => {
 
         // ---- Refund wallet update for ONLINE Paid OR COD Orders ---- //
         if (
-            (orderDetails.paymentMethod === 'ONLINE' && orderDetails.paymentStatus === 'Paid') 
+            (orderDetails.paymentMethod === 'ONLINE' && orderDetails.paymentStatus === 'Paid' ) 
         ) {
+            await User.findOneAndUpdate(
+                { _id: userId },
+                {
+                    $inc: { wallet: refundAmount },
+                    $push: {
+                        walletHistory: {
+                            amount: refundAmount,
+                            type: 'refund',
+                            orderId,
+                            date: new Date(),
+                            note: `Refund for cancelling item in order #${orderId}`
+                        }
+                    }
+                },
+                { new: true }
+            );
+        } else if(orderDetails.paymentMethod ==="WALLET" && orderDetails.paymentStatus == 'Paid'){
             await User.findOneAndUpdate(
                 { _id: userId },
                 {

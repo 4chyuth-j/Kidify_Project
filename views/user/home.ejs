@@ -283,9 +283,7 @@ Here it is used to load the header section html code of the page from /views/par
                         title: data.message || 'Added to cart!',
                         timer: 1200,
                         showConfirmButton: false,
-                    }).then(() => {
-                        location.reload();
-                    });
+                    })
                 })
                 .catch(error => {
                     Swal.fire({

@@ -408,211 +408,276 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // Function to handle quantity change
-        function handleQuantityChange(cartItemId, isIncrease) {
-            const row = document.querySelector(`tr[data-product-id="${cartItemId}"]`);
-            const input = row.querySelector('.quantity-input');
-            let value = parseInt(input.value);
-            const newValue = isIncrease ? value + 1 : Math.max(1, value - 1);
+    <script>function handleQuantityChange(cartItemId, isIncrease) {
+    const row = document.querySelector(`tr[data-product-id="${cartItemId}"]`);
+    const input = row.querySelector('.quantity-input');
+    let value = parseInt(input.value);
+    const newValue = isIncrease ? value + 1 : Math.max(1, value - 1);
 
-            // Check maximum quantity limit of 3
-            if (isIncrease && newValue > 3) {
+    // Check maximum quantity limit of 3
+    if (isIncrease && newValue > 3) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Quantity Limit Reached',
+            text: 'You can only add up to 3 items of this product!',
+            timer: 2000,
+            showConfirmButton: false,
+        });
+        return;
+    }
+
+    fetch(`/get-product-stock?id=${cartItemId}`)
+        .then(response => response.json())
+        .then(data => {
+            const stockLimit = data.stock; // API returns { stock: number }
+
+            if (newValue > stockLimit) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Quantity Limit Reached',
-                    text: 'You can only add up to 3 items of this product!',
+                    title: 'Stock Limit Exceeded',
+                    text: `Only ${stockLimit} items available in stock!`,
                     timer: 2000,
                     showConfirmButton: false,
                 });
-                return;
+            } else {
+                input.value = newValue;
+                //API call to update cart quantity 
+                updateCartQuantity(cartItemId, newValue);
             }
+        })
+        .catch(error => {
+            console.error('Error checking stock:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to check stock availability',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        });
+}
 
-            fetch(`/get-product-stock?id=${cartItemId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const stockLimit = data.stock; // API returns { stock: number }
+// Add event listeners for decrease buttons
+document.querySelectorAll('.decrease-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const cartItemId = button.getAttribute('data-product-id');
+        handleQuantityChange(cartItemId, false);
+    });
+});
 
-                    if (newValue > stockLimit) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Stock Limit Exceeded',
-                            text: `Only ${stockLimit} items available in stock!`,
-                            timer: 2000,
-                            showConfirmButton: false,
-                        });
-                    } else {
-                        input.value = newValue;
-                        //API call to update cart quantity 
-                        updateCartQuantity(cartItemId, newValue);
+// Add event listeners for increase buttons
+document.querySelectorAll('.increase-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const cartItemId = button.getAttribute('data-product-id');
+        handleQuantityChange(cartItemId, true);
+    });
+});
+
+function updateCartQuantity(cartItemId, quantity) {
+    console.log(`Updating cart: cartItemId=${cartItemId}, quantity=${quantity}`);
+    
+    // Get the row that contains this item
+    const row = document.querySelector(`tr[data-product-id="${cartItemId}"]`);
+    const unitPriceCell = row.querySelector('td:nth-child(2)');
+    const subtotalCell = row.querySelector('td:nth-child(4)');
+    
+    // Get the unit price (without the ₹ symbol)
+    const unitPrice = parseFloat(unitPriceCell.textContent.replace('₹', ''));
+    
+    // Calculate new subtotal for this item
+    const newSubtotal = unitPrice * quantity;
+    
+    fetch(`/update-cart-quantity`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cartItemId, quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Quantity of product updated in cart");
+            
+            // Update the quantity display
+            row.querySelector('.quantity-input').value = quantity;
+            
+            // Update the subtotal for this row
+            subtotalCell.textContent = `₹${newSubtotal.toFixed(0)}`;
+            
+            // Update the cart totals
+            updateCartTotals();
+        } else {
+            console.error('Update failed:', data.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: data.message || 'Failed to update cart',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error updating cart:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update cart',
+            timer: 2000,
+            showConfirmButton: false,
+        });
+    });
+}
+
+// Function to update cart totals (subtotal and total)
+function updateCartTotals() {
+    let cartTotal = 0;
+    
+    // Calculate the sum of all row subtotals
+    document.querySelectorAll('.cart-table tbody tr').forEach(row => {
+        // Skip empty cart message row if it exists
+        if (!row.querySelector('td[colspan]')) {
+            const subtotalCell = row.querySelector('td:nth-child(4)');
+            if (subtotalCell) {
+                const subtotal = parseFloat(subtotalCell.textContent.replace('₹', ''));
+                cartTotal += subtotal;
+            }
+        }
+    });
+    
+    // Update the summary box totals
+    document.getElementById('subtotal').textContent = cartTotal.toFixed(0);
+    document.getElementById('total').textContent = cartTotal.toFixed(0);
+}
+
+function removeFromCart(itemId) {
+    console.log("front end itemID:", itemId);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to remove this product from your cart?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, remove it!',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/remove-from-cart?id=${itemId}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || err.message);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove the row from the DOM
+                const row = document.querySelector(`tr[data-product-id="${itemId}"]`);
+                if (row) {
+                    row.remove();
+                    // Update totals
+                    updateCartTotals();
+                    
+                    // Check if cart is now empty
+                    const remainingItems = document.querySelectorAll('.cart-table tbody tr');
+                    if (remainingItems.length === 0) {
+                        // Insert empty cart message
+                        const tbody = document.querySelector('.cart-table tbody');
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = `
+                            <td colspan="6" style="text-align: center; padding: 20px; background-color: #ffe4e1; color: #d14792;">
+                                Your cart is empty! <br>Continue shopping <a href="/shop">Shop Now</a>
+                            </td>
+                        `;
+                        tbody.appendChild(emptyRow);
                     }
-                })
-                .catch(error => {
-                    console.error('Error checking stock:', error);
+                    
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to check stock availability',
-                        timer: 2000,
+                        icon: 'success',
+                        title: data.message || 'Removed from cart',
+                        timer: 1200,
                         showConfirmButton: false,
                     });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: error.message || 'Something went wrong',
+                    timer: 1200,
+                    showConfirmButton: false,
                 });
+            });
         }
+    });
+}
 
-        // Add event listeners for decrease buttons
-        document.querySelectorAll('.decrease-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const cartItemId = button.getAttribute('data-product-id');
-                handleQuantityChange(cartItemId, false);
-            });
-        });
-
-        // Add event listeners for increase buttons
-        document.querySelectorAll('.increase-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const cartItemId = button.getAttribute('data-product-id');
-                handleQuantityChange(cartItemId, true);
-            });
-        });
-
-        function updateCartQuantity(cartItemId, quantity) {
-            console.log(`Updating cart: cartItemId=${cartItemId}, quantity=${quantity}`);
-            fetch(`/update-cart-quantity`, {
+function clearCart() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to empty the cart?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Clear it!',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/clearCartProducts', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cartItemId, quantity })
+                    'Content-Type': 'application/json'
+                }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log("Quantity of product updated in cart");
-                        location.reload();
-                    } else {
-                        console.error('Update failed:', data.message);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Update Failed',
-                            text: data.message || 'Failed to update cart',
-                            timer: 2000,
-                            showConfirmButton: false,
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating cart:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to update cart',
-                        timer: 2000,
-                        showConfirmButton: false,
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || err.message);
                     });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Clear all product rows
+                const tbody = document.querySelector('.cart-table tbody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px; background-color: #ffe4e1; color: #d14792;">
+                            Your cart is empty! <br>Continue shopping <a href="/shop">Shop Now</a>
+                        </td>
+                    </tr>
+                `;
+                
+                // Reset totals to zero
+                document.getElementById('subtotal').textContent = '0.00';
+                document.getElementById('total').textContent = '0.00';
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message || 'Cart cleared successfully',
+                    timer: 1200,
+                    showConfirmButton: false,
                 });
-        }
-
-        function removeFromCart(itemId) {
-            console.log("front end itemID:", itemId);
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to remove this product from your cart?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, remove it!',
-                cancelButtonText: 'Cancel',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/remove-from-cart?id=${itemId}`, {
-                        method: 'POST'
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.error || err.message);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: data.message || 'Removed from cart',
-                                timer: 1200,
-                                showConfirmButton: false,
-                            }).then(() => {
-                                location.reload();
-                            });
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops!',
-                                text: error.message || 'Something went wrong',
-                                timer: 1200,
-                                showConfirmButton: false,
-                            });
-                        });
-                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: error.message || 'Something went wrong',
+                    timer: 1200,
+                    showConfirmButton: false,
+                });
             });
         }
-
-        function clearCart() {
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to empty the cart?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Clear it!',
-                cancelButtonText: 'Cancel',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('/clearCartProducts', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.error || err.message);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: data.message || 'Removed from cart',
-                                timer: 1200,
-                                showConfirmButton: false,
-                            }).then(() => {
-                                location.reload();
-                            });
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops!',
-                                text: error.message || 'Something went wrong',
-                                timer: 1200,
-                                showConfirmButton: false,
-                            });
-                        });
-                }
-
-            });
-
-
-
-
-        }
+    });
+}
     </script>
 
     <%- include("../../views/partials/user/footer.ejs") %>

@@ -184,33 +184,36 @@
                     </thead>
                     <tbody>
                         <% for(let i=0; i < cat.length; i++) { %>
-                            <tr>
+                            <tr data-category-id="<%= cat[i]._id %>" data-status="<%= cat[i].isListed %>">
                                 <td>
                                     <%= cat[i].name %>
                                 </td>
                                 <td>
                                     <%= cat[i].categoryOffer %> %
                                 </td>
-                                <td>
+                                <td class="category-status">
                                     <% if (cat[i].isListed) { %>
                                         <span class="status-badge status-active">Active</span>
                                         <% } else { %>
                                             <span class="status-badge status-blocked">Blocked</span>
                                             <% } %>
                                 </td>
-                                <td>
-                                    <a href="/admin/editCategory?id=<%= cat[i]._id %>" class="text-primary"><i class="bi bi-pencil"></i></a>
-                                    <%if(cat[i].isListed){%>
-                                        <a href="/admin/blockCategory?id=<%= cat[i]._id %>" class="text-danger ms-3"><i
-                                                class="bi bi-lock-fill"></i></a>
-                                        <%}else{%>
-                                            <a href="/admin/unblockCategory?id=<%= cat[i]._id %>"
-                                                class="text-success ms-3"><i class="bi bi-unlock-fill"></i></a>
-
-                                        <%}%>
+                                <td class="category-actions">
+                                    <a href="/admin/editCategory?id=<%= cat[i]._id %>" class="text-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        onclick="toggleCategoryStatus('<%= cat[i]._id %>', '<%= cat[i].isListed %>')"
+                                        class="toggle-status ms-3 <%= cat[i].isListed ? 'text-danger' : 'text-success' %>">
+                                        <% if(cat[i].isListed) { %>
+                                            <i class="bi bi-lock-fill"></i>
+                                            <% } else { %>
+                                                <i class="bi bi-unlock-fill"></i>
+                                                <% } %>
+                                    </a>
                                 </td>
                             </tr>
-                        <% } %>
+                            <% } %>
                     </tbody>
                 </table>
             </div>
@@ -231,5 +234,64 @@
             </nav>
         </div>
     </div>
+    <script>
+        // Function to toggle category status
+        async function toggleCategoryStatus(categoryId, currentStatus) {
+            try {
+                // Determine which endpoint to call based on current status
+                const endpoint = currentStatus ? '/admin/blockCategory' : '/admin/unblockCategory';
+
+                // Make the fetch request
+                const response = await fetch(`${endpoint}?id=${categoryId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                // Check if the request was successful
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Find the row that needs to be updated
+                    const statusCell = document.querySelector(`tr[data-category-id="${categoryId}"] .category-status`);
+                    const actionCell = document.querySelector(`tr[data-category-id="${categoryId}"] .category-actions`);
+                    const toggleBtn = actionCell.querySelector('.toggle-status');
+
+                    // Update the status badge
+                    if (data.isListed) {
+                        // Category is now active (was just unblocked)
+                        statusCell.innerHTML = '<span class="status-badge status-active">Active</span>';
+                        toggleBtn.innerHTML = '<i class="bi bi-lock-fill"></i>';
+                        toggleBtn.classList.remove('text-success');
+                        toggleBtn.classList.add('text-danger');
+
+                        // IMPORTANT: Update the onclick attribute with the NEW status
+                        toggleBtn.setAttribute('onclick', `toggleCategoryStatus('${categoryId}', true)`);
+                    } else {
+                        // Category is now blocked (was just blocked)
+                        statusCell.innerHTML = '<span class="status-badge status-blocked">Blocked</span>';
+                        toggleBtn.innerHTML = '<i class="bi bi-unlock-fill"></i>';
+                        toggleBtn.classList.remove('text-danger');
+                        toggleBtn.classList.add('text-success');
+
+                        // IMPORTANT: Update the onclick attribute with the NEW status
+                        toggleBtn.setAttribute('onclick', `toggleCategoryStatus('${categoryId}', false)`);
+                    }
+
+                    // Update the data attribute to reflect new status
+                    const row = document.querySelector(`tr[data-category-id="${categoryId}"]`);
+                    row.setAttribute('data-status', data.isListed);
+
+                } else {
+                    console.error('Failed to update category status');
+                    alert('Failed to update category status. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error updating category status:', error);
+                alert('An error occurred while updating the category status.');
+            }
+        }
+    </script>
 
     <%- include("../../views/partials/admin/footer") %>

@@ -35,6 +35,10 @@ router.get("/blockCustomer",adminAuth,customerController.customerBlocked);
 
 router.get("/unblockCustomer",adminAuth,customerController.customerUnblocked);
 
+router.post('/blockCustomer-ajax', adminAuth, customerController.customerBlockedAjax);
+
+router.post('/unblockCustomer-ajax', adminAuth, customerController.customerUnblockedAjax);
+
 router.get("/pageError",adminAuth,adminController.pageError);
 
 

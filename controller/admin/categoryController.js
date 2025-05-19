@@ -84,7 +84,7 @@ const addCategory = async (req, res) => {
 
 
     } catch (error) {
-        console.log("error in saving category details in dB:",error)
+        console.log("error in saving category details in dB:", error)
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
@@ -95,13 +95,41 @@ const addCategory = async (req, res) => {
 const categoryBlocked = async (req, res) => {
     try {
         let id = req.query.id;
-        await Category.updateOne({ _id: id }, { isListed: false });
-        res.redirect("/admin/category");
+        const updatedCategory = await Category.findByIdAndUpdate(
+            id,
+            { isListed: false },
+            { new: true }
+        );
 
+        // Check if the request is an AJAX request
+        const isAjaxRequest = req.headers.accept && req.headers.accept.includes('application/json');
+
+        if (isAjaxRequest) {
+            // If it's an AJAX request, return JSON response
+            return res.status(200).json({
+                success: true,
+                isListed: updatedCategory.isListed,
+                message: "Category blocked successfully"
+            });
+        } else {
+            // If it's a regular request, redirect
+            return res.redirect("/admin/category");
+        }
     } catch (error) {
-        console.log("Error occured while blocking the Category",error);
-        res.status(500).send("Internal server error");
-        res.redirect("/pageError");
+        console.log("Error occurred while blocking the Category", error);
+
+        // Check if it's an AJAX request
+        const isAjaxRequest = req.headers.accept && req.headers.accept.includes('application/json');
+
+        if (isAjaxRequest) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to block category"
+            });
+        } else {
+            res.status(500).send("Internal server error");
+            return res.redirect("/pageError");
+        }
     }
 }
 
@@ -110,13 +138,41 @@ const categoryBlocked = async (req, res) => {
 const categoryUnBlocked = async (req, res) => {
     try {
         let id = req.query.id;
-        await Category.updateOne({ _id: id }, { isListed: true });
-        res.redirect("/admin/category");
+        const updatedCategory = await Category.findByIdAndUpdate(
+            id,
+            { isListed: true },
+            { new: true }
+        );
 
+        // Check if the request is an AJAX request
+        const isAjaxRequest = req.headers.accept && req.headers.accept.includes('application/json');
+
+        if (isAjaxRequest) {
+            // If it's an AJAX request, return JSON response
+            return res.status(200).json({
+                success: true,
+                isListed: updatedCategory.isListed,
+                message: "Category unblocked successfully"
+            });
+        } else {
+            // If it's a regular request, redirect
+            return res.redirect("/admin/category");
+        }
     } catch (error) {
-        console.log("Error occured while Unblocking the Category:",error);
-        res.status(500).send("Internal server error");
-        res.redirect("/pageError");
+        console.log("Error occurred while Unblocking the Category:", error);
+
+        // Check if it's an AJAX request
+        const isAjaxRequest = req.headers.accept && req.headers.accept.includes('application/json');
+
+        if (isAjaxRequest) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to unblock category"
+            });
+        } else {
+            res.status(500).send("Internal server error");
+            return res.redirect("/pageError");
+        }
     }
 }
 
@@ -144,7 +200,7 @@ const editCategory = async (req, res) => {
         const id = req.params.id;
         let isListed = true;
         const { name, description, visibilityStatus, discount } = req.body;
-        const existingCategory = await Category.findOne({ name,description,visibilityStatus, discount });
+        const existingCategory = await Category.findOne({ name, description, visibilityStatus, discount });
 
         if (existingCategory) {
             return res.status(400).json({ error: "Category exists, Please make changes" });
@@ -175,7 +231,7 @@ const editCategory = async (req, res) => {
 
 
     } catch (error) {
-        console.log("something went wrong :",error)
+        console.log("something went wrong :", error)
         res.status(500).json({ error: "Internal Server error" });
 
     }

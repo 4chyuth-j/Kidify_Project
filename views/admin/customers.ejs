@@ -129,6 +129,38 @@
         font-weight: bold;
         pointer-events: none;
     }
+    
+    /* Toast notification styling */
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+    }
+    
+    .notification {
+        min-width: 250px;
+        background-color: white;
+        color: #333;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        margin-bottom: 10px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .notification.show {
+        opacity: 1;
+    }
+    
+    .notification-success {
+        border-left: 4px solid #28a745;
+    }
+    
+    .notification-error {
+        border-left: 4px solid #dc3545;
+    }
 </style>
 
 <div class="content-container">
@@ -146,6 +178,9 @@
         </form>
     </div>
 
+    <!-- Notification container -->
+    <div class="notification-container"></div>
+
     <!-- Table -->
     <div class="table-container">
         <div class="table-responsive">
@@ -161,27 +196,21 @@
                 </thead>
                 <tbody>
                     <% for(let i = 0; i < data.length; i++) { %>
-                        <tr>
+                        <tr id="user-row-<%= data[i]._id %>">
                             <td><%= data[i].name %></td>
                             <td><%= data[i].email %></td>
                             <td><%= data[i].userId.slice(0,8) %></td>
                             <td>
-                                <% if (data[i].isBlocked === false) { %>
-                                    <span class="status-badge status-active">Active</span>
-                                <% } else { %>
-                                    <span class="status-badge status-blocked">Blocked</span>
-                                <% } %>
+                                <span class="status-badge <%= data[i].isBlocked ? 'status-blocked' : 'status-active' %>" id="status-<%= data[i]._id %>">
+                                    <%= data[i].isBlocked ? 'Blocked' : 'Active' %>
+                                </span>
                             </td>
                             <td>
-                                <% if(data[i].isBlocked === false) { %>
-                                    <button class="btn btn-danger" style="width: 80px;">
-                                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Block</a>
-                                    </button>
-                                <% } else { %>
-                                    <button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Unblock</a>
-                                    </button>
-                                <% } %>
+                                <button class="btn <%= data[i].isBlocked ? 'btn-success' : 'btn-danger' %>" style="width: 80px;" 
+                                        onclick="toggleUserStatus('<%= data[i]._id %>', <%= data[i].isBlocked %>)" 
+                                        id="btn-<%= data[i]._id %>">
+                                    <%= data[i].isBlocked ? 'Unblock' : 'Block' %>
+                                </button>
                             </td>
                         </tr>
                     <% } %>
@@ -203,5 +232,89 @@
         </nav>
     </div>
 </div>
+
+<script>
+    function toggleUserStatus(userId, isCurrentlyBlocked) {
+        // Disable button during the request
+        const button = document.getElementById(`btn-${userId}`);
+        const statusBadge = document.getElementById(`status-${userId}`);
+        
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        
+        const endpoint = isCurrentlyBlocked ? 
+            `/admin/unblockCustomer-ajax?id=${userId}` : 
+            `/admin/blockCustomer-ajax?id=${userId}`;
+        
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update button and status
+                const newStatus = isCurrentlyBlocked ? false : true;
+                
+                // Update button
+                button.className = `btn ${newStatus ? 'btn-success' : 'btn-danger'}`;
+                button.innerHTML = newStatus ? 'Unblock' : 'Block';
+                button.disabled = false;
+                
+                // Update status badge
+                statusBadge.className = `status-badge ${newStatus ? 'status-blocked' : 'status-active'}`;
+                statusBadge.innerText = newStatus ? 'Blocked' : 'Active';
+                
+                // Update onclick attribute
+                button.onclick = function() {
+                    toggleUserStatus(userId, newStatus);
+                };
+                
+                // Show notification
+                showNotification(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`, 'success');
+            } else {
+                showNotification(data.message || 'An error occurred', 'error');
+                button.disabled = false;
+                button.innerHTML = isCurrentlyBlocked ? 'Unblock' : 'Block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred', 'error');
+            button.disabled = false;
+            button.innerHTML = isCurrentlyBlocked ? 'Unblock' : 'Block';
+        });
+    }
+    
+    function showNotification(message, type = 'success') {
+        const notificationContainer = document.querySelector('.notification-container');
+        const notification = document.createElement('div');
+        
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<div class="notification-body">${message}</div>`;
+        
+        notificationContainer.appendChild(notification);
+        
+        // Show notification
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        // Hide and remove notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notificationContainer.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+</script>
 
 <%- include("../../views/partials/admin/footer") %>

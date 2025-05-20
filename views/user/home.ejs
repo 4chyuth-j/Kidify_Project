@@ -4,6 +4,8 @@ Here it is used to load the header section html code of the page from /views/par
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preload" href="img/hero/hero-1.jpg" as="image">
+    <link rel="preload" href="img/hero/hero-2.jpg" as="image">
     <style>
         .btn {
             display: inline-block;
@@ -207,7 +209,7 @@ Here it is used to load the header section html code of the page from /views/par
 
                             <div class="product-content-wrap">
                                 <h6 title="<%= products[i].productName %>">
-                                    <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 45) +
+                                    <%= products[i].productName.length> 20 ? products[i].productName.substring(0, 40) +
                                         "..." : products[i].productName %>
                                 </h6>
                                 <h5>₹<%=products[i].basePrice%>
@@ -229,7 +231,7 @@ Here it is used to load the header section html code of the page from /views/par
             fetch(`/add-to-wishlist?id=${productId}`, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json', 
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }
             })
